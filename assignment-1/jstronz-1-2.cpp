@@ -27,5 +27,11 @@ int main()
     // Prompt user for double and store (use cout & cin, store in usr_string)
     prompt_user(std::cout, "Enter a string: ");
     rw_string(std::cin, std::cout);
+
+    /* For for future reference on assignment 1-3
+     * prompt_user(std::cout, "Enter a float: ");
+     * rw_float(std::cin, std::cout);
+     * std::cin.ignore();
+     */
     return 0;
 }
