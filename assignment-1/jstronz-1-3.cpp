@@ -15,8 +15,12 @@
 #include <iostream>
 #include <string>
 #include <sstream>
-#include <jstronz-1-3.h>
+#include "jstronz-1-3.h"
 
+void prompt_user(std::ostream& os, const std::string& user_prompt)
+{
+   os << user_prompt; 
+}
 
 void rw_double(std::istream& is, std::ostream& os)
 {
@@ -25,7 +29,6 @@ void rw_double(std::istream& is, std::ostream& os)
     os << doublein << std::endl;
 }
 
-
 void rw_float(std::istream& is, std::ostream& os)
 {
     float floatin;
@@ -33,10 +36,16 @@ void rw_float(std::istream& is, std::ostream& os)
     os << floatin << std::endl;
 }
 
-
 void rw_string(std::istream& is, std::ostream& os)
 {
     std::string stringin;
-    is >> stringin;
+    std::getline(is, stringin);
     os << stringin << std::endl;
+}
+
+void rw_int(std::istream& is, std::ostream& os)
+{
+    int iint;
+    is >> iint;
+    os << iint << std::endl;
 }
