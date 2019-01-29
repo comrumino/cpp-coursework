@@ -19,6 +19,7 @@ TEST(ArrayInt, array)
     // Convert array into stringstream for CHECK_EQUAL
     std::stringstream strArray;
     for (int i = 0; i < szArray; ++i) {
+        // use subscript since dynamic array cannot used range based iteration
         strArray << myArray[i] << " ";
     }
     // Verify array values
