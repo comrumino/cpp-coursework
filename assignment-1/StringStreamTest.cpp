@@ -55,7 +55,7 @@ TEST(RWFloat, stringstream)
 
 TEST(RWString, stringstream)
 {
-    const std::string istring = "This statement is false!";
+    const std::string istring("This statement is false!");  // direct initialize
     std::stringstream os;
     std::stringstream is(istring);
     // Read from istream (is) into a string and write string to ostream (os)
@@ -72,7 +72,7 @@ TEST(RWString, stringstream)
 
 TEST(helloRWInt, stringstream)
 {
-    const std::string istring = "Hello";
+    const std::string istring("Hello");  // direct initialize
     std::stringstream os;
     std::stringstream is(istring);
     // Read from istream (is) into a int and write int to ostream (os)

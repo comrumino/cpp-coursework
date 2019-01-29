@@ -19,9 +19,14 @@
 * non-type names are not capital
 * underscores for multipart names
 * length of name should be roughly proportional to the size of its scope
+* initialize unless you have a good reason not to
 * http://www.stroustrup.com/Programming/PPP-style-rev3.pdf
 
+## Things to know
+* assignment changes the LHS
+
 ## Commenting    
+* a null statement should be commented `;`
 * Stating intent (i.e. identify the purpose of a variable)
 * Strategy or general design (i.e. summarize an algorithm)
 * Stating invariants, pre- and post-conditions
@@ -40,14 +45,48 @@
 * a function is where logically separate copmutation starts---best point to think about correct code and catch errors
 * is it easy to know when a boundary condition is violated    
 
+## Types
+* unsigned type when you know that the the values cannot be negative
+* int for integer arithmetic
+* short is usually too small and long is often has the same size as int
+* use long long when values are larger than the minimum gauranteed size of an int
+* char or bool should only be used to hodl characters or truth values
+* use double for floating-point arithematic, long double is unnecessary and often entails run-time cost
+* integral types
+
+## Type Conversion
+* nonbool -> if value == 0 then false, so nonzero is true
+* undefined operation such as assign an out-of-range value to an object of signed type the result is undefined
+* don't mixed signed and unsigned types
+* `20 /* decimal */ 024 /* octal */ 0x14 /* hexidecimal */
+* string literal is array of chars followed by a null character
+* escape single quotes, double quotes, question mark, backslash
+* specify the type of a literal e.g. `L'a'`
+
+## References
+* bind the reference to initializer and cannot not be re-bindined, so it must be initialized
+* are not an object
 
 ## Terms
+* object, a region of memory which contains data and has a type
+* declaration, makes a name known to program (variable declaration specifies name & type)
+* identifiers, e.g. name
+* variable provides us with a named storage that our programs can manipulate
+* initialized, when an object is given a value at creation time
+* default initialized, variables are given a default value when created
+* assignment, overwrites an objects current value
+* type specifier, the name of a type
+* reference/alias, a name for already existing object aka the "lvalue" `int &refVal = ival; // refVal is another name for ival`
 * clash, two incompatible declarations within the same scope
 * pre-conditions, function argument requirements to run properly (doc if always good arguments, not too slow, not too complicated).
 * post-conditions, the promis of what is returned
 * invariant, a set of constraints which make the state valid (a rule for object value)
 * state, the value of an object
 * valid state, the idea of a valid value
+* lvalues persist and rvalues are ephemeral
+* index/subscript, the value you use in an subscript
+* vector is template, which generates types such as `vector<int>`
+* compound type, type defined in terms of others types such as pointer and reference
 
 ## Operator: new
 * `new type; // returns a valid address, memory is not initialized, and calls the class constructor`
@@ -66,16 +105,27 @@
 * if a var is not initialized at declaration, then auto cannot be used
 
 ## vectors
-* a vector is a template
+* only subscript known elements to exist, a range constructor might help `vector<unsigned> scores(11, 0);`
 * `for (std::vector::iterator element = values.begin(); element != values.end(); ++element)`
 * `for (auto element = values.begin(); element != values.end(); ++element) `
 * `std::stringstream actual; for (auto value : values)`
 
 ## string
 * Any variable used to store the result of string size should be stored in `std::size_type`---`auto len = line.size()`
+* `string s5 = "hiya"; //copy initialization`
+* `string s6("hiya"); //direct initialization`
 
+## Namespace
+* don't use `using` declarations because they'll be copied into the including programs text
 
 ## Pointers
+* a pointer is an object
+* four states of a pointer: point to an object, point to a location past the end of an object, null, and invalid otherwise
+* trying to access an object via a pointer when it does not point to one results in undefined behavior
+* `int \**p1 = nullptr/NULL/0;` ordered in preference
+* initialize all pointers
+* void pointers, deal with memory as memory
+* read it right to left for complicated point or reference declarations `int *&r`
 * `const char* q = hello; // can't modify the data being pointed at, but can change what we point at`
 * `char* const r = hello; // can't change what is pointed at, but can change the value at what we point`
 * `const char* const s = hello; // cant change what is pointed at and can't change the value at what we point` 
@@ -90,11 +140,15 @@
 # Week 1:   
 ### Primer    
 * ~~1.1-1.4 pg 1-19~~
-* 2.1-2.2 pg 31-50
-* 3.1-3.3 pg 81-102
+* ~~2.1-2.2 pg 31-50~~
+* ~~3.1-3.3 pg 81-102~~
+* ~~2.3~~
+* ~~4.1 - 4.10~~
+* 5.1 - 5.5
 
 ### Effective
-* intro, item 1, item 2 pg 2-17
+* ~~intro, item 1, item 2 pg 2-17~~
+* item 16
 
 ### Bjarne
 * pg 59-89
