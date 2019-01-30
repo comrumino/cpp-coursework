@@ -21,6 +21,7 @@
 * length of name should be roughly proportional to the size of its scope
 * initialize unless you have a good reason not to
 * http://www.stroustrup.com/Programming/PPP-style-rev3.pdf
+* almost always auto: choice between auto and explicit, choose auto. changing an object iterated requires fewer changes
 
 ## Things to know
 * assignment changes the LHS
@@ -53,6 +54,7 @@
 * char or bool should only be used to hodl characters or truth values
 * use double for floating-point arithematic, long double is unnecessary and often entails run-time cost
 * integral types
+* auto, type deduction looks at the initializer to deduce what auto should be
 
 ## Type Conversion
 * nonbool -> if value == 0 then false, so nonzero is true
@@ -110,6 +112,11 @@
 * `for (auto element = values.begin(); element != values.end(); ++element) `
 * `std::stringstream actual; for (auto value : values)`
 
+## arrays
+* for dynamically allocated arrays begin/end are not defined as in C size tracking required, stl collection classes are preferred. 
+* `auto array = new int[10];` or `auto array = std::make_unique<int[]>(10);`
+
+
 ## string
 * Any variable used to store the result of string size should be stored in `std::size_type`---`auto len = line.size()`
 * `string s5 = "hiya"; //copy initialization`
@@ -119,6 +126,14 @@
 * don't use `using` declarations because they'll be copied into the including programs text
 
 ## Pointers
+* `std::unique_ptr<int> p2; //initializes to a nullptr`
+* unique pointers use heap memory and delete memory automatically via destructor
+* make unique is a way of initializing a unique pointer
+* (cont. ) `std::unique_ptr<int[]> values2 = std::make_unique<int[]>(10);` alternatively
+* (cont. ) `auto values2 = std::make_unique<int[]>(10);`
+* shared pointer, syntax `std::shared_ptr<int[]> sharedValues = std::make_shared<int[]>(20);`
+* (cont. ) allows multiple clients to share access to that dynamically allocated heap memory by using reference counting
+* (cont. ) use unique pointer unless you really need sharing
 * a pointer is an object
 * four states of a pointer: point to an object, point to a location past the end of an object, null, and invalid otherwise
 * trying to access an object via a pointer when it does not point to one results in undefined behavior
@@ -131,6 +146,9 @@
 * `const char* const s = hello; // cant change what is pointed at and can't change the value at what we point` 
 * `int* myPtr = new int; // allocate storage for an int and assign the pointer to the storage to myPtr`
 * `new int(33); // to the address (the pointer) of a newly allocated int with the value of 33`
+* pointer arithmetic, `int* p; int arr[2] = {0, 1}; p = arr; ++p;`
+* whyyyyy, "1[arr] <=> arr[1]"
+* unique_ptr undefined behavior conditions!!!
 
 ## Compile
 * flags: `-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused`
