@@ -50,12 +50,12 @@ char* cat(char* char_arr1, char* char_arr2)
     return res;
 }
 
-std::string cat(std::string& string1, std::string& string2)
+std::string cat(const std::string& string1, const std::string& string2)
 {
     return string1 + string2;
 }
 
-int main()
+/*int main()
 {
     char* char_arr1 = new char[3]{'1', '2', '3'};
     char* char_arr2 = new char[3]{'4', '5', '6'};
@@ -71,4 +71,4 @@ int main()
 
     
     return 0;
-}
+}*/
