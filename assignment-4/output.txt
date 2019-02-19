@@ -1,0 +1,18 @@
+# 4-1 #
+[archie@swanstation cprogrm711]$ g++ ./include/Main.cpp ./assignment-4/DateTest.cpp ./assignment-4/jstronz-4-1.cpp -L./lib -lUnitLite -o ./a.out  && ./a.out
+3 tests, 0 failures, 0 errors
+
+# 4-2 #
+[archie@swanstation cprogrm711]$ g++ ./include/Main.cpp ./assignment-4/WriteTest.cpp ./assignment-4/write.cpp -L./lib -lUnitLite -o ./a.out  && ./a.out
+3 tests, 0 failures, 0 errors
+[archie@swanstation cprogrm711]$ g++ ./assignment-4/WriteMain.cpp ./assignment-4/write.cpp -o ./a.out && ./a.out 
+1
+-1
+1.01
+-1.101
+this is a false statement
+
+# 4-3 #
+[archie@swanstation cprogrm711]$ g++ ./include/Main.cpp ./assignment-4/LambdaTest.cpp -L./lib -lUnitLite -o ./a.out  && ./a.out
+1 tests, 0 failures, 0 errors
+
