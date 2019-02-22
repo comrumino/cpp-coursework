@@ -36,7 +36,6 @@ TEST(DateTest, add_month)
     CHECK_EQUAL("010", ymd.str());
 }
 
-
 TEST(DateTest, add_year)
 {
     Date date;

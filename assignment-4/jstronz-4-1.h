@@ -16,8 +16,8 @@
  *   
  *   | Date addOneDay(const Date& date);
  */
-#ifndef JSTRONZ_4_1_H
-#define JSTRONZ_4_1_H
+#pragma once
+
 struct Date
 {
     int year = 0;
@@ -30,4 +30,3 @@ void add_day(Date& date);
 void add_month(Date& date);
 
 void add_year(Date& date);
-#endif

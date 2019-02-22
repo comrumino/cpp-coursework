@@ -14,9 +14,9 @@ TEST(lambdaTestProblem, lambdas)
     auto sum = 0;
 
     std::for_each(values.begin(), values.end(), [&values, &sum](auto val) -> void
-                                                {
-                                                    sum += val;
-                                                });
+    { 
+        sum += val;
+    });
 
     CHECK_EQUAL(42, sum);
 }

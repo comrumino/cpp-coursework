@@ -20,6 +20,7 @@
  */
 #include <sstream>
 #include <string>
+
 void write(std::ostream& os, const int& intgr)
 {
     os << intgr;
