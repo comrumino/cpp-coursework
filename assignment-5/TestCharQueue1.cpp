@@ -1,15 +1,40 @@
 #include <iostream>
+#include <sstream>
 #include "TestHarness.h"
 #include "CharQueue1.h"
 
 TEST(CharQueue, construct_sizes) {
-    // the fuck
-    // CharQueue cq();
-    // std::cout << cq;
+    std::stringstream cqss;
     CharQueue cq0(0);
-    cq0.dequeue();
+    cqss << cq0;
+    CHECK_EQUAL("\nsize: 1\nbegin: 0\ncount: 0\nqueue: \n\n", cqss.str());
+    cqss.str("");
+    CharQueue cq1(1);
+    cqss << cq1;
+    CHECK_EQUAL("\nsize: 1\nbegin: 0\ncount: 0\nqueue: \n\n", cqss.str());
+    cqss.str("");
+    CharQueue cq2(2);
+    cqss << cq2;
+    CHECK_EQUAL("\nsize: 2\nbegin: 0\ncount: 0\nqueue: \n\n", cqss.str());
+}
+
+TEST(CharQueue, enqueue) {
+    std::stringstream cqss;
+    CharQueue cq0(0);
+    cq0.enqueue('a');
+    cq0.enqueue('b');
+    cq0.enqueue('c');
+    cqss << cq0;
+    CHECK_EQUAL("\nsize: 4\nbegin: 0\ncount: 3\nqueue: abc\n\n", cqss.str());
+}
+
+TEST(CharQueue, dequeue) {
+    std::stringstream cqss;
+    CharQueue cq0(0);
     cq0.enqueue('i');
     cq0.enqueue('f');
+    cq0.enqueue('q');
+    cq0.enqueue('r');
     cq0.dequeue();
     cq0.dequeue();
     cq0.enqueue('g');
@@ -17,9 +42,53 @@ TEST(CharQueue, construct_sizes) {
     cq0.enqueue('c');
     cq0.dequeue();
     cq0.dequeue();
-    //cq0.dequeue();
-    std::cout << cq0;
-    CHECK_EQUAL("ifgac", cq0.queue.get());
-    CHECK_EQUAL(6, strlen(cq0.queue.get()));
+    cq0.dequeue();
+    cqss << cq0;
+    CHECK_EQUAL("\nsize: 7\nbegin: 5\ncount: 2\nqueue: ac\n\n", cqss.str());
+}
 
+TEST(CharQueue, isEmpty) {
+    CharQueue cq0(0);
+    CHECK_EQUAL(true, cq0.isEmpty());
+    cq0.enqueue('i');
+    CHECK_EQUAL(false, cq0.isEmpty());
+    cq0.dequeue();
+    CHECK_EQUAL(true, cq0.isEmpty());
+}
+
+TEST(CharQueue, capacity) {
+    CharQueue cq0(0);
+    CHECK_EQUAL(1, cq0.capacity());
+    cq0.enqueue('a');
+    cq0.enqueue('b');
+    cq0.enqueue('c');
+    CHECK_EQUAL(4, cq0.capacity());
+    cq0.enqueue('g');
+    cq0.enqueue('a');
+    CHECK_EQUAL(7, cq0.capacity());
+}
+
+TEST(CharQueue, swap) {
+    std::stringstream cqss;
+    std::stringstream cq2ss;
+    CharQueue cq(0);
+    cq.enqueue('i');
+    cq.enqueue('f');
+    cq.enqueue('q');
+    cq.enqueue('r');
+    cq.dequeue();
+    cq.dequeue();
+    cq.enqueue('g');
+    cq.enqueue('a');
+    cq.enqueue('c');
+    cq.dequeue();
+    cq.dequeue();
+    cq.dequeue();
+    CharQueue cq2(0);
+    cq2.enqueue('c');
+    cq2.enqueue('a');
+    cq.swap(cq2);
+    cqss << cq;
+    cq2ss << cq2;
+    CHECK_EQUAL("\nsize: 7\nbegin: 5\ncount: 2\nqueue: ac\n\n", cq2ss.str());
 }

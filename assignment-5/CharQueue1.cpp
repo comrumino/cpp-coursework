@@ -3,12 +3,12 @@
 #include "CharQueue1.h"
 
 CharQueue::CharQueue(size_t size)
-    :begin{0}, count{0}, size{size ? size : 1}, queue{std::make_unique<char[]>(size + 1)}
+    :begin(0), count(0), size(size ? size : 1), queue(std::make_unique<char[]>(size + 1))
 {
 }
 
 CharQueue::CharQueue(const CharQueue& src) 
-    :begin{src.begin}, count{src.count}, size{src.size}, queue{std::make_unique<char[]>(size + 1)}
+    :begin(src.begin), count(src.count), size(src.size), queue(std::make_unique<char[]>(size + 1))
 {
     auto q = queue.get();
     auto sq = src.queue.get();
@@ -20,24 +20,19 @@ CharQueue::CharQueue(const CharQueue& src)
 }
 
 void CharQueue::enqueue(char ch) {
-    // check if count is capacity, and resize after enqueue
-    queue[begin + count++ % size] = ch;
+    queue[(begin + count) % size] = ch;
+    count++;
     if (count == size) {
         size_t newsize = size + (size >> 3) + (size < 9 ? 3 : 6);
-        auto _queue = std::make_unique<char[]>(newsize);
+        auto _queue = std::make_unique<char[]>(newsize + 1);
         auto q = queue.get();
         q += begin;
         auto tq = _queue.get();
-        while (*tq++ = *q++) {
+        for (int i = 0; i < count; ++i) {
             if (*q == '\0') {
-                break;
+                q = queue.get();
             }
-        }
-        if (count + begin < size) {
-            q = queue.get();
-            for (int i = 0; i < begin + count - size; ++i) {
-                *tq++ = *q++;
-            }
+            *tq++ = *q++;
         }
         queue = std::move(_queue);
         begin = 0;
@@ -51,10 +46,11 @@ char CharQueue::dequeue() {
     //
     if (!isEmpty()) {
         --count;
-        return queue[begin++];
+        char ch = queue[begin++];
+        begin = begin % size;
+        return ch;
     } else {
-        std::cout << "Cannot dequeue empty queue!" << std::endl;
-        return NULL; 
+        return '\0'; 
     }
 
 }
@@ -64,12 +60,19 @@ bool CharQueue::isEmpty() const {
 }
 
 void CharQueue::swap(CharQueue& src) {  // exchange contents
-    // check sizes
-
+    auto _src = *this;
+    size = src.size;
+    begin = src.begin;
+    count = src.count;
+    queue = std::move(src.queue);
+    src.size = _src.size;
+    src.begin = _src.begin;
+    src.count = _src.count;
+    src.queue = std::move(_src.queue);
 }
 
 size_t CharQueue::capacity() const {
-   return 0; 
+   return size; 
 }
 
 CharQueue& CharQueue::operator=(CharQueue src) {
@@ -95,9 +98,13 @@ std::ostream& operator<<(std::ostream& os, const CharQueue& cq) {
     os << "count: " << cq.count << std::endl;
     os << "queue: ";
     auto p = cq.queue.get();
-    while (*p != '\0') {
-        std::cout << *p++;
+    p += cq.begin;
+    for (int i = 0; i < cq.count; ++i) {
+        if (*p == '\0') {
+            p = cq.queue.get();
+        }
+        os << *p++;
     }
-    std::cout << std::endl << std::endl ;
+    os << std::endl << std::endl ;
     return os;  // return ostream to allow chaining
 }

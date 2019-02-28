@@ -9,6 +9,7 @@ private:
     unsigned int count;
 
 public:
+
     std::unique_ptr<char[]> queue;
     CharQueue();
     CharQueue(size_t size = 1);
