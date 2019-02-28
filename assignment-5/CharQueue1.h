@@ -3,17 +3,15 @@
 
 class CharQueue {
 private:
-    // std::unique_ptr<char[]> 
+    std::unique_ptr<char[]> queue;
     size_t size;
     unsigned int begin;
     unsigned int count;
 
 public:
-
-    std::unique_ptr<char[]> queue;
     CharQueue();
-    CharQueue(size_t size = 1);
-    CharQueue(const CharQueue& src); // copy constructor
+    CharQueue(size_t size);
+    CharQueue(const CharQueue& src);  // copy constructor
 
     void enqueue(char ch);
     char dequeue();

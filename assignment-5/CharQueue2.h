@@ -1,14 +1,17 @@
 #pragma once
+#include <memory>
 
 class CharQueue {
 private:
-    // std::unique_ptr<char[]> 
-    auto queue = std::make_unique<char[]>(0);
+    std::unique_ptr<char[]> queue;
+    size_t size;
+    unsigned int begin;
+    unsigned int count;
 
 public:
     CharQueue();
     CharQueue(size_t size);
-    CharQueue(const CharQueue& src); // copy constructor
+    CharQueue(const CharQueue& src);  // copy constructor
 
     void enqueue(char ch);
     char dequeue();
@@ -19,4 +22,6 @@ public:
     size_t capacity() const;
 
     CharQueue& operator=(CharQueue src);
+    // global function is friend of class, so can access private
+    friend std::ostream& operator<<(std::ostream& os, const CharQueue& cq);
 };
