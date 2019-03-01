@@ -13,10 +13,10 @@
 
 class CharQueue {
 private:
-    std::unique_ptr<char[]> queue;
-    size_t size;
     unsigned int begin;
     unsigned int count;
+    size_t size;
+    std::unique_ptr<char[]> queue;
 
 public:
     CharQueue();

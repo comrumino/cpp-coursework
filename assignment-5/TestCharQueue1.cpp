@@ -104,9 +104,10 @@ TEST(CharQueue, capacity) {
     CHECK_EQUAL(7, cq0.capacity());
 }
 
-TEST(CharQueue, assignment) {
+TEST(CharQueue, copy_assignment) {
     std::stringstream cqss;
     std::stringstream cq2ss;
+    std::stringstream cq3ss;
     CharQueue cq(0);
     cq.enqueue('i');
     cq.enqueue('f');
@@ -118,11 +119,22 @@ TEST(CharQueue, assignment) {
     cq.enqueue('a');
     cq.enqueue('c');
     cq.dequeue();
-    cq.dequeue();
-    cq.dequeue();
-    CharQueue cq2(0);
-    cq2 = cq;
+    // create cq2 via copy and cq3 via assignment
+    CharQueue cq2(cq);
+    CharQueue cq3(0);
+    cq3 = cq;
+    // preserve state of cq
     cqss << cq;
+    cq.dequeue();
+    cq.dequeue();
+    // create conditions to verify deep-copy against cq
+    for (int i = 0; i < 7; ++i) {
+        cq.enqueue('f');
+    }
+    // copy test cq2 and cq
     cq2ss << cq2;
     CHECK_EQUAL(cqss.str(), cq2ss.str());
+    // assignment test cq3 and cq
+    cq3ss << cq3;
+    CHECK_EQUAL(cqss.str(), cq3ss.str());
 }
