@@ -1,117 +1,72 @@
+#include <deque>
 #include <memory>
 #include <iostream>
-#include "CharQueue1.h"
+#include "CharQueue2.h"
 
 CharQueue::CharQueue()
-    :begin(0), count(0), size(1), queue(std::make_unique<char[]>(size + 1))
+    :queue()
 {
 }
 
 CharQueue::CharQueue(size_t size)
-    :begin(0), count(0), size(size ? size : 1), queue(std::make_unique<char[]>(size + 1))
+    :queue()
 {
+    if (size > queue.max_size()) {
+        queue.resize(queue.max_size());
+    } else if (size > queue.size()) {
+        queue.resize(size);
+    }
 }
 
 CharQueue::CharQueue(const CharQueue& src) 
-    :begin(src.begin), count(src.count), size(src.size), queue(std::make_unique<char[]>(src.size + 1))
+    :queue()
 {
-    auto q = queue.get();
-    auto sq = src.queue.get();
-    while (*q++ = *sq++) {
-        if (*sq == '\0') {
-            break;
-        }
-    }
+    queue = src.queue;
 }
 
 void CharQueue::enqueue(char ch) {
-    if (ch == '\0') {  // CharQueue assumes that enqueued characters are not null, so do nothing
-        return;
-    }
-    queue[(begin + count) % size] = ch;
-    count++;
-    if (count == size) {
-        size_t newsize = size + (size >> 3) + (size < 9 ? 3 : 6);
-        auto _queue = std::make_unique<char[]>(newsize + 1);
-        auto q = queue.get();
-        q += begin;
-        auto tq = _queue.get();
-        for (int i = 0; i < count; ++i) {
-            if (*q == '\0') {
-                q = queue.get();
-            }
-            *tq++ = *q++;
-        }
-        queue = std::move(_queue);
-        begin = 0;
-        size = newsize;
-    }
+    queue.push_back(ch);
 }
 
 char CharQueue::dequeue() {
-
-    // check if check empty
-    //
-    if (!isEmpty()) {
-        --count;
-        char ch = queue[begin++];
-        begin = begin % size;
-        return ch;
+    if (!queue.empty()) {
+        char front = queue.front();
+        queue.pop_front();
+        return front;
     } else {
-        return '\0'; 
+        return '\0';
     }
 
 }
 
 bool CharQueue::isEmpty() const {
-    return count == 0;
+    return queue.empty();
 }
 
 void CharQueue::swap(CharQueue& src) {  // exchange contents
     CharQueue _src(src);
-    src.size = size;
-    src.begin = begin;
-    src.count = count;
-    src.queue = std::move(queue);
-    size = _src.size;
-    begin = _src.begin;
-    count = _src.count;
-    queue = std::move(_src.queue);
+    src.queue = queue;
+    queue = _src.queue;
 }
 
 size_t CharQueue::capacity() const {
-   return size; 
+   return queue.size();
 }
 
 CharQueue& CharQueue::operator=(CharQueue src) {
-    size = src.size;
-    begin = src.begin;
-    count = src.count;
-    queue = std::make_unique<char[]>(size + 1);
-    auto p = queue.get();  // get pointer
-    auto q = src.queue.get();
-    while (*p++ = *q++) {
-        if (*q == '\0') {
-            break;
-        }
-    }
+    queue = src.queue;
     return *this;
-
 }
 
 std::ostream& operator<<(std::ostream& os, const CharQueue& cq) {
     os << std::endl;
-    os << "size: " << cq.size << std::endl;
-    os << "begin: " << cq.begin << std::endl;
-    os << "count: " << cq.count << std::endl;
+    os << "size: " << cq.queue.size() << std::endl;
+    os << "max_size: " << cq.queue.max_size() << std::endl;
     os << "queue: ";
-    auto p = cq.queue.get();
-    p += cq.begin;
-    for (int i = 0; i < cq.count; ++i) {
-        if (*p == '\0') {
-            p = cq.queue.get();
+    for (auto p = cq.queue.cbegin(); p != cq.queue.cend(); ++p) {
+        if (*p != '\0') {
+            os << *p;
         }
-        os << *p++;
     }
     os << std::endl << std::endl ;
     return os;  // return ostream to allow chaining

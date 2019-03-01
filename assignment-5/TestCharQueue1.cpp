@@ -36,6 +36,7 @@ TEST(CharQueue, enqueue) {
 TEST(CharQueue, dequeue) {
     std::stringstream cqss;
     CharQueue cq0(0);
+    cq0.dequeue();
     cq0.enqueue('i');
     cq0.enqueue('f');
     cq0.enqueue('q');

@@ -1,41 +1,41 @@
 #include <iostream>
 #include <sstream>
 #include "TestHarness.h"
-#include "CharQueue1.h"
+#include "CharQueue2.h"
 
 TEST(CharQueue, construct_sizes) {
     std::stringstream cqss;
     CharQueue cq;
     cqss << cq;
-    CHECK_EQUAL("\nsize: 1\nbegin: 0\ncount: 0\nqueue: \n\n", cqss.str());
+    CHECK_EQUAL("\nsize: 0\nmax_size: 18446744073709551615\nqueue: \n\n", cqss.str());
     cqss.str("");
     CharQueue cq0(0);
     cqss << cq0;
-    CHECK_EQUAL("\nsize: 1\nbegin: 0\ncount: 0\nqueue: \n\n", cqss.str());
+    CHECK_EQUAL("\nsize: 0\nmax_size: 18446744073709551615\nqueue: \n\n", cqss.str());
     cqss.str("");
     CharQueue cq1(1);
     cqss << cq1;
-    CHECK_EQUAL("\nsize: 1\nbegin: 0\ncount: 0\nqueue: \n\n", cqss.str());
+    CHECK_EQUAL("\nsize: 1\nmax_size: 18446744073709551615\nqueue: \n\n", cqss.str());
     cqss.str("");
     CharQueue cq2(2);
     cqss << cq2;
-    CHECK_EQUAL("\nsize: 2\nbegin: 0\ncount: 0\nqueue: \n\n", cqss.str());
+    CHECK_EQUAL("\nsize: 2\nmax_size: 18446744073709551615\nqueue: \n\n", cqss.str());
 }
 
 TEST(CharQueue, enqueue) {
     std::stringstream cqss;
     CharQueue cq0(0);
-    cq0.enqueue('\0');
     cq0.enqueue('a');
     cq0.enqueue('b');
     cq0.enqueue('c');
     cqss << cq0;
-    CHECK_EQUAL("\nsize: 4\nbegin: 0\ncount: 3\nqueue: abc\n\n", cqss.str());
+    CHECK_EQUAL("\nsize: 3\nmax_size: 18446744073709551615\nqueue: abc\n\n", cqss.str());
 }
 
 TEST(CharQueue, dequeue) {
     std::stringstream cqss;
     CharQueue cq0(0);
+    cq0.dequeue();
     cq0.enqueue('i');
     cq0.enqueue('f');
     cq0.enqueue('q');
@@ -49,7 +49,7 @@ TEST(CharQueue, dequeue) {
     cq0.dequeue();
     cq0.dequeue();
     cqss << cq0;
-    CHECK_EQUAL("\nsize: 7\nbegin: 5\ncount: 2\nqueue: ac\n\n", cqss.str());
+    CHECK_EQUAL("\nsize: 2\nmax_size: 18446744073709551615\nqueue: ac\n\n", cqss.str());
 }
 
 TEST(CharQueue, isEmpty) {
@@ -93,14 +93,14 @@ TEST(CharQueue, swap) {
 
 TEST(CharQueue, capacity) {
     CharQueue cq0(0);
-    CHECK_EQUAL(1, cq0.capacity());
+    CHECK_EQUAL(0, cq0.capacity());
     cq0.enqueue('a');
     cq0.enqueue('b');
     cq0.enqueue('c');
-    CHECK_EQUAL(4, cq0.capacity());
+    CHECK_EQUAL(3, cq0.capacity());
     cq0.enqueue('g');
     cq0.enqueue('a');
-    CHECK_EQUAL(7, cq0.capacity());
+    CHECK_EQUAL(5, cq0.capacity());
 }
 
 TEST(CharQueue, assignment) {

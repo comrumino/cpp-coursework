@@ -1,12 +1,10 @@
 #pragma once
+#include <deque>
 #include <memory>
 
 class CharQueue {
 private:
-    std::unique_ptr<char[]> queue;
-    size_t size;
-    unsigned int begin;
-    unsigned int count;
+    std::deque<char> queue;
 
 public:
     CharQueue();
