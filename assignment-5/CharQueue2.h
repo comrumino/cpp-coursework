@@ -1,6 +1,14 @@
+/*
+ *  Author: James Stronz
+ *  Course: C++PROG 711 - 2019
+ *  Assignment: 5.2
+ *  Problem Statement:
+ *   + CharQueue2 with a std::deque<char> data member.
+ *     Use the compiler generated copy constructor and assignment
+ *     operator as a bitwise copy of the deque will perform a deep copy.
+ */
 #pragma once
 #include <deque>
-#include <memory>
 
 class CharQueue {
 private:
