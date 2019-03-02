@@ -17,7 +17,7 @@ private:
 public:
     CharQueue();
     CharQueue(size_t size);
-    CharQueue(const CharQueue& src);  // copy constructor
+    // CharQueue(const CharQueue& src);  // use default constructor, per prompt
 
     void enqueue(char ch);
     char dequeue();
@@ -27,7 +27,7 @@ public:
 
     size_t capacity() const;
 
-    CharQueue& operator=(CharQueue src);
+    // CharQueue& operator=(CharQueue src);  // use default assignment operator, per prompt
     // global function is friend of class, so can access private
     friend std::ostream& operator<<(std::ostream& os, const CharQueue& cq);
 };

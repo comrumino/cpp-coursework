@@ -28,12 +28,6 @@ CharQueue::CharQueue(size_t size)
     }
 }
 
-CharQueue::CharQueue(const CharQueue& src) 
-    :queue()
-{
-    queue = src.queue;  // std::deque makes this a deep-copy
-}
-
 void CharQueue::enqueue(char ch) {
     queue.push_back(ch);
 }
@@ -60,11 +54,6 @@ void CharQueue::swap(CharQueue& src) {  // exchange contents
 
 size_t CharQueue::capacity() const {
    return queue.size();
-}
-
-CharQueue& CharQueue::operator=(CharQueue src) {
-    queue = src.queue;
-    return *this;
 }
 
 std::ostream& operator<<(std::ostream& os, const CharQueue& cq) {
