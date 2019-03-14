@@ -36,4 +36,10 @@
 TEST(Array, put) {
     Array arr;
     arr.put(1, 1);
+    std::cout << arr << std::endl;
+}
+
+TEST(Array, subscript_operator_write) {
+    Array arr;
+    arr.put(0, 1);
 }

@@ -35,10 +35,17 @@
 Array::Array() 
     :myArray()
 {
-    std::cout << "Test this" << std::endl;
+}
+
+Array::Array(const Array& arr) 
+    :myArray(arr.myArray) {
+
 }
 
 void Array::put(int index, int value) {
+    if (myArray.size() < index) {
+        myArray.resize(index);
+    }
     myArray.emplace(myArray.begin() + index, value);
 }
 
@@ -48,4 +55,27 @@ int Array::get(int index) const {
 
 void Array::remove(int index) {
     myArray.erase(myArray.begin() + index);
+}
+
+int Array::operator[](std::vector<int>::size_type index) {
+    return myArray[index];
+}
+
+const int& Array::operator[](std::vector<int>::size_type index) const {
+    return myArray[index];
+}
+
+Array& Array::operator=(Array arr) {
+    if (this == &arr) {
+        return *this;
+    }
+    myArray = arr.myArray;
+    return *this;
+}
+
+std::ostream& operator<<(std::ostream& os, const Array& arr) {
+    for (auto i : arr.myArray ) {
+        os << i;
+    }
+    return os;
 }
