@@ -25,17 +25,24 @@
  *   + Write an overloaded ostream operator to display the contents of the array.
  *   + Write and test the copy constructor for the dynamic array class.
  *   + Write and test the assignment operator for the dynamic array class.
+ *
  *   + In this case, why is it better to write our own copy constructor and assignment operator
  *     rather than rely on the compiler generated ones?
+ *   To use a unique_ptr and a copy constructor, the solution is more straight forward to define your
+ *   own copy constructor. Similarly for assignment operators in a class with unique_ptr, not using the
+ *   default constructor is the most obvious solution. By not using the default constructor avoiding
+ *   future recompilition is also possible. Among many other considersations is personal
+ *   preferences and aggregates.
+ *   
  *   + In what situation might it be better to rely on the compiler generated copy constructor and assignment operators?
+ *   When a class has no non-trivially default constructors and is trivially copyable (scalar types,
+ *   trivial classs types, arrays of trivial types, etc.) derived class constructors can automatically be generated.
+ *   This saves time, or makes time to read reddit at work.
  */
 #pragma once
 #include <vector>
 
 class Array {
-    /* We write our own copy constructor and assignment operator, to maximize future choice and minimize future developer overhead.
-     *
-     */
 public:
     Array(int i=1);  // constructed as `Array arr;`
     Array(const Array& arr);  // copy constructor
