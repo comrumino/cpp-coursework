@@ -37,14 +37,14 @@ class Array {
      *
      */
 public:
-    Array();  // constructed as `Array arr;`
+    Array(int i=1);  // constructed as `Array arr;`
     Array(const Array& arr);  // copy constructor
 
     void put(int index, int value);
     int get(int index) const;
     void remove(int index);
-    int operator[](std::vector<int>::size_type index);
-    const int& operator[](std::vector<int>::size_type index) const;
+    int& operator[](std::vector<int>::size_type index);
+    int operator[](std::vector<int>::size_type index) const;
     Array& operator=(Array arr);
 
     friend std::ostream& operator<<(std::ostream& os, const Array& arr);

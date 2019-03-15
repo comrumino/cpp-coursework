@@ -32,21 +32,22 @@
 #include <iostream>
 #include "array.h"
 
-Array::Array() 
-    :myArray()
+Array::Array(int i)
+    :myArray(i)
 {
 }
 
 Array::Array(const Array& arr) 
-    :myArray(arr.myArray) {
-
+    :myArray(arr.myArray)
+{
 }
 
 void Array::put(int index, int value) {
-    if (myArray.size() < index) {
-        myArray.resize(index);
+    int idx_adjust = 1;  // account for starting at 0
+    if (myArray.size() < index + idx_adjust) {
+        myArray.resize(index + idx_adjust);
     }
-    myArray.emplace(myArray.begin() + index, value);
+    myArray[index] = value;
 }
 
 int Array::get(int index) const {
@@ -57,11 +58,11 @@ void Array::remove(int index) {
     myArray.erase(myArray.begin() + index);
 }
 
-int Array::operator[](std::vector<int>::size_type index) {
+int& Array::operator[](std::vector<int>::size_type index) {  // allow for overwriting values
     return myArray[index];
 }
 
-const int& Array::operator[](std::vector<int>::size_type index) const {
+int Array::operator[](std::vector<int>::size_type index) const {
     return myArray[index];
 }
 
