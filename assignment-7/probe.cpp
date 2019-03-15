@@ -38,6 +38,9 @@ void Probe::inc_ctor() {
 
 void Probe::inc_dtor() {
     dtor_calls += 1;
+    if (dtor_calls > ctor_calls) {
+        throw 1;  // If this happens then throw an error to indicate Probe is being misused
+    }
 }
 
 std::ostream& operator<<(std::ostream& os, const Probe& probe) {
