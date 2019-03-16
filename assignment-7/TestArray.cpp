@@ -26,19 +26,24 @@
  *   + Write and test the copy constructor for the dynamic array class.
  *   + Write and test the assignment operator for the dynamic array class.
  *
+ *   (Most recent prompt)
+ *   + Describe why you chose to either use the default copy constructor and copy assignment or provide your own implementations.
+ *   To allow for direct initialization and avoid ambiguity which results in compilation errors, the ctor is implemented.
+ *   As for the copy ctor and assignment operator, explicit default was used for brevity.
+ *
+ *   (Originally copied prompts)
  *   + In this case, why is it better to write our own copy constructor and assignment operator
  *     rather than rely on the compiler generated ones?
  *   To use a unique_ptr and a copy constructor, the solution is more straight forward to define your
  *   own copy constructor. Similarly for assignment operators in a class with unique_ptr, not using the
  *   default constructor is the most obvious solution. By not using the default constructor avoiding
- *   future recompilition is also possible. Among many other considersations is personal
+ *   future recompilation is also possible. Among many other considerations is personal
  *   preferences and aggregates.
  *   
  *   + In what situation might it be better to rely on the compiler generated copy constructor and assignment operators?
  *   When a class has no non-trivially default constructors and is trivially copyable (scalar types,
- *   trivial classs types, arrays of trivial types, etc.) derived class constructors can automatically be generated.
- *   This saves time, or makes time to read reddit at work.
-
+ *   trivial class types, arrays of trivial types, etc.) derived class constructors can automatically be generated.
+ *   This saves time, or makes time to read Reddit at work.
  */
 #include <iostream>
 #include "TestHarness.h"
@@ -49,6 +54,13 @@ TEST(Array, overload_ostream) {  // Verify the trivial case works and all other 
     Array arr;
     ss << arr;
     CHECK_EQUAL("0", ss.str());
+}
+
+TEST(Array, direct_init) {
+    std::stringstream ss;
+    Array arr(3);
+    ss << arr;
+    CHECK_EQUAL("000", ss.str());
 }
 
 TEST(Array, put) {
@@ -81,7 +93,7 @@ TEST(Array, subscript_operator_write) {
     Array arr;
     arr.put(0, 1);
     arr.put(2, 1);  // by put test, it follows that this is {1, 0, 1}  (*)
-    arr[1] = 1;  // by (*) this should be {1, 1, 1}
+    arr[1] = 1;  // by (*) this should be {1, 1, 1}                    (+)
     ss << arr;
     CHECK_EQUAL("111", ss.str());
 }
@@ -111,6 +123,15 @@ TEST(Array, assignment_operator) {
     arr.put(0, 1);
     arr.put(2, 1);  // by put test, it follows that this is {1, 0, 1}
     Array arr2 = arr;
+    ss << arr2;
+    CHECK_EQUAL("101", ss.str());
+    // clear stringstream
+    ss.str("");
+    // Verify nothing unexpected happens
+    arr[1] = 1;  // by (+) this is {1, 1, 1}
+    ss << arr;
+    CHECK_EQUAL("111", ss.str());
+    ss.str("");
     ss << arr2;
     CHECK_EQUAL("101", ss.str());
 }

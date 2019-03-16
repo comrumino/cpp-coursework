@@ -26,33 +26,39 @@
  *   + Write and test the copy constructor for the dynamic array class.
  *   + Write and test the assignment operator for the dynamic array class.
  *
+ *   (Most recent prompt)
+ *   + Describe why you chose to either use the default copy constructor and copy assignment or provide your own implementations.
+ *   To allow for direct initialization and avoid ambiguity which results in compilation errors, the ctor is implemented.
+ *   As for the copy ctor and assignment operator, explicit default was used for brevity.
+ *
+ *   (Originally copied prompts)
  *   + In this case, why is it better to write our own copy constructor and assignment operator
  *     rather than rely on the compiler generated ones?
  *   To use a unique_ptr and a copy constructor, the solution is more straight forward to define your
  *   own copy constructor. Similarly for assignment operators in a class with unique_ptr, not using the
  *   default constructor is the most obvious solution. By not using the default constructor avoiding
- *   future recompilition is also possible. Among many other considersations is personal
+ *   future recompilation is also possible. Among many other considerations is personal
  *   preferences and aggregates.
  *   
  *   + In what situation might it be better to rely on the compiler generated copy constructor and assignment operators?
  *   When a class has no non-trivially default constructors and is trivially copyable (scalar types,
- *   trivial classs types, arrays of trivial types, etc.) derived class constructors can automatically be generated.
- *   This saves time, or makes time to read reddit at work.
+ *   trivial class types, arrays of trivial types, etc.) derived class constructors can automatically be generated.
+ *   This saves time, or makes time to read Reddit at work.
  */
 #pragma once
 #include <vector>
 
 class Array {
 public:
-    Array(int i=1);  // constructed as `Array arr;`
-    Array(const Array& arr);  // copy constructor
+    Array(int i=1);  // Allow direct initialization of array size for intuitive use and avoid ambiguity
+    Array(const Array& arr) = default;  // default copy ctor is ok for for vector object with integral elements
 
     void put(int index, int value);
     int get(int index) const;
     void remove(int index);
     int& operator[](std::vector<int>::size_type index);
     int operator[](std::vector<int>::size_type index) const;
-    Array& operator=(Array arr);
+    Array& operator=(Array&) = default;  // default assignment is ok for for vector object with integral elements
 
     friend std::ostream& operator<<(std::ostream& os, const Array& arr);
 
