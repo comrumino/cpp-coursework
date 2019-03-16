@@ -27,6 +27,7 @@
 * initialize unless you have a good reason not to
 * http://www.stroustrup.com/Programming/PPP-style-rev3.pdf
 * almost always auto: choice between auto and explicit, choose auto. changing an object iterated requires fewer changes
+* class functions always in .cc so that not everything has to be recompiled.
 
 ## Things to know
 * assignment changes the LHS
@@ -110,7 +111,7 @@
         a. visibility: public (all objects), protected (classes/subclasses), private (within instance)    
         b. name, id of attr & type, of attr    
     2. associations, relates to others and by multiplicity  
-    3. ooperations, `visibility name(parameter list): return type`    
+    3. operations, `visibility name(parameter list): return type`    
         a. param, `direction name:type = optional default value`      
         b. in, no change; out, change always; inout, might change      
         c. constructors, init objects      
@@ -169,6 +170,8 @@
 * state, the value of an object
 * valid state, the idea of a valid value
 * lvalues persist and rvalues are ephemeral
+* lvalue is an object w/ an identifiable memory location
+* rvalue is memory location
 * index/subscript, the value you use in an subscript
 * vector is template, which generates types such as `vector<int>`
 * compound type, type defined in terms of others types such as pointer and reference
@@ -253,6 +256,9 @@
 * four states of a pointer: point to an object, point to a location past the end of an object, null, and invalid otherwise
 * trying to access an object via a pointer when it does not point to one results in undefined behavior
 * `int \**p1 = nullptr/NULL/0;` ordered in preference
+* `const int *ptr = &foo; // <-- NON-CONST pointer, CONST data. ptr _can_ point somewhere else, but what it points to _cannot_ be modified.`
+* `int * const ptr = &foo; // <-- CONST pointer, NON-CONST data.  // ptr _cannot_ point to anywhere else, but what it points to _can_ be modified.`
+* `const int * const ptr = &foo; // <-- CONST pointer, CONST data.  // ptr _cannot_ point to anywhere else, and what it points to _cannot_ be modified.`
 
 ### Unique pointers
 * unique pointers use heap memory and delete memory automatically via destructor, make unique is a way of initializing a unique pointer
@@ -327,3 +333,10 @@ An operator that changes the behavior of stream is called manipulator
 
 ## MD Cheatsheet
 * https://github.com/adam-p/markdown-here/wiki/Markdown-Cheatsheet
+
+# Project Notes
+* [Architectural Principles That Prevent Code Modification](https://www.owasp.org/index.php/Architectural_Principles_That_Prevent_Code_Modification_or_Reverse_Engineering#Controls)
+* [Risks, explainations, and mitigations](https://www.owasp.org/index.php/Technical_Risks_of_Reverse_Engineering_and_Unauthorized_Code_Modification)
+* [Licensing security pt 2](https://blogs.flexera.com/ecm/2016/03/what-you-need-to-know-about-software-licensing-security-part-2/)
+* [Licensing security pt 1](https://blogs.flexera.com/ecm/2016/03/what-you-need-to-know-about-software-licensing-security-part-1/)
+
