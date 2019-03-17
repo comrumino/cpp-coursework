@@ -19,7 +19,10 @@ const Point& Triangle::getV3() const {
 }
 
 void Triangle::draw(std::ostream& os) const {
-    os << "draw triangle: " << v1 << "," << v2 << "," << v3;
+    os << "draw triangle: ";
+    os << getV1() << ",";
+    os << getV2() << ",";
+    os << getV3();
 }
 
 void Triangle::stream(std::ostream& os) const {

@@ -11,12 +11,14 @@ const Point& Rectangle::getUpperLeftPoint() const {
     return ul_pt;
 }
 
-const Point& Rectangle::getLowerRightPoint() const {
+const Point& Rectangle::getBottomRightPoint() const {
     return br_pt;
 }
 
 void Rectangle::draw(std::ostream& os) const {
-    os << "draw rectangle: " << ul_pt << "," << br_pt;
+    os << "draw rectangle: ";
+    os << getUpperLeftPoint() << ",";
+    os << getBottomRightPoint();
 }
 
 void Rectangle::stream(std::ostream& os) const {

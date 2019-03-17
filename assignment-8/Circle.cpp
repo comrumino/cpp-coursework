@@ -1,12 +1,20 @@
 #include "Circle.h"
 
-Circle::Circle(const Point& pnt, const float flt)
-    :Shape(), pnt(pnt), flt(flt)
+Circle::Circle(const Point& pnt, const float rad)
+    :Shape(), pnt(pnt), rad(rad)
 {
 }
 
+const Point& Circle::getPoint() const {
+    return pnt;
+}
+
+const float& Circle::getRadius() const {
+    return rad;
+}
+
 void Circle::draw(std::ostream& os) const {
-    os << "draw circle: " << pnt << "," << flt;
+    os << "draw circle: " << getPoint() << "," << getRadius();
 }
 
 void Circle::stream(std::ostream& os) const {
