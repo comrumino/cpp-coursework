@@ -1,7 +1,7 @@
 #include "Circle.h"
 
 Circle::Circle(const Point& pnt, const float flt)
-    :pnt(pnt), flt(flt), Shape()
+    :Shape(), pnt(pnt), flt(flt)
 {
 }
 

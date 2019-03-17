@@ -22,14 +22,12 @@
 #include <memory>
 #include <sstream>
 
-
 TEST(Point, test) {
     Point pt(1, 2);
     std::stringstream ss;
     ss << pt;
     CHECK_EQUAL("1,2", ss.str());
 }
-
 
 TEST(Triangle, ctor) {
     const Point pt1(0, 0);
@@ -58,28 +56,19 @@ TEST(Circle, ctor) {
     CHECK_EQUAL("draw circle: 0,0,1", ss.str());
 }
 
-TEST(draw, Shape)
-{
-    std::vector<Shape*> shapes;
-
-    shapes.push_back(new Triangle(Point(11.1, 22.2), Point(33.3, 44.4), Point(55.5, 66.6)));
-    shapes.push_back(new Rectangle(Point(11.1, 22.2), Point(33.3, 44.4)));
-    shapes.push_back(new Circle(Point(111.1, 222.2), 333.3));
-
+TEST(Shape, dynamic_triangle) {
     std::stringstream message;
-
-    for (auto& shape : shapes)
-    {
-        shape->draw(message);
-    }
-
-    CHECK_EQUAL("draw triangle: 11.1,22.2,33.3,44.4,55.5,66.6draw rectangle: 11.1,22.2,33.3,44.4draw circle: 111.1,222.2,333.3", message.str());
-
-    for (auto& shape : shapes)
-    {
-        delete shape;
-    }
+    Shape* shp = new Triangle(Point(11.1, 22.2), Point(33.3, 44.4), Point(55.5, 66.6));
+    shp->draw(message);
+    CHECK_EQUAL("draw triangle: 11.1,22.2,33.3,44.4,55.5,66.6", message.str());
+    delete shp;
+    message.str("");
+    shp = new Rectangle(Point(11.1, 22.2), Point(33.3, 44.4));
+    shp->draw(message);
+    CHECK_EQUAL("draw rectangle: 11.1,22.2,33.3,44.4", message.str());
+    delete shp;
 }
+
 TEST(drawUnique, Shape)
 {
     std::vector<std::unique_ptr<Shape>> shapes;

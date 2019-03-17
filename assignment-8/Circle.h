@@ -11,6 +11,6 @@ public:
     void stream(std::ostream& os) const;
 
 private:
-    const Point& pnt;
+    const Point pnt;
     const float flt;
 };

@@ -2,7 +2,7 @@
 #include <sstream>
 
 Triangle::Triangle(const Point& v1, const Point& v2, const Point& v3)
-    :v1(v1), v2(v2), v3(v3), Shape()
+    :Shape(), v1(v1), v2(v2), v3(v3)
 {
 }
 
