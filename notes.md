@@ -47,6 +47,9 @@
 * object-based paradigm, organization is based on interactions of objects so that ultimately a solution can be found
 * object-orientatd paradigm, adds inheritcance to polymorphism to object-based paradigm
 
+### RAII
+* RAII, exception safety for stack resources and locality of aquistion/release logic
+
 ### Design Considerations
 * a function is where logically separate copmutation starts---best point to think about correct code and catch errors
 * is it easy to know when a boundary condition is violated    
@@ -130,12 +133,7 @@
 
 
 ## Types
-* unsigned type when you know that the the values cannot be negative
-* int for integer arithmetic
-* short is usually too small and long is often has the same size as int
-* use long long when values are larger than the minimum gauranteed size of an int
-* char or bool should only be used to hodl characters or truth values
-* use double for floating-point arithematic, long double is unnecessary and often entails run-time cost
+* static type, the type declared or yielded from expression
 * integral types
 * auto, type deduction looks at the initializer to deduce what auto should be
 
@@ -203,7 +201,6 @@
 
 ## auto
 * the type is deduced by the value it is initialized to `template<typename T> struct TD; TD<decltype(var_auto_decl)> td;`
-
 * if a var is not initialized at declaration, then auto cannot be used
 
 ## vectors
@@ -246,6 +243,10 @@
 ### Lambda function
 * unnamed inline function
 
+### Virtual function
+* `virtual void draw() const = 0;` indicates a pure virtual function so parent class is abstract
+* `virtual void error(const std::string& msg);` indicates a simple virtual so we wish to inherit the def
+
 ## Enum
 * a type which can be set to one value out of a set, prefer enum class for their scope resolution
 * old style, `enum Color` and `enum class Color`
@@ -280,7 +281,13 @@
 ## Class
 * field, data members which determine state
 
+### Inheritance
+* Base should almost always have a virtual destructor (why?)
+* Derived object has a subobject for itself and each base class which allows a reference/pointer to be bound
+* Public inheritance <=> "IS-A"
+
 ## Compile
+* gdb: `-ggdb`
 * flags: `-pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused`
 * `g++ -fPIC ./include/*.cpp -shared -Wl,-soname,libUnitLite.so  -o ./lib/libUnitLite.so`
 * `reset && g++ ./include/Main.cpp ./assignment-2/SwapTest.cpp ./assignment-2/jstronz-2-1.cpp -L./lib -lUnitLite`
