@@ -12,13 +12,11 @@
  *      Instead draw will output the geometry in text format to the specified ostream.
  */
 #include "TestHarness.h"
-
 #include "Point.h"
 #include "Shape.h"
 #include "Triangle.h"
 #include "Rectangle.h"
 #include "Circle.h"
-
 #include <memory>
 #include <sstream>
 
@@ -53,7 +51,7 @@ TEST(Rectangle, stream_operator) {
     std::stringstream ss;
     // Check accessors
     ss << rctngl.getUpperLeftPoint() << "|";
-    ss << rctngl.getBottomRightPoint();
+    ss << rctngl.getLowerRightPoint();
     CHECK_EQUAL("0,0|1,1", ss.str());
     ss.str("");  // reset ss
     // Check stream operator

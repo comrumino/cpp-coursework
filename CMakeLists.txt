@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.14.0)
 project(CPROGRM)
 # CXX Preferences
 SET(CMAKE_CXX_COMPILER             "/usr/bin/clang++")
-SET(CMAKE_CXX_FLAGS                "-Wall -Wextra -Weverything -pedantic -Wno-sign-conversion")
+# SET(CMAKE_CXX_FLAGS                "-Wall -Wextra -Weverything -pedantic -Wno-sign-conversion")
 SET(CMAKE_CXX_FLAGS_DEBUG          "-g")
 SET(CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET(CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
