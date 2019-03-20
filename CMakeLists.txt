@@ -1,16 +1,19 @@
 cmake_minimum_required(VERSION 3.14.0)
 project(CPROGRM)
-    SET (CMAKE_CXX_COMPILER             "/usr/bin/clang++")
-    SET (CMAKE_CXX_FLAGS                "-Wall")
-    SET (CMAKE_CXX_FLAGS_DEBUG          "-g")
-    SET (CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
-    SET (CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
-    SET (CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
-
+# CXX Preferences
+SET(CMAKE_CXX_COMPILER             "/usr/bin/clang++")
+SET(CMAKE_CXX_FLAGS                "-Wall -Wextra -Weverything -pedantic -Wno-sign-conversion")
+SET(CMAKE_CXX_FLAGS_DEBUG          "-g")
+SET(CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
+SET(CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
+SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
+# Set shared object to be linked later
 add_library(unitlite SHARED IMPORTED)
 set_property(TARGET unitlite PROPERTY IMPORTED_LOCATION "/home/archie/uwnotes/cprogrm711/lib/libUnitLite.so")
-
-include_directories ("${PROJECT_SOURCE_DIR}/assignment-8")
+# Include some dirs
+include_directories ("$ENV{RELPATH}")
 include_directories ("${PROJECT_SOURCE_DIR}/include")
-add_executable(CPROGRM ${PROJECT_SOURCE_DIR}/include/Main.cpp ${PROJECT_SOURCE_DIR}/assignment-8/Circle.cpp  ${PROJECT_SOURCE_DIR}/assignment-8/Point.cpp  ${PROJECT_SOURCE_DIR}/assignment-8/Rectangle.cpp  ${PROJECT_SOURCE_DIR}/assignment-8/TestShape.cpp  ${PROJECT_SOURCE_DIR}/assignment-8/Triangle.cpp)
+# Glob the source and add exec and link
+file(GLOB SRC_FILES $ENV{RELPATH}/*.cpp)
+add_executable(CPROGRM ${PROJECT_SOURCE_DIR}/include/Main.cpp ${SRC_FILES})
 TARGET_LINK_LIBRARIES(CPROGRM unitlite)

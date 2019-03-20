@@ -1,0 +1,37 @@
+﻿Design Document
+NP License Verification and Enforcement
+
+
+1. What problem are we trying to solve?
+We would like to improve the way license limitations are verified and enforced in order to:
+* Improve the understanding of the licensing model through the user interface
+* Prevent license theft
+* Increase revenue
+2. What is the current implemented solution?
+* NP-View Java:
+   * The compiled Java code has a LicenseHandler class that checks the number of rulesets imported into a single project and discard rulesets if the license limit is reached. The license limit is encoded into the license key that users have to input when launching NP-View for the first time. The LicenseHandler class also checks for the current date and compares it against the license expiration date that is encoded into the license key.
+* NP-View HTML and NP-Live:
+   * The compiled Python code from the manager module checks the number of rulesets imported into a single workspace and compares it against the license device limitation. If the license limit is reached, the workspace topology is only computed up to the limit. If there is no license, the workspace topology is only a birds eye view. The manager module also checks the expiration date of the license.
+
+
+The current problems are:
+* The license is floating, which means users can create an unlimited number of projects without any restriction other than the number of devices displayed in each project. As a result, users can divide large network into multiple project and then save/update projects with a single license.
+* The license does not limit the number of users, which means that NP-View and NP-Live can be installed on an unlimited number of workstations
+* The NP-View HTML and NP-Live license enforcement is done in Python, which can be easily de-compiled and modified.
+3. How are we going to solve this problem?
+The new license verification system will:
+* Be implemented in a compiled language such as Go,
+* Take into account the change tracking feature (details below),
+* Leverage system and user activation
+
+
+The change tracking feature consists in monitoring device ruleset over time and recording modifications through multiple project versions. The goal is to enable this versioning only for a fixed number of devices, as opposed to allowing the floating license on an unlimited number of projects. For example, with a 5-device license, the current system enables users to:
+* Create project A with devices 1, 2, 3, 4, and 5
+* Create project B with devices 6, 7, 8, 9, and 10
+* Freely alternate between the two projects and showing diff views for both groups of devices
+The new system will enforce the following limitation:
+* If a user creates project A with devices 1, 2, 3, 4, and 5, and then later:
+* Creates project B with devices 6, 7, 8, 9, and 10, then:
+   * The software will prompt the user on whether to wipe change tracking from Project A in order to enable change tracking on Project B
+      * If the user says yes, then later when project A is opened the previous versions of devices rulesets will be deleted
+      * If the user says no, then project B won't include change tracking
