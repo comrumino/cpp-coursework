@@ -12,7 +12,6 @@
 #include <iostream>
 #include <string>
 #include <cstring>
-#include <vector>
 #include "jstronz-2-3.h"
 
 char* cat(const char* char_arr1, const char* char_arr2)

@@ -7,4 +7,4 @@ out/*
 CPROGRM
 cmake_install.cmake
 CMakeCache.txt
-./CMakeFiles/
+CMakeFiles/*

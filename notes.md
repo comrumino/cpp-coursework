@@ -230,6 +230,7 @@
 ## Function
 * TODO definition
 * copy-by-value not suitable for large objects
+* a factory function is a function that returns a class instance (e.g. make_unique which returns a unique_ptr instance)
 
 ### Function prototype
 * used to identify to the compiler
@@ -246,6 +247,7 @@
 ### Virtual function
 * `virtual void draw() const = 0;` indicates a pure virtual function so parent class is abstract
 * `virtual void error(const std::string& msg);` indicates a simple virtual so we wish to inherit the def
+* each class with a virtual function has it's own vtable which contains the addresses of it's virtual functions
 
 ## Enum
 * a type which can be set to one value out of a set, prefer enum class for their scope resolution
@@ -280,6 +282,9 @@
 
 ## Class
 * field, data members which determine state
+* use getters/setters is preferred
+* upcast, 
+* downcast, by dynamic_cast mostly for debugging
 
 ### Inheritance
 * Base should almost always have a virtual destructor (why?)
