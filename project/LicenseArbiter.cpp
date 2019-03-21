@@ -10,366 +10,209 @@
  * Verify signature ExampleLicense against signature
  *  openssl dgst -sha512 -verify ./public.pem -signature ExampleLicense.sig.base64.d ./ExampleLicense.txt
  * */
-#include <stdlib.h>
-#include <stdio.h>
-#include <limits.h>
-#include <string.h>
+
+#include <cstring>
+#include <iostream>
+#include <openssl/aes.h>
+#include <openssl/evp.h>
+#include <openssl/rsa.h>
+#include <openssl/pem.h>
+#include <openssl/ssl.h>
+#include <openssl/bio.h>
+#include <openssl/err.h>
 #include <assert.h>
 
-#include <openssl/evp.h>
-#include <openssl/err.h>
-#include <openssl/rsa.h>
-#include <openssl/sha.h>
-#include <openssl/rand.h>
+std::string privateKey ="-----BEGIN RSA PRIVATE KEY-----\n"\
+"MIIEowIBAAKCAQEAy8Dbv8prpJ/0kKhlGeJYozo2t60EG8L0561g13R29LvMR5hy\n"\
+"vGZlGJpmn65+A4xHXInJYiPuKzrKUnApeLZ+vw1HocOAZtWK0z3r26uA8kQYOKX9\n"\
+"Qt/DbCdvsF9wF8gRK0ptx9M6R13NvBxvVQApfc9jB9nTzphOgM4JiEYvlV8FLhg9\n"\
+"yZovMYd6Wwf3aoXK891VQxTr/kQYoq1Yp+68i6T4nNq7NWC+UNVjQHxNQMQMzU6l\n"\
+"WCX8zyg3yH88OAQkUXIXKfQ+NkvYQ1cxaMoVPpY72+eVthKzpMeyHkBn7ciumk5q\n"\
+"gLTEJAfWZpe4f4eFZj/Rc8Y8Jj2IS5kVPjUywQIDAQABAoIBADhg1u1Mv1hAAlX8\n"\
+"omz1Gn2f4AAW2aos2cM5UDCNw1SYmj+9SRIkaxjRsE/C4o9sw1oxrg1/z6kajV0e\n"\
+"N/t008FdlVKHXAIYWF93JMoVvIpMmT8jft6AN/y3NMpivgt2inmmEJZYNioFJKZG\n"\
+"X+/vKYvsVISZm2fw8NfnKvAQK55yu+GRWBZGOeS9K+LbYvOwcrjKhHz66m4bedKd\n"\
+"gVAix6NE5iwmjNXktSQlJMCjbtdNXg/xo1/G4kG2p/MO1HLcKfe1N5FgBiXj3Qjl\n"\
+"vgvjJZkh1as2KTgaPOBqZaP03738VnYg23ISyvfT/teArVGtxrmFP7939EvJFKpF\n"\
+"1wTxuDkCgYEA7t0DR37zt+dEJy+5vm7zSmN97VenwQJFWMiulkHGa0yU3lLasxxu\n"\
+"m0oUtndIjenIvSx6t3Y+agK2F3EPbb0AZ5wZ1p1IXs4vktgeQwSSBdqcM8LZFDvZ\n"\
+"uPboQnJoRdIkd62XnP5ekIEIBAfOp8v2wFpSfE7nNH2u4CpAXNSF9HsCgYEA2l8D\n"\
+"JrDE5m9Kkn+J4l+AdGfeBL1igPF3DnuPoV67BpgiaAgI4h25UJzXiDKKoa706S0D\n"\
+"4XB74zOLX11MaGPMIdhlG+SgeQfNoC5lE4ZWXNyESJH1SVgRGT9nBC2vtL6bxCVV\n"\
+"WBkTeC5D6c/QXcai6yw6OYyNNdp0uznKURe1xvMCgYBVYYcEjWqMuAvyferFGV+5\n"\
+"nWqr5gM+yJMFM2bEqupD/HHSLoeiMm2O8KIKvwSeRYzNohKTdZ7FwgZYxr8fGMoG\n"\
+"PxQ1VK9DxCvZL4tRpVaU5Rmknud9hg9DQG6xIbgIDR+f79sb8QjYWmcFGc1SyWOA\n"\
+"SkjlykZ2yt4xnqi3BfiD9QKBgGqLgRYXmXp1QoVIBRaWUi55nzHg1XbkWZqPXvz1\n"\
+"I3uMLv1jLjJlHk3euKqTPmC05HoApKwSHeA0/gOBmg404xyAYJTDcCidTg6hlF96\n"\
+"ZBja3xApZuxqM62F6dV4FQqzFX0WWhWp5n301N33r0qR6FumMKJzmVJ1TA8tmzEF\n"\
+"yINRAoGBAJqioYs8rK6eXzA8ywYLjqTLu/yQSLBn/4ta36K8DyCoLNlNxSuox+A5\n"\
+"w6z2vEfRVQDq4Hm4vBzjdi3QfYLNkTiTqLcvgWZ+eX44ogXtdTDO7c+GeMKWz4XX\n"\
+"uJSUVL5+CVjKLjZEJ6Qc2WZLl94xSwL71E41H4YciVnSCQxVc4Jw\n"\
+"-----END RSA PRIVATE KEY-----\n\0";
 
+std::string publicKey ="-----BEGIN PUBLIC KEY-----\n"\
+"MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAy8Dbv8prpJ/0kKhlGeJY\n"\
+"ozo2t60EG8L0561g13R29LvMR5hyvGZlGJpmn65+A4xHXInJYiPuKzrKUnApeLZ+\n"\
+"vw1HocOAZtWK0z3r26uA8kQYOKX9Qt/DbCdvsF9wF8gRK0ptx9M6R13NvBxvVQAp\n"\
+"fc9jB9nTzphOgM4JiEYvlV8FLhg9yZovMYd6Wwf3aoXK891VQxTr/kQYoq1Yp+68\n"\
+"i6T4nNq7NWC+UNVjQHxNQMQMzU6lWCX8zyg3yH88OAQkUXIXKfQ+NkvYQ1cxaMoV\n"\
+"PpY72+eVthKzpMeyHkBn7ciumk5qgLTEJAfWZpe4f4eFZj/Rc8Y8Jj2IS5kVPjUy\n"\
+"wQIDAQAB\n"\
+"-----END PUBLIC KEY-----\n";
 
-typedef unsigned char byte;
-#define UNUSED(x) ((void)x)
-const char hn[] = "SHA512";
-
-/* Returns 0 for success, non-0 otherwise */
-int make_keys(EVP_PKEY** skey, EVP_PKEY** vkey);
-
-/* Returns 0 for success, non-0 otherwise */
-int sign_it(const byte* msg, size_t mlen, byte** sig, size_t* slen, EVP_PKEY* pkey);
-
-/* Returns 0 for success, non-0 otherwise */
-int verify_it(const byte* msg, size_t mlen, const byte* sig, size_t slen, EVP_PKEY* pkey);
-
-/* Prints a buffer to stdout. Label is optional */
-void print_it(const char* label, const byte* buff, size_t len);
-
-int main(int argc, char* argv[])
-{
-    printf("Testing RSA functions with EVP_DigestSign and EVP_DigestVerify\n");
-
-    OpenSSL_add_all_algorithms();
-
-    /* Sign and Verify HMAC keys */
-    EVP_PKEY *skey = NULL, *vkey = NULL;
-
-    int rc = make_keys(&skey, &vkey);
-    assert(rc == 0);
-    if(rc != 0)
-        exit(1);
-
-    assert(skey != NULL);
-    if(skey == NULL)
-        exit(1);
-
-    assert(vkey != NULL);
-    if(vkey == NULL)
-        exit(1);
-
-    const byte msg[] = "Now is the time for all good men to come to the aide of their country";
-    byte* sig = NULL;
-    size_t slen = 0;
-
-    /* Using the skey or signing key */
-    rc = sign_it(msg, sizeof(msg), &sig, &slen, skey);
-    assert(rc == 0);
-    if(rc == 0) {
-        printf("Created signature\n");
-    } else {
-        printf("Failed to create signature, return code %d\n", rc);
-        exit(1); /* Should cleanup here */
-    }
-
-    print_it("Signature", sig, slen);
-
-#if 0
-    /* Tamper with signature */
-    printf("Tampering with signature\n");
-    sig[0] ^= 0x01;
-#endif
-
-#if 0
-    /* Tamper with signature */
-    printf("Tampering with signature\n");
-    sig[slen - 1] ^= 0x01;
-#endif
-
-    /* Using the vkey or verifying key */
-    rc = verify_it(msg, sizeof(msg), sig, slen, vkey);
-    if(rc == 0) {
-        printf("Verified signature\n");
-    } else {
-        printf("Failed to verify signature, return code %d\n", rc);
-    }
-
-    if(sig)
-        OPENSSL_free(sig);
-
-    if(skey)
-        EVP_PKEY_free(skey);
-
-    if(vkey)
-        EVP_PKEY_free(vkey);
-
-    return 0;
+RSA* createPrivateRSA(std::string key) {
+  RSA *rsa = NULL;
+  const char* c_string = key.c_str();
+  BIO * keybio = BIO_new_mem_buf((void*)c_string, -1);
+  if (keybio==NULL) {
+      return 0;
+  }
+  rsa = PEM_read_bio_RSAPrivateKey(keybio, &rsa,NULL, NULL);
+  return rsa;
 }
 
-int sign_it(const byte* msg, size_t mlen, byte** sig, size_t* slen, EVP_PKEY* pkey)
-{
-    /* Returned to caller */
-    int result = -1;
-
-    if(!msg || !mlen || !sig || !pkey) {
-        assert(0);
-        return -1;
-    }
-
-    if(*sig)
-        OPENSSL_free(*sig);
-
-    *sig = NULL;
-    *slen = 0;
-
-    EVP_MD_CTX* ctx = NULL;
-
-    do
-    {
-        ctx = EVP_MD_CTX_create();
-        assert(ctx != NULL);
-        if(ctx == NULL) {
-            printf("EVP_MD_CTX_create failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        const EVP_MD* md = EVP_get_digestbyname(hn);
-        assert(md != NULL);
-        if(md == NULL) {
-            printf("EVP_get_digestbyname failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        int rc = EVP_DigestInit_ex(ctx, md, NULL);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestInit_ex failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        rc = EVP_DigestSignInit(ctx, NULL, md, NULL, pkey);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestSignInit failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        rc = EVP_DigestSignUpdate(ctx, msg, mlen);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestSignUpdate failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        size_t req = 0;
-        rc = EVP_DigestSignFinal(ctx, NULL, &req);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestSignFinal failed (1), error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        assert(req > 0);
-        if(!(req > 0)) {
-            printf("EVP_DigestSignFinal failed (2), error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        *sig = (byte*)OPENSSL_malloc(req);
-        assert(*sig != NULL);
-        if(*sig == NULL) {
-            printf("OPENSSL_malloc failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        *slen = req;
-        rc = EVP_DigestSignFinal(ctx, *sig, slen);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestSignFinal failed (3), return code %d, error 0x%lx\n", rc, ERR_get_error());
-            break; /* failed */
-        }
-
-        assert(req == *slen);
-        if(rc != 1) {
-            printf("EVP_DigestSignFinal failed, mismatched signature sizes %ld, %ld", req, *slen);
-            break; /* failed */
-        }
-
-        result = 0;
-
-    } while(0);
-
-    if(ctx) {
-        EVP_MD_CTX_destroy(ctx);
-        ctx = NULL;
-    }
-
-    return !!result;
+RSA* createPublicRSA(std::string key) {
+  RSA *rsa = NULL;
+  BIO *keybio;
+  const char* c_string = key.c_str();
+  keybio = BIO_new_mem_buf((void*)c_string, -1);
+  if (keybio==NULL) {
+      return 0;
+  }
+  rsa = PEM_read_bio_RSA_PUBKEY(keybio, &rsa,NULL, NULL);
+  return rsa;
 }
 
-int verify_it(const byte* msg, size_t mlen, const byte* sig, size_t slen, EVP_PKEY* pkey)
-{
-    /* Returned to caller */
-    int result = -1;
-
-    if(!msg || !mlen || !sig || !slen || !pkey) {
-        assert(0);
-        return -1;
-    }
-
-    EVP_MD_CTX* ctx = NULL;
-
-    do
-    {
-        ctx = EVP_MD_CTX_create();
-        assert(ctx != NULL);
-        if(ctx == NULL) {
-            printf("EVP_MD_CTX_create failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        const EVP_MD* md = EVP_get_digestbyname(hn);
-        assert(md != NULL);
-        if(md == NULL) {
-            printf("EVP_get_digestbyname failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        int rc = EVP_DigestInit_ex(ctx, md, NULL);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestInit_ex failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        rc = EVP_DigestVerifyInit(ctx, NULL, md, NULL, pkey);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestVerifyInit failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        rc = EVP_DigestVerifyUpdate(ctx, msg, mlen);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestVerifyUpdate failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        /* Clear any errors for the call below */
-        ERR_clear_error();
-
-        rc = EVP_DigestVerifyFinal(ctx, sig, slen);
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_DigestVerifyFinal failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        result = 0;
-
-    } while(0);
-
-    if(ctx) {
-        EVP_MD_CTX_destroy(ctx);
-        ctx = NULL;
-    }
-
-    return !!result;
-
+bool RSASign( RSA* rsa,
+              const unsigned char* Msg,
+              size_t MsgLen,
+              unsigned char** EncMsg,
+              size_t* MsgLenEnc) {
+  EVP_MD_CTX* m_RSASignCtx = EVP_MD_CTX_create();
+  EVP_PKEY* priKey  = EVP_PKEY_new();
+  EVP_PKEY_assign_RSA(priKey, rsa);
+  if (EVP_DigestSignInit(m_RSASignCtx,NULL, EVP_sha256(), NULL,priKey)<=0) {
+      return false;
+  }
+  if (EVP_DigestSignUpdate(m_RSASignCtx, Msg, MsgLen) <= 0) {
+      return false;
+  }
+  if (EVP_DigestSignFinal(m_RSASignCtx, NULL, MsgLenEnc) <=0) {
+      return false;
+  }
+  *EncMsg = (unsigned char*)malloc(*MsgLenEnc);
+  if (EVP_DigestSignFinal(m_RSASignCtx, *EncMsg, MsgLenEnc) <= 0) {
+      return false;
+  }
+  EVP_MD_CTX_free(m_RSASignCtx);
+  return true;
 }
 
-void print_it(const char* label, const byte* buff, size_t len)
-{
-    if(!buff || !len)
-        return;
+bool RSAVerifySignature( RSA* rsa,
+                         unsigned char* MsgHash,
+                         size_t MsgHashLen,
+                         const char* Msg,
+                         size_t MsgLen,
+                         bool* Authentic) {
+  *Authentic = false;
+  EVP_PKEY* pubKey  = EVP_PKEY_new();
+  EVP_PKEY_assign_RSA(pubKey, rsa);
+  EVP_MD_CTX* m_RSAVerifyCtx = EVP_MD_CTX_create();
 
-    if(label)
-        printf("%s: ", label);
-
-    for(size_t i=0; i < len; ++i)
-        printf("%02X", buff[i]);
-
-    printf("\n");
+  if (EVP_DigestVerifyInit(m_RSAVerifyCtx,NULL, EVP_sha256(),NULL,pubKey)<=0) {
+    return false;
+  }
+  if (EVP_DigestVerifyUpdate(m_RSAVerifyCtx, Msg, MsgLen) <= 0) {
+    return false;
+  }
+  int AuthStatus = EVP_DigestVerifyFinal(m_RSAVerifyCtx, MsgHash, MsgHashLen);
+  if (AuthStatus==1) {
+    *Authentic = true;
+    EVP_MD_CTX_free(m_RSAVerifyCtx);
+    return true;
+  } else if(AuthStatus==0){
+    *Authentic = false;
+    EVP_MD_CTX_free(m_RSAVerifyCtx);
+    return true;
+  } else{
+    *Authentic = false;
+    EVP_MD_CTX_free(m_RSAVerifyCtx);
+    return false;
+  }
 }
 
-int make_keys(EVP_PKEY** skey, EVP_PKEY** vkey)
-{
-    int result = -1;
+void Base64Encode( const unsigned char* buffer,
+                   size_t length,
+                   char** base64Text) {
+  BIO *bio, *b64;
+  BUF_MEM *bufferPtr;
 
-    if(!skey || !vkey)
-        return -1;
+  b64 = BIO_new(BIO_f_base64());
+  bio = BIO_new(BIO_s_mem());
+  bio = BIO_push(b64, bio);
 
-    if(*skey != NULL) {
-        EVP_PKEY_free(*skey);
-        *skey = NULL;
-    }
+  BIO_write(bio, buffer, length);
+  BIO_flush(bio);
+  BIO_get_mem_ptr(bio, &bufferPtr);
+  BIO_set_close(bio, BIO_NOCLOSE);
+  BIO_free_all(bio);
 
-    if(*vkey != NULL) {
-        EVP_PKEY_free(*vkey);
-        *vkey = NULL;
-    }
-
-    RSA* rsa = NULL;
-
-    do
-    {
-        *skey = EVP_PKEY_new();
-        assert(*skey != NULL);
-        if(*skey == NULL) {
-            printf("EVP_PKEY_new failed (1), error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        *vkey = EVP_PKEY_new();
-        assert(*vkey != NULL);
-        if(*vkey == NULL) {
-            printf("EVP_PKEY_new failed (2), error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        rsa = RSA_generate_key(2048, RSA_F4, NULL, NULL);
-        assert(rsa != NULL);
-        if(rsa == NULL) {
-            printf("RSA_generate_key failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        /* Set signing key */
-        int rc = EVP_PKEY_assign_RSA(*skey, RSAPrivateKey_dup(rsa));
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_PKEY_assign_RSA (1) failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        /* Sanity check. Verify private exponent is present */
-        /* assert(EVP_PKEY_get0_RSA(*skey)->d != NULL); */
-
-        /* Set verifier key */
-        rc = EVP_PKEY_assign_RSA(*vkey, RSAPublicKey_dup(rsa));
-        assert(rc == 1);
-        if(rc != 1) {
-            printf("EVP_PKEY_assign_RSA (2) failed, error 0x%lx\n", ERR_get_error());
-            break; /* failed */
-        }
-
-        /* Sanity check. Verify private exponent is missing */
-        /* assert(EVP_PKEY_get0_RSA(*vkey)->d == NULL); */
-
-        result = 0;
-
-    } while(0);
-
-    if(rsa) {
-        RSA_free(rsa);
-        rsa = NULL;
-    }
-
-    return !!result;
+  *base64Text=(*bufferPtr).data;
 }
 
+size_t calcDecodeLength(const char* b64input) {
+  size_t len = strlen(b64input), padding = 0;
+
+  if (b64input[len-1] == '=' && b64input[len-2] == '=') //last two chars are =
+    padding = 2;
+  else if (b64input[len-1] == '=') //last char is =
+    padding = 1;
+  return (len*3)/4 - padding;
+}
+
+void Base64Decode(const char* b64message, unsigned char** buffer, size_t* length) {
+  BIO *bio, *b64;
+
+  int decodeLen = calcDecodeLength(b64message);
+  *buffer = (unsigned char*)malloc(decodeLen + 1);
+  (*buffer)[decodeLen] = '\0';
+
+  bio = BIO_new_mem_buf(b64message, -1);
+  b64 = BIO_new(BIO_f_base64());
+  bio = BIO_push(b64, bio);
+
+  *length = BIO_read(bio, *buffer, strlen(b64message));
+  BIO_free_all(bio);
+}
+
+char* signMessage(std::string privateKey, std::string plainText) {
+  RSA* privateRSA = createPrivateRSA(privateKey); 
+  unsigned char* encMessage;
+  char* base64Text;
+  size_t encMessageLength;
+  RSASign(privateRSA, (unsigned char*) plainText.c_str(), plainText.length(), &encMessage, &encMessageLength);
+  Base64Encode(encMessage, encMessageLength, &base64Text);
+  free(encMessage);
+  return base64Text;
+}
+
+bool verifySignature(std::string publicKey, std::string plainText, char* signatureBase64) {
+  RSA* publicRSA = createPublicRSA(publicKey);
+  unsigned char* encMessage;
+  size_t encMessageLength;
+  bool authentic;
+  Base64Decode(signatureBase64, &encMessage, &encMessageLength);
+  bool result = RSAVerifySignature(publicRSA, encMessage, encMessageLength, plainText.c_str(), plainText.length(), &authentic);
+  return result & authentic;
+}
+
+int main() {
+  std::string plainText = "My secret message.\n";
+  char* signature = signMessage(privateKey, plainText);
+  bool authentic = verifySignature(publicKey, "My secret message.\n", signature);
+  if ( authentic ) {
+    std::cout << "Authentic" << std::endl;
+  } else {
+    std::cout << "Not Authentic" << std::endl;
+  }
+}
