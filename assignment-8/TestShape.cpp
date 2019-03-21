@@ -20,7 +20,7 @@
 #include <memory>
 #include <sstream>
 
-TEST(Point, test) {
+TEST(Point, stream_operator) {  // verify trivial class, streams as expected
     Point pt(1, 2);
     std::stringstream ss;
     ss << pt;
@@ -63,6 +63,7 @@ TEST(Circle, stream_operator) {
     const Point pt1(0, 0);
     Circle crcl(pt1, 1);
     std::stringstream ss;
+    // Check accessors
     ss << crcl.getPoint() << "|";
     ss << crcl.getRadius();
     CHECK_EQUAL("0,0|1", ss.str());
