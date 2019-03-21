@@ -1,5 +1,5 @@
 *.out
-*.gch
+*.gch*
 *.o
 *.so
 out/*
