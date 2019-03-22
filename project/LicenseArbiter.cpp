@@ -1,4 +1,6 @@
-/* Generate keys
+/* openssl ecparam -name secp521r1 -genkey -noout -out my.key.pem
+ *
+ * Generate keys
  *  openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4196 -out private.pem
  *  openssl rsa -in private.pem -outform PEM -pubout -out public.pem
  * Create signature of ExampleLicense.txt and store as ExampleLicense.sig
