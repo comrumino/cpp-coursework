@@ -35,22 +35,15 @@
 #include <fstream>
 #include <streambuf>
 
-// using DSA_ptr = std::unique_ptr<DSA, decltype(&::DSA_free)>;
 // using BIO_MEM_ptr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
+using tDSA_free = decltype(&::DSA_free);
 using tBIO_free = decltype(&::BIO_free);
 // using BIO_FILE_ptr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
 // using EVP_PKEY_ptr = std::unique_ptr<EVP_PKEY, decltype(&::EVP_PKEY_free)>;
 
-DSA* createPublicDSA(const char* key) {
-    DSA *dsa = nullptr;
-    //std::unique_ptr<BIO, BIO_free_all> keybio(BIO_new_mem_buf((void*)key, -1));
-    //BIO_MEM_ptr keybio(BIO_new_mem_buf((void*)key, -1), ::BIO_free);
-    //BIO_MEM_ptr keybio(BIO_new_mem_buf((void*)key, -1), ::BIO_free);
+std::unique_ptr<DSA, tDSA_free> createPublicDSA(const char* key) {
     std::unique_ptr<BIO, tBIO_free> keybio(BIO_new_mem_buf((void*)key, -1), BIO_free);
-    //BIO *keybio;
-    //keybio = BIO_new_mem_buf((void*)key, -1);
-    if (keybio != nullptr)
-        dsa = PEM_read_bio_DSA_PUBKEY(keybio.get(), &dsa, nullptr, nullptr);
+    std::unique_ptr<DSA, tDSA_free> dsa(PEM_read_bio_DSA_PUBKEY(keybio.get(), nullptr, nullptr, nullptr), DSA_free);
     return dsa;
 }
 
@@ -102,21 +95,19 @@ void Base64Decode(std::string b64sig, unsigned char*& buffer, size_t* length) {
     buffer = new unsigned char[decodeLen + 1];
     (buffer)[decodeLen] = '\0';
 
-    BIO *bio = BIO_new_mem_buf(b64sig.c_str(), -1);
-    BIO *b64 = BIO_new(BIO_f_base64());
-    bio = BIO_push(b64, bio);
+    std::unique_ptr<BIO, tBIO_free> bio(BIO_new_mem_buf(b64sig.c_str(), -1), BIO_free);
+    std::unique_ptr<BIO, tBIO_free> b64(BIO_new(BIO_f_base64()), BIO_free);
 
-    *length = BIO_read(bio, buffer, b64sig.length());
-    BIO_free_all(bio);
+    *length = BIO_read(BIO_push(b64.get(), bio.get()), buffer, b64sig.length());
 }
 
 bool verifySignature(std::string publicKey, std::string plainText, std::string b64sig) {
-    DSA* publicDSA = createPublicDSA(publicKey.c_str());
+    std::unique_ptr<DSA, tDSA_free> publicDSA(createPublicDSA(publicKey.c_str()));
     unsigned char* encMessage;
     size_t encMessageLength;
     bool authentic = false;
     Base64Decode(b64sig, encMessage, &encMessageLength);
-    DSAVerifySignature(publicDSA, encMessage, encMessageLength, plainText.c_str(), plainText.length(), authentic);
+    DSAVerifySignature(publicDSA.get(), encMessage, encMessageLength, plainText.c_str(), plainText.length(), authentic);
     return authentic;
 }
 
