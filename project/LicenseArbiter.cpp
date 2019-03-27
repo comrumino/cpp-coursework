@@ -15,6 +15,9 @@
  * openssl dgst -verify npview_signature_public_key.pem -signature ExampleLicense.txt.sig ExampleLicense.txt
  *
  *  https://www.openssl.org/docs/man1.1.0/man3/PEM_read_bio_PrivateKey.html
+ *
+ *  https://stackoverflow.com/questions/20058862/using-openssl-to-generate-a-dsa-key-pair/22580463
+ *   g++ -g3 -O1 -Wall  -I/usr/include/openssl/ -lssl -lcrypto LicenseArbiter.cpp -o a.out
  * */
 #include <cstring>
 #include <iostream>
@@ -32,12 +35,22 @@
 #include <fstream>
 #include <streambuf>
 
+// using DSA_ptr = std::unique_ptr<DSA, decltype(&::DSA_free)>;
+// using BIO_MEM_ptr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
+using tBIO_free = decltype(&::BIO_free);
+// using BIO_FILE_ptr = std::unique_ptr<BIO, decltype(&::BIO_free)>;
+// using EVP_PKEY_ptr = std::unique_ptr<EVP_PKEY, decltype(&::EVP_PKEY_free)>;
+
 DSA* createPublicDSA(const char* key) {
     DSA *dsa = nullptr;
-    BIO *keybio;
-    keybio = BIO_new_mem_buf((void*)key, -1);
+    //std::unique_ptr<BIO, BIO_free_all> keybio(BIO_new_mem_buf((void*)key, -1));
+    //BIO_MEM_ptr keybio(BIO_new_mem_buf((void*)key, -1), ::BIO_free);
+    //BIO_MEM_ptr keybio(BIO_new_mem_buf((void*)key, -1), ::BIO_free);
+    std::unique_ptr<BIO, tBIO_free> keybio(BIO_new_mem_buf((void*)key, -1), BIO_free);
+    //BIO *keybio;
+    //keybio = BIO_new_mem_buf((void*)key, -1);
     if (keybio != nullptr)
-        dsa = PEM_read_bio_DSA_PUBKEY(keybio, &dsa, nullptr, nullptr);
+        dsa = PEM_read_bio_DSA_PUBKEY(keybio.get(), &dsa, nullptr, nullptr);
     return dsa;
 }
 
