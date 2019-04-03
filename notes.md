@@ -351,4 +351,9 @@ An operator that changes the behavior of stream is called manipulator
 * [Risks, explainations, and mitigations](https://www.owasp.org/index.php/Technical_Risks_of_Reverse_Engineering_and_Unauthorized_Code_Modification)
 * [Licensing security pt 2](https://blogs.flexera.com/ecm/2016/03/what-you-need-to-know-about-software-licensing-security-part-2/)
 * [Licensing security pt 1](https://blogs.flexera.com/ecm/2016/03/what-you-need-to-know-about-software-licensing-security-part-1/)
+* [openssl official](https://www.openssl.org/)
+* [Openssl asymmetrict](http://www.firmcodes.com/asymmetric/)
+* [Openssl forum](https://bytes.com/topic/c/answers/490515-please-help-how-do-i-include-openssl-my-code)
+* [Example in C++](https://eclipsesource.com/blogs/2016/09/07/tutorial-code-signing-and-verification-with-openssl/)
+* [C++ best example](https://gist.github.com/irbull/08339ddcd5686f509e9826964b17bb59)
 

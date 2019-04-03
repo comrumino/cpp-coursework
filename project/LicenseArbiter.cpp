@@ -1,6 +1,8 @@
-/* Generate keys
- *  openssl genpkey -algorithm DSA -pkeyopt dsa_keygen_bits:4196 -out private.pem
- *  openssl dsa -in private.pem -outform PEM -pubout -out public.pem
+/* openssl ecparam -name secp521r1 -genkey -noout -out my.key.pem
+ *
+ * Generate keys
+ *  openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4196 -out private.pem
+ *  openssl rsa -in private.pem -outform PEM -pubout -out public.pem
  * Create signature of ExampleLicense.txt and store as ExampleLicense.sig
  *  openssl dgst -sha512 -sign ./private.pem -out ./ExampleLicense.sig ./ExampleLicense.txt 
  * Encode binary signature to base64
