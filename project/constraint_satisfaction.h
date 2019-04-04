@@ -16,15 +16,27 @@ static const struct License
     const std::string developer = "Developer License";
 } license;
 
-class Expiration {
+
+const bool is_expired(std::string date);
+
+const bool is_product(std::string product_type);
+
+const bool is_license(std::string license_type);
+
+const bool is_users(std::string users);
+
+const bool is_rulesets(std::string rulesets);
+
+const bool is_devices(std::string devices);
+
+class ConstraintSatisfaction
+{
 public:
-    Expiration() = delete;  // disable default constructor
-    Expiration(const Expiration& rhs) = delete;  // disable copy constructor
-    Expiration& operator=(const Expiration& rhs) = delete;  // disable assignment constructor
-    Expiration(std::string date);  // allow direct initialization
-    ~Expiration() = default;  // string default destruction safe?
-    const bool is_valid_format() const;
-    const std::string get() const;
-private:
-    const std::string date;
-};
+    ConstraintSatisfaction() = delete;
+    ConstraintSatisfaction(const ConstraintSatisfaction& src) = delete;
+    ConstraintSatisfaction& operator=(const ConstraintSatisfaction& rhs) = delete;
+    ConstraintSatisfaction(std::string prdct, std::string lcns, std::string exp,
+                           std::string usrs, std::string rlsts, std::string devs);
+    virtual const bool is_valid() = 0;  // check the license is valid format and verify signature
+    virtual const bool is_discretionary() = 0;  // check the license is within limits via datastore
+}
