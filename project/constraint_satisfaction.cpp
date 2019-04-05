@@ -56,32 +56,76 @@ const bool is_license(std::string license_type) {
         return false;
 }
 
-const bool is_users(std::string users) {
-    unsigned int usrs = 0;
-    std::sscanf(users.c_str(), "%u", &usrs);
-    if (0 < usrs && usrs < 65536) {
+const bool is_users(unsigned int users) {
+    if (0 < users && users < 65536) {
         return true;
     } else {
         return false;
     }
 }
 
-const bool is_rulesets(std::string rulesets) {
-    unsigned int rlsts = 0;
-    std::sscanf(rulesets.c_str(), "%u", &rlsts);
-    if (0 < rlsts && rlsts < 65536) {
+const bool is_rulesets(unsigned int rulesets) {
+    if (0 < rulesets && rulesets < 65536) {
         return true;
     } else {
         return false;
     }
 }
 
-const bool is_devices(std::string devices) {
-    unsigned int dvcs = 0;
-    std::sscanf(devices.c_str(), "%u", &dvcs);
-    if (0 < dvcs && dvcs < 65536) {
+const bool is_devices(unsigned int devices) {
+    if (0 < devices && devices < 65536) {
         return true;
     } else {
         return false;
     }
+}
+
+ConstraintSatisfaction::ConstraintSatisfaction(std::string prdct, std::string lcns, std::string exp, std::string usrs,
+                                               std::string rlsts, std::string devs, const bool signature)
+    :product(prdct), license(lcns), expiration(exp), signature(signature)
+{
+    std::sscanf(usrs.c_str(), "%u", &users);
+    std::sscanf(rlsts.c_str(), "%u", &rulesets);
+    std::sscanf(devs.c_str(), "%u", &devices);
+}
+
+const bool ConstraintSatisfaction::is_valid() {
+    // check that the license provided is sane
+    if (!is_product(this->product)) {
+        return false;
+    } else if (!is_license(this->license)) {
+        return false;
+    } else if (!is_expired(expiration)) {
+        return false;
+    } else if (!is_users(users)) {
+        return false;
+    } else if (!is_rulesets(rulesets)) {
+        return false;
+    } else if (!is_devices(devices)) {
+        return false;
+    } else if (!signature) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+NPLiveConstraint::NPLiveConstraint(std::string prdct, std::string lcns, std::string exp, std::string usrs,
+                                   std::string rlsts, std::string devs, const bool signature)
+    :ConstraintSatisfaction(prdct, lcns, exp, usrs, rlsts, devs, signature)
+{
+}
+
+const bool NPLiveConstraint::is_discretionary() {
+   return false;
+}
+
+NPViewConstraint::NPViewConstraint(std::string prdct, std::string lcns, std::string exp, std::string usrs,
+                                   std::string rlsts, std::string devs, const bool signature)
+    :ConstraintSatisfaction(prdct, lcns, exp, usrs, rlsts, devs, signature)
+{
+}
+
+const bool NPViewConstraint::is_discretionary() {
+   return false;
 }

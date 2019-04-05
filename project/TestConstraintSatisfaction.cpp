@@ -47,8 +47,8 @@ TEST(ConstraintSatisfaction, is_license) {
 }
 
 TEST(ConstraintSatisfaction, is_users_rulesets_devices) {
-    std::vector<std::string> invalid_test_cases {"", "0", "65536"};
-    std::vector<std::string> valid_test_cases {"1", "2", "65535"};
+    std::vector<unsigned int> invalid_test_cases {0, 65536};
+    std::vector<unsigned int> valid_test_cases {1, 2, 65535};
     // users
     for (auto invalid : invalid_test_cases) {
         CHECK_EQUAL(false, is_users(invalid));
