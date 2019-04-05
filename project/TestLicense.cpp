@@ -1,5 +1,6 @@
 #include "TestHarness.h"
 #include "constraint_satisfaction.h"
+#include "license.h"
 #include <iostream>
 #include <string>
 
@@ -71,3 +72,26 @@ TEST(ConstraintSatisfaction, is_users_rulesets_devices) {
         CHECK_EQUAL(true, is_devices(valid));
     }
 }
+
+TEST(License, verifySignature) {
+    // std::ifstream privifs("testing/npview_signature_key.pem");
+    // std::string privateKey((std::istreambuf_iterator<char>(privifs)), std::istreambuf_iterator<char>());
+    //
+    std::ifstream pubifs("testing/npview_signature_public_key.pem");
+    std::string publicKey((std::istreambuf_iterator<char>(pubifs)), std::istreambuf_iterator<char>());
+
+    std::ifstream licifs("testing/ExampleLicense.txt");
+    std::string license((std::istreambuf_iterator<char>(licifs)), std::istreambuf_iterator<char>());
+
+    std::ifstream sigifs("testing/ExampleLicense.sig.base64");
+    std::string signature((std::istreambuf_iterator<char>(sigifs)), std::istreambuf_iterator<char>());
+
+    std::cout << license << std::endl;
+    bool authentic = verifySignature(publicKey, license, signature);
+    if ( authentic ) {
+        std::cout << "Authentic" << std::endl;
+    } else {
+        std::cout << "Not Authentic" << std::endl;
+    }
+}
+
