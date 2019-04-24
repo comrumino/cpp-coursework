@@ -39,13 +39,18 @@ private:
   char *mName = nullptr;
 };
 
-inline const char *Circle::GetName() const { return mName; }
+inline const char *Circle::GetName() const { return (mName != nullptr) ? mName : ""; }
 
 inline void Circle::SetName(const char *name) {
-  if (mName != nullptr)
+  if (mName != nullptr) {
     delete[] mName;
-  mName = new char[MaxNameSize + 1]{'\0'};
-  strncpy(mName, name, MaxNameSize);
+  }
+  if (name != nullptr) {
+    mName = new char[MaxNameSize + 1]{'\0'};
+    strncpy(mName, name, MaxNameSize);
+  } else {
+    mName = nullptr;
+  }
 }
 
 inline int Circle::GetRadius() const { return mRadius; }

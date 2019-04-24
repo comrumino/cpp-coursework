@@ -21,7 +21,7 @@ Circle::~Circle() {
 #ifdef SWAP_SEMANTICS
 // assignment pass by value to create a copy
 Circle &Circle::operator=(Circle other) {
-  SetName(other.GetName()); // shallow copy of character buffer
+  SetName(other.GetName());
   mRadius = other.GetRadius();
   mXCoord = other.GetX();
   mYCoord = other.GetY();
@@ -30,7 +30,7 @@ Circle &Circle::operator=(Circle other) {
 #else
 // this is another way to overload assignment by reference instead
 Circle &Circle::operator=(const Circle &other) {
-  mName = other.GetName(); // shallow copy of character buffer
+  SetName(other.GetName());
   mRadius = other.GetRadius();
   mXCoord = other.GetX();
   mYCoord = other.GetY();

@@ -10,7 +10,7 @@ const int kMaxNameSize = 128;
 // 1) Write an output overload (2pt)
 TEST(outputTest, outputTest) {
   cout << "### # # 1" << endl;
-  Circle c1(2, 1, 1, "MyCircle");
+  Circle c1(2);
   cout << "Expected:" << endl;
   cout << "MyCircle" << endl;
   cout << " radius: 2" << endl;
