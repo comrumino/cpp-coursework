@@ -5,7 +5,6 @@
 using namespace std;
 
 // Extra Credit (1pt): use this preprocessor token to enable either assignment
-// overload
 #define SWAP_SEMANTICS
 
 class Circle {
@@ -13,7 +12,7 @@ public:
   Circle(int radius, int xCoord = 0, int yCoord = 0,
          const char *name = nullptr);
   Circle(const Circle &other);
-  ~Circle() = default;
+  ~Circle();
 
 #ifdef SWAP_SEMANTICS
   Circle &operator=(Circle other);
@@ -33,17 +32,20 @@ public:
   void swap(Circle &other);
 
 private:
+  static const int MaxNameSize = 128;
   int mXCoord;
   int mYCoord;
   int mRadius;
-  const char *mName;
+  char *mName = nullptr;
 };
 
 inline const char *Circle::GetName() const { return mName; }
 
 inline void Circle::SetName(const char *name) {
-  if (name != nullptr)
-    mName = name;
+  if (mName != nullptr)
+    delete[] mName;
+  mName = new char[MaxNameSize + 1]{'\0'};
+  strncpy(mName, name, MaxNameSize);
 }
 
 inline int Circle::GetRadius() const { return mRadius; }
