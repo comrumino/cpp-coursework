@@ -12,11 +12,15 @@ int DoAssignment()
 
 	StudentProcessor	sp;
 	TCollStudents	rawCollStudents;
-        std::cout << "test" << std::endl;
 	if ( sp.LoadStudents( "/home/archie/repo/cprogrm712/assignment-2/studentinfo.txt", rawCollStudents ) )
 	{
-        std::cout << "test" << std::endl;
+        auto stdn = *rawCollStudents.back();
+        std::cout << "test 1 " << stdn.GetFirstName() << std::endl;
 		sp.ProcessStudents( rawCollStudents );
+        auto coll = *sp.mCCStudents.back();
+        stdn = *coll.back();
+
+        std::cout << "test 2 " << stdn.GetFirstName() << std::endl;
 		sp.PrintStudents( std::cout );
 	}
 	else

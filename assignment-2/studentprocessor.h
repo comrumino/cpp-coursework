@@ -3,8 +3,11 @@
 
 #include <ostream>
 #include <string>
+#include <vector>
+#include <map>
 
 #include "types.h"
+#include "student.h"
 
 class StudentProcessor
 {
@@ -16,6 +19,7 @@ public:
 	void ProcessStudents( const TCollStudents & rawCollStudents );
 	void PrintStudents( std::ostream & os ) const;
 
+	TCollCollStudents	mCCStudents;
 	
 private:
 
@@ -24,11 +28,13 @@ private:
 
 	void DeleteElements( TCollStudents * collPtr );
 
-
-	TCollCollStudents	mCCStudents;
+    std::map<char, TCollStudents> mymap;
+    std::vector<Student> all_students;
 };
 
 inline StudentProcessor::StudentProcessor()
-{};
+{
+    all_students.reserve(1024);
+};
 
 #endif

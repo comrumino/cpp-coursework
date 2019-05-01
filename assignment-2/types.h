@@ -2,8 +2,7 @@
 #define __TYPES_H__
 
 #include <vector>
-
-class Student;
+#include "student.h"
 
 // collection of student object pointers
 typedef std::vector<Student*> TCollStudents;
