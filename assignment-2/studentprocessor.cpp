@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <vector>
 #include <map>
 #include <fstream>
@@ -55,27 +56,19 @@ bool StudentProcessor::LoadStudents( const std::string & inputFile, TCollStudent
             ln = finfo.substr(finfo.find_first_not_of(" "), finfo.find_last_not_of(" ") + 1);
             std::sscanf(id.c_str(), "%i", &iid);
             //
-            std::cout << "a" << std::endl;
             all_students.push_back(Student(fn, ln, iid));
-            std::cout << "b" << std::endl;
             rawCollStudents.push_back(&all_students.back()); // switch cast to scan
-            std::cout << "c" << std::endl;
-            std::cout << "fuck dis 2" << std::endl;
         }
         success = true;
     }
-    std::cout << "fuck dis 3" << std::endl;
     input.close();
-    std::cout << "fuck dis 4" << std::endl;
     return success;
 }
 
 void StudentProcessor::ProcessStudents( const TCollStudents & rawCollStudents )
 {
-    for (auto ms : rawCollStudents) {
-        std::cout << "FN " <<  ms->GetFirstName()[0] << std::endl;
+    for (auto ms : rawCollStudents)
         mymap[ms->GetFirstName()[0]].push_back(ms);
-    }
     for (std::map<char, TCollStudents>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
         mCCStudents.push_back(&(it->second));
 }
@@ -88,23 +81,25 @@ void StudentProcessor::PrintStudents( std::ostream & os ) const
 void StudentProcessor::PrintStudents( std::ostream & os, const TCollStudents & cStudents ) const
 {
     for (auto student : cStudents) {
-        std::cout << "FUCK LOOP2" << std::endl;
-        std::cout << "FUCK LOOP2 BACK" << student->GetFirstName() << std::endl;
-        os << student->GetFirstName() << " " << student->GetLastName() << " " << student->GetId() << std::endl;
+        os << "    " << student->GetFirstName() << " " << student->GetLastName() << " " << student->GetId() << endl;
     }
 }
 
 void StudentProcessor::PrintStudents( std::ostream & os, const TCollCollStudents & ccStudents ) const
 {
+    int i = 0;
     for (auto mCStudents : ccStudents) {
-        std::cout << "FUCK LOOP" << std::endl;
-        std::cout << "FUCK LOOP BACK" << mCStudents->back() << std::endl;
+        os << "Collection " << i++ << ":" << std::endl;
         PrintStudents(os, *mCStudents);
     }
 }
 
-void DeleteElements( TCollStudents * collPtr )
+void StudentProcessor::DeleteElements( TCollStudents * collPtr )
 {
+    for (auto student : *collPtr) {
+        auto mc = student->GetFirstName()[0];
+        mymap[mc].erase(std::remove(mymap[mc].begin(), mymap[mc].end(), student), mymap[mc].end());
+    }
 }
 
 
