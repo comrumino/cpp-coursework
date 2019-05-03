@@ -32,7 +32,7 @@ bool StudentProcessor::LoadStudents(const std::string &inputFile, TCollStudents 
                 finfo = fcontent;
                 fcontent = "";
             }
-            //
+            // look for a student id
             fcf = finfo.find(",");
             if (fcf != -1) {
                 fcf = finfo.find(",");
@@ -43,7 +43,7 @@ bool StudentProcessor::LoadStudents(const std::string &inputFile, TCollStudents 
                 id = "-1";
                 std::cerr << "Student " << finfo << " did not have an ID" << std::endl;
             }
-            //
+            // look for names
             finfo = finfo.substr(finfo.find_first_not_of(" "),
                                  finfo.find_last_not_of(" ") + 1); // trim
             if (finfo.find(" ") == -1 ||
@@ -55,7 +55,9 @@ bool StudentProcessor::LoadStudents(const std::string &inputFile, TCollStudents 
             finfo = finfo.substr(fcf + 1, std::string::npos);
             ln = finfo.substr(finfo.find_first_not_of(" "), finfo.find_last_not_of(" ") + 1);
             std::sscanf(id.c_str(), "%i", &iid);
-            //
+            // sanity check before ctor
+            if (fn == "" || ln == "" || iid < -1)
+                continue;
             all_students.push_back(Student(fn, ln, iid));
             rawCollStudents.push_back(&all_students.back()); // switch cast to scan
         }

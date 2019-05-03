@@ -1,6 +1,4 @@
-#ifndef __STUDENT_PROCESSOR_H__
-#define __STUDENT_PROCESSOR_H__
-
+#pragma once
 #include <map>
 #include <ostream>
 #include <string>
@@ -26,10 +24,8 @@ class StudentProcessor {
 
     void DeleteElements(TCollStudents *collPtr);
 
-    std::map<char, TCollStudents> smap;
-    std::vector<Student> all_students;
+    std::map<char, TCollStudents> smap; // something to store a sorted result
+    std::vector<Student> all_students;  // store student objects so that dtor isn't called too early
 };
 
 inline StudentProcessor::StudentProcessor() { all_students.reserve(1024); };
-
-#endif

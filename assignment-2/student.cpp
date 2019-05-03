@@ -5,8 +5,6 @@ using namespace std;
 
 Student::Student(const string &fName, const string &lName, int id) : mFirstName(fName), mLastName(lName), mID(id) {}
 
-Student::~Student() {}
-
 const string &Student::GetLastName() const { return mLastName; }
 
 const string &Student::GetFirstName() const { return mFirstName; }
