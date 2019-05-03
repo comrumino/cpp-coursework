@@ -1,19 +1,18 @@
-#include <algorithm>
-#include <vector>
-#include <map>
-#include <fstream>
-#include <iostream>
-#include <sstream>
-#include <cstdio>
-#include <typeinfo>
 #include "studentprocessor.h"
 #include "student.h"
+#include <algorithm>
+#include <cstdio>
+#include <fstream>
+#include <iostream>
+#include <map>
+#include <sstream>
+#include <typeinfo>
+#include <vector>
 
 using namespace std;
 
-bool StudentProcessor::LoadStudents( const std::string & inputFile, TCollStudents & rawCollStudents )
-{
-    ifstream input(inputFile); 
+bool StudentProcessor::LoadStudents(const std::string &inputFile, TCollStudents &rawCollStudents) {
+    ifstream input(inputFile);
     bool success = false;
     if (input) {
         std::string fcontent((std::istreambuf_iterator<char>(input)), (std::istreambuf_iterator<char>()));
@@ -25,7 +24,6 @@ bool StudentProcessor::LoadStudents( const std::string & inputFile, TCollStudent
         int iid = -1;
         Student student;
         while (fcontent != "") {
-            std::cout << "fuck dis 1" << std::endl;
             fcf = fcontent.find(";");
             if (fcf != -1) {
                 finfo = fcontent.substr(0, fcf);
@@ -46,8 +44,10 @@ bool StudentProcessor::LoadStudents( const std::string & inputFile, TCollStudent
                 std::cerr << "Student " << finfo << " did not have an ID" << std::endl;
             }
             //
-            finfo = finfo.substr(finfo.find_first_not_of(" "), finfo.find_last_not_of(" ") + 1);  // trim
-            if (finfo.find(" ") == -1 || finfo.find(",") != -1) {  // if after trimming, there is no whitespace skip input
+            finfo = finfo.substr(finfo.find_first_not_of(" "),
+                                 finfo.find_last_not_of(" ") + 1); // trim
+            if (finfo.find(" ") == -1 ||
+                finfo.find(",") != -1) { // if after trimming, there is no whitespace skip input
                 continue;
             }
             fcf = finfo.find_first_of(" ");
@@ -65,28 +65,22 @@ bool StudentProcessor::LoadStudents( const std::string & inputFile, TCollStudent
     return success;
 }
 
-void StudentProcessor::ProcessStudents( const TCollStudents & rawCollStudents )
-{
+void StudentProcessor::ProcessStudents(const TCollStudents &rawCollStudents) {
     for (auto ms : rawCollStudents)
-        mymap[ms->GetFirstName()[0]].push_back(ms);
-    for (std::map<char, TCollStudents>::iterator it=mymap.begin(); it!=mymap.end(); ++it)
+        smap[ms->GetLastName()[0]].push_back(ms);
+    for (std::map<char, TCollStudents>::iterator it = smap.begin(); it != smap.end(); ++it)
         mCCStudents.push_back(&(it->second));
 }
 
-void StudentProcessor::PrintStudents( std::ostream & os ) const
-{
-    PrintStudents(os, mCCStudents);
-}
+void StudentProcessor::PrintStudents(std::ostream &os) const { PrintStudents(os, mCCStudents); }
 
-void StudentProcessor::PrintStudents( std::ostream & os, const TCollStudents & cStudents ) const
-{
+void StudentProcessor::PrintStudents(std::ostream &os, const TCollStudents &cStudents) const {
     for (auto student : cStudents) {
         os << "    " << student->GetFirstName() << " " << student->GetLastName() << " " << student->GetId() << endl;
     }
 }
 
-void StudentProcessor::PrintStudents( std::ostream & os, const TCollCollStudents & ccStudents ) const
-{
+void StudentProcessor::PrintStudents(std::ostream &os, const TCollCollStudents &ccStudents) const {
     int i = 0;
     for (auto mCStudents : ccStudents) {
         os << "Collection " << i++ << ":" << std::endl;
@@ -94,13 +88,21 @@ void StudentProcessor::PrintStudents( std::ostream & os, const TCollCollStudents
     }
 }
 
-void StudentProcessor::DeleteElements( TCollStudents * collPtr )
-{
+void StudentProcessor::DeleteElements(TCollStudents *collPtr) {
     for (auto student : *collPtr) {
-        auto mc = student->GetFirstName()[0];
-        mymap[mc].erase(std::remove(mymap[mc].begin(), mymap[mc].end(), student), mymap[mc].end());
+        auto mc = student->GetLastName()[0];
+        all_students.erase(std::remove(all_students.begin(), all_students.end(), *student), all_students.end());
+        smap[mc].erase(std::remove(smap[mc].begin(), smap[mc].end(), student), smap[mc].end());
     }
 }
 
-
-// TCollCollStudents	mCCStudents
+bool operator==(const Student &lhs, const Student &rhs) {
+    if (lhs.GetFirstName() != rhs.GetFirstName())
+        return false;
+    else if (lhs.GetLastName() != rhs.GetLastName())
+        return false;
+    else if (lhs.GetId() != rhs.GetId())
+        return false;
+    else
+        return true;
+}
