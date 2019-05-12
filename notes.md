@@ -1,6 +1,4 @@
 # Readings
-* Lippman Chap 11 Associative containers (Class 1)
-* Lippman Chap 16.1, 16.1.1 to 16.1.4, 16.2 (Template Arg deduction)  (Class 2)
 * Lippman Sec 5.6 and 18.1 Exception Handling ( Skip Function try blocks Sec 18.1.3) May 15th
 * Lippman Sec 3.4, 9.2.1, 9.2.3 Iterators  10.5.1 Iterator categories May 22nd
 * VTBL pdf
@@ -125,6 +123,46 @@
 * base class, should almost always have a virtual destructor (why?)
 * Derived object has a subobject for itself and each base class which allows a reference/pointer to be bound to the base
 
+## Condensed quarter two
+* overloaded operator, redefine the built-in operation---member of class or operand of type class
+* conversion operator, performs class-type/user-defined conversions (judicious, clear, avoid mutual conversions, multiple arith type convs)
+* explicit conversion, implicit conversion restricted to expressions used as a condition
+* function-objects, callable objects (class w/ operator def)---lambdas are function objects
+* function-table, datastructure allowing search of function-objects with the same call signature---function templates
+* function-template, library template representing any callable type
+* vectors, contiguous storage can result in reallocation operations and reserve can help reduce the amoritized cost
+* containers, template types that hold a collection of objects such that all objects are the same type
+* container operations, ctor, add, remove, size, and iteration---algorithms cover search and such
+* sequential container, elmts are ordered and accessed by position
+* associative container, a map or a set such that state varies for the ordered and uniqueness of keys
+* iterator (concept), general mechanism to move from one element to the next for the entire collection of objects
+* iterator (type), defined by a container and instance of which is returned by `begin()` and `end()`
+* iterator (object), an object st it can... reference, dereference, or equality check the element it denotes; also load next element in collection
+* valid iterator, denotes element or off-the-{beginning,end}
+* invalid iterator, iterators invalidated iff allocation or deallocation moves the elements it denotes
+* invalidated iter example, elmt in doubly-linked list is removed, then only iterator denoting elmt are invalidated
+* list, sequential container of doubly-linked elements
+* adaptor, provides an interface to type which is consistent with another---stack, queue, priority_queue
+* library headers, c headers have `ctype.h` and c++ headers have `cctype`
+* subscripts, unchecked, outside of range is undefined, of empty is undefined
+* strict weak ordering, the set of keys used for associative containers should be provably well-ordered by definition of the less-than operator
+* ordered, less than is the binary operator for keys used to load and write elements
+* unordered, hash equality is the binary operator for keys used to load and write elements
+* class templates, cannot deduce template parameter types and each instantiation of a class template is an independent class with its own version of member functions
+* class-template member function, only instantiated when use so if an instance does not meet the requirements of an operation it's all good
+* default template arguments, default a type for a template
+* function templates, can deduce template parameter types
+* explicit instantiation, `extern` declares the arguments for all parameters and nonextern instationation---extern is promise of instantiation elsewhere to avoid overheard
+* function parameter pack, one or more arguments
+* instantiate, the replacement of template arguments with corresponding args based on a call.
+* member template, member function that is a template (applies ordinary non template classes aswell)
+* template nontype parameters, intergral parameters are consts, refs/ptrs have lifetimes
+* template specialization, all parameters of template function are specified. class template and member templates allow partial specialization via partial evalation of the base template
+* template type parameter, named used to abstract a type (that is the parameters to the template dipshit)
+* trailing return types, `auto fcn(It beg, It end) -> typename remove_reference<decltype(*beg)>::type` if the function template return type is a related type of a template type parameter, instantiation of all possibilities is burdensome
+* type transformation template, metaprogramming, tranform a given template type parameter to a related type
+* variadic template, varying number of template arguments---use template parmeter pack
+
 ## Shared pointers
 * shared pointer, syntax `std::shared_ptr<int[]> sharedValues = std::make_shared<int[]>(20);` allows multiple clients to share access to that dynamically allocated heap memory by using reference counting use unique pointer unless you really need sharing
 * void pointers, deal with memory as memory
@@ -156,6 +194,7 @@
 * [Example in C++](https://eclipsesource.com/blogs/2016/09/07/tutorial-code-signing-and-verification-with-openssl/)
 * [C++ best example](https://gist.github.com/irbull/08339ddcd5686f509e9826964b17bb59)
 * http://www.stroustrup.com/Programming/PPP-style-rev3.pdf
+* [Amortized Analysis, CMU Algo](https://www.cs.cmu.edu/afs/cs/academic/class/15451-s07/www/)
 
 # UML: Identity, behavior, state (IBS)
 * unified modeling language
