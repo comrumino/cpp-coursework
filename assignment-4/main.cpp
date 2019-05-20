@@ -58,9 +58,7 @@ class QueueEmptyException : public BaseException {
     const char *what() const throw() override;
 };
 
-const char* QueueEmptyException::what() const throw() {
-    return "Queue Empty";
-}
+const char *QueueEmptyException::what() const throw() { return "Queue Empty"; }
 
 class QueueCopyException : public BaseException {
   public:
@@ -68,9 +66,7 @@ class QueueCopyException : public BaseException {
     const char *what() const throw() override;
 };
 
-const char* QueueCopyException::what() const throw() {
-    return "Invalid Queue Copy";
-}
+const char *QueueCopyException::what() const throw() { return "Invalid Queue Copy"; }
 
 class QueueGrowException : public BaseException {
   public:
@@ -78,10 +74,7 @@ class QueueGrowException : public BaseException {
     const char *what() const throw() override;
 };
 
-const char* QueueGrowException::what() const throw() {
-    return "Invalid Queue Grow";
-}
-
+const char *QueueGrowException::what() const throw() { return "Invalid Queue Grow"; }
 
 class QueueBase {
   public:
@@ -94,17 +87,15 @@ class QueueBase {
     int Capacity() const;
 
     void Swap(QueueBase &other);
-  protected:
 
+  protected:
     static const int m_Empty = -1;
     int m_Capacity;
     int m_Head = m_Empty;
     int m_Tail = m_Empty;
 };
 
-inline QueueBase::QueueBase(unsigned int capacity)
-    : m_Capacity(capacity)
-{}
+inline QueueBase::QueueBase(unsigned int capacity) : m_Capacity(capacity) {}
 
 inline QueueBase::QueueBase(const QueueBase &other)
     : m_Capacity(other.m_Capacity), m_Head(other.m_Head), m_Tail(other.m_Tail) {}
@@ -117,24 +108,16 @@ inline int QueueBase::Size() const {
     else if (m_Head >= m_Tail)
         return m_Head - m_Tail;
     else
-        return (m_Capacity + 1) - (m_Tail - m_Head);  // Less the negative space (distance between head and tail)
+        return (m_Capacity + 1) - (m_Tail - m_Head); // Less the negative space (distance between head and tail)
 }
 
-inline bool QueueBase::IsEmpty() const {
-    return m_Tail == m_Empty && m_Head == m_Empty;
-}
+inline bool QueueBase::IsEmpty() const { return m_Tail == m_Empty && m_Head == m_Empty; }
 
-inline bool QueueBase::IsFull() const {
-    return (m_Tail % m_Capacity) == (m_Head % m_Capacity);
-}
+inline bool QueueBase::IsFull() const { return (m_Tail % m_Capacity) == (m_Head % m_Capacity); }
 
-inline int QueueBase::Capacity() const {
-    return m_Capacity;
-}
+inline int QueueBase::Capacity() const { return m_Capacity; }
 
-inline void QueueBase::Swap(QueueBase &other) {
-    std::swap(*this, other);
-}
+inline void QueueBase::Swap(QueueBase &other) { std::swap(*this, other); }
 
 template <typename T> class Queue : public QueueBase {
   public:
@@ -151,6 +134,7 @@ template <typename T> class Queue : public QueueBase {
     template <typename T2> Queue &operator=(const Queue<T2> &other);
 
     void Swap(Queue<T> &other);
+
   private:
     template <typename T2> friend class Queue;
 
@@ -162,9 +146,7 @@ template <typename T> class Queue : public QueueBase {
 
 template <typename T> Queue<T>::Queue(unsigned int capacity) : QueueBase(capacity), m_Array(new T[m_Capacity]) {}
 
-template <typename T> Queue<T>::~Queue() {
-    delete[] m_Array;
-}
+template <typename T> Queue<T>::~Queue() { delete[] m_Array; }
 
 template <typename T> Queue<T>::Queue(const Queue<T> &other) : QueueBase(other), m_Array(new T[m_Capacity]) {
     Copy(other);
@@ -173,7 +155,7 @@ template <typename T> Queue<T>::Queue(const Queue<T> &other) : QueueBase(other),
 template <typename T> Queue<T> &Queue<T>::operator=(const Queue<T> &other) {
     // Always realloc even if current capacity is greater than the rhs capacity
     if (m_Array != nullptr)
-        delete [] m_Array;
+        delete[] m_Array;
     m_Capacity = other.m_Capacity;
     m_Array = new T[m_Capacity];
     Copy(other);
@@ -184,16 +166,14 @@ template <typename T> template <typename T2> Queue<T> &Queue<T>::operator=(const
     // Always realloc even if current capacity is greater than the rhs capacity
     // assignment of Queues with different types
     if (m_Array != nullptr)
-        delete [] m_Array;
+        delete[] m_Array;
     m_Capacity = other.m_Capacity;
     m_Array = new T[m_Capacity];
     Copy(other);
     return *this;
 }
 
-template <typename T> void Queue<T>::Swap(Queue<T> &other) {
-    std::swap(*this, other);
-}
+template <typename T> void Queue<T>::Swap(Queue<T> &other) { std::swap(*this, other); }
 
 template <typename T> void Queue<T>::Push(const T &e) {
     if (IsEmpty()) {
@@ -224,7 +204,7 @@ template <typename T> T Queue<T>::Pop() {
     }
 }
 
-template <typename T> void Queue<T>::Grow(int n_Capacity) {  // increase capacity
+template <typename T> void Queue<T>::Grow(int n_Capacity) { // increase capacity
     if (n_Capacity == -1) {
         n_Capacity = m_Capacity + (m_Capacity >> 3) + (m_Capacity < 9 ? 3 : 6);
     } else if (n_Capacity > m_Capacity) {
@@ -235,7 +215,7 @@ template <typename T> void Queue<T>::Grow(int n_Capacity) {  // increase capacit
     Queue<T> nQueue(n_Capacity);
     nQueue.Copy(*this);
     if (m_Array != nullptr)
-        delete [] m_Array;
+        delete[] m_Array;
     m_Capacity = nQueue.Capacity();
     m_Array = new T[m_Capacity];
     Copy(nQueue);
@@ -245,18 +225,18 @@ template <typename T> template <typename T2> void Queue<T>::Copy(const Queue<T2>
     if (m_Capacity >= other.m_Capacity) {
         m_Head = 0;
         m_Tail = 0;
-        if (other.m_Head >= other.m_Tail) {  // elements are contiguous
+        if (other.m_Head >= other.m_Tail) { // elements are contiguous
             for (int i = other.m_Tail; i < other.m_Head; ++i) {
-                m_Array[m_Head] = (T2) other.m_Array[i];
+                m_Array[m_Head] = (T2)other.m_Array[i];
                 ++m_Head;
             }
-        } else {  // elements are not contiguous so do from start to head and tail to end
-            for (int i = other.m_Tail; i < other.m_Capacity; ++i) {  // from tail to end
-                m_Array[m_Head] = (T2) other.m_Array[i];
+        } else { // elements are not contiguous so do from start to head and tail to end
+            for (int i = other.m_Tail; i < other.m_Capacity; ++i) { // from tail to end
+                m_Array[m_Head] = (T2)other.m_Array[i];
                 ++m_Head;
             }
-            for (int i = 0; i < other.m_Head; ++i) {  // from start up to head
-                m_Array[m_Head] = (T2) other.m_Array[i];
+            for (int i = 0; i < other.m_Head; ++i) { // from start up to head
+                m_Array[m_Head] = (T2)other.m_Array[i];
                 ++m_Head;
             }
         }
@@ -349,7 +329,6 @@ void TestIntFloatAssignmentCtor() {
     }
 }
 
-
 #include "TestHarness.h"
 
 TEST(Queue, Size) {
@@ -438,7 +417,6 @@ TEST(Queue, IntFloatAssignmentCtor) {
     CHECK_EQUAL(1, q1.Size());
     CHECK_EQUAL(3, q2.Size());
 }
-
 
 TEST(Queue, Swap) {
     Queue<int> q1(2);
