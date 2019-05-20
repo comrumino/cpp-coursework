@@ -101,11 +101,11 @@ inline QueueBase::QueueBase(const QueueBase &other)
     : m_Capacity(other.m_Capacity), m_Head(other.m_Head), m_Tail(other.m_Tail) {}
 
 inline int QueueBase::Size() const {
-    if (IsEmpty())
+    if (IsEmpty()) // m_Head == -1 && m_Tail == -1
         return 0;
-    else if (IsFull())
+    else if (IsFull()) // m_Head % m_Capacity == m_Tail % m_Capacity 
         return m_Capacity;
-    else if (m_Head >= m_Tail)
+    else if (m_Head > m_Tail)
         return m_Head - m_Tail;
     else
         return (m_Capacity + 1) - (m_Tail - m_Head); // Less the negative space (distance between head and tail)
@@ -153,7 +153,7 @@ template <typename T> Queue<T>::Queue(const Queue<T> &other) : QueueBase(other),
 }
 
 template <typename T> Queue<T> &Queue<T>::operator=(const Queue<T> &other) {
-    // Always realloc even if current capacity is greater than the rhs capacity
+    // Always realloc even if current capacity is greater than the rhs capacity for predictable swap
     if (m_Array != nullptr)
         delete[] m_Array;
     m_Capacity = other.m_Capacity;
@@ -163,8 +163,7 @@ template <typename T> Queue<T> &Queue<T>::operator=(const Queue<T> &other) {
 }
 
 template <typename T> template <typename T2> Queue<T> &Queue<T>::operator=(const Queue<T2> &other) {
-    // Always realloc even if current capacity is greater than the rhs capacity
-    // assignment of Queues with different types
+    // Always realloc even if current capacity is greater than the rhs capacity for predictable swap
     if (m_Array != nullptr)
         delete[] m_Array;
     m_Capacity = other.m_Capacity;
@@ -192,7 +191,7 @@ template <typename T> T Queue<T>::Pop() {
         throw QueueEmptyException();
     } else {
         T returnValue = T();
-        m_Tail %= m_Capacity;
+        m_Tail %= m_Capacity; // consistency with m_Head behavior
         returnValue = m_Array[m_Tail];
         ++m_Tail;
         if (m_Tail == m_Head) {
@@ -225,7 +224,7 @@ template <typename T> template <typename T2> void Queue<T>::Copy(const Queue<T2>
     if (m_Capacity >= other.m_Capacity) {
         m_Head = 0;
         m_Tail = 0;
-        if (other.m_Head >= other.m_Tail) { // elements are contiguous
+        if (other.m_Head > other.m_Tail) { // elements are contiguous
             for (int i = other.m_Tail; i < other.m_Head; ++i) {
                 m_Array[m_Head] = (T2)other.m_Array[i];
                 ++m_Head;
@@ -443,10 +442,13 @@ TEST(Queue, Swap) {
 
 TEST(Queue, DynamicTail) {
     Queue<int> q1(3);
+    Queue<int> q2(3);
     for (int i = 0; i < 3; ++i)
         q1.Push(i);
-    for (int i = 0; i < 3; ++i) {
-        q1.Pop();
+    for (int i = 0; i < 3; ++i) { // Verify copy for full capacity for boundary conditions
+        q2 = q1;
+        q1.Swap(q2);
+        CHECK_EQUAL(i, q1.Pop());
         q1.Push(i);
         CHECK_EQUAL(3, q1.Size());
     }
