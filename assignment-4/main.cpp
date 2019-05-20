@@ -113,7 +113,7 @@ inline int QueueBase::Size() const {
 
 inline bool QueueBase::IsEmpty() const { return m_Tail == m_Empty && m_Head == m_Empty; }
 
-inline bool QueueBase::IsFull() const { return (m_Tail % m_Capacity) == (m_Head % m_Capacity); }
+inline bool QueueBase::IsFull() const { return !IsEmpty() && (m_Tail % m_Capacity) == (m_Head % m_Capacity); }
 
 inline int QueueBase::Capacity() const { return m_Capacity; }
 
@@ -376,6 +376,8 @@ TEST(Queue, DirectInitCtor) {
 TEST(Queue, Empty) {
     bool passed = false;
     Queue<int> q(2); // head = tail = -1
+    CHECK_EQUAL(true, q.IsEmpty());
+    CHECK_EQUAL(false, q.IsFull());
     q.Push(1);       // head = tail = 0
     q.Pop();         // head = tail = -1 (queue is empty)
 
