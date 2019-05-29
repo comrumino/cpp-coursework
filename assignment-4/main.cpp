@@ -146,7 +146,7 @@ template <typename T> class Queue : public QueueBase {
 
 template <typename T> Queue<T>::Queue(unsigned int capacity) : QueueBase(capacity), m_Array(new T[m_Capacity]) {}
 
-template <typename T> Queue<T>::~Queue() { delete[] m_Array; }
+template <typename T> Queue<T>::~Queue() { if (m_Array != nullptr) delete[] m_Array; }
 
 template <typename T> Queue<T>::Queue(const Queue<T> &other) : QueueBase(other), m_Array(new T[m_Capacity]) {
     Copy(other);
@@ -226,16 +226,16 @@ template <typename T> template <typename T2> void Queue<T>::Copy(const Queue<T2>
         m_Tail = 0;
         if (other.m_Head > other.m_Tail) { // elements are contiguous
             for (int i = other.m_Tail; i < other.m_Head; ++i) {
-                m_Array[m_Head] = (T2)other.m_Array[i];
+                m_Array[m_Head] = (T)other.m_Array[i];
                 ++m_Head;
             }
         } else { // elements are not contiguous so do from start to head and tail to end
             for (int i = other.m_Tail; i < other.m_Capacity; ++i) { // from tail to end
-                m_Array[m_Head] = (T2)other.m_Array[i];
+                m_Array[m_Head] = (T)other.m_Array[i];
                 ++m_Head;
             }
             for (int i = 0; i < other.m_Head; ++i) { // from start up to head
-                m_Array[m_Head] = (T2)other.m_Array[i];
+                m_Array[m_Head] = (T)other.m_Array[i];
                 ++m_Head;
             }
         }
