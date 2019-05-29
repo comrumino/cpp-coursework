@@ -49,32 +49,32 @@ class BaseException {
     BaseException() {}
     virtual ~BaseException() {}
 
-    virtual const char *what() const throw() = 0;
+    virtual const char *what() const noexcept = 0;
 };
 
 class QueueEmptyException : public BaseException {
   public:
     QueueEmptyException() = default;
-    const char *what() const throw() override;
+    const char *what() const noexcept override;
 };
 
-const char *QueueEmptyException::what() const throw() { return "Queue Empty"; }
+const char *QueueEmptyException::what() const noexcept { return "Queue Empty"; }
 
 class QueueCopyException : public BaseException {
   public:
     QueueCopyException() = default;
-    const char *what() const throw() override;
+    const char *what() const noexcept override;
 };
 
-const char *QueueCopyException::what() const throw() { return "Invalid Queue Copy"; }
+const char *QueueCopyException::what() const noexcept { return "Invalid Queue Copy"; }
 
 class QueueGrowException : public BaseException {
   public:
     QueueGrowException() = default;
-    const char *what() const throw() override;
+    const char *what() const noexcept override;
 };
 
-const char *QueueGrowException::what() const throw() { return "Invalid Queue Grow"; }
+const char *QueueGrowException::what() const noexcept { return "Invalid Queue Grow"; }
 
 class QueueBase {
   public:
@@ -226,16 +226,16 @@ template <typename T> template <typename T2> void Queue<T>::Copy(const Queue<T2>
         m_Tail = 0;
         if (other.m_Head > other.m_Tail) { // elements are contiguous
             for (int i = other.m_Tail; i < other.m_Head; ++i) {
-                m_Array[m_Head] = (T)other.m_Array[i];
+                m_Array[m_Head] = other.m_Array[i];  
                 ++m_Head;
             }
         } else { // elements are not contiguous so do from start to head and tail to end
             for (int i = other.m_Tail; i < other.m_Capacity; ++i) { // from tail to end
-                m_Array[m_Head] = (T)other.m_Array[i];
+                m_Array[m_Head] = other.m_Array[i];
                 ++m_Head;
             }
             for (int i = 0; i < other.m_Head; ++i) { // from start up to head
-                m_Array[m_Head] = (T)other.m_Array[i];
+                m_Array[m_Head] = other.m_Array[i];
                 ++m_Head;
             }
         }
