@@ -8,8 +8,8 @@ typedef std::vector<std::string> strvector;
 
 class Board {
 public:
-  Board(const unsigned int numRows, const unsigned int numCols, const Dictionary &dict,
-        const strvector &debug=strvector());
+  Board(const unsigned int numRows, const unsigned int numCols,
+        const Dictionary &dict, const strvector &debug = strvector());
 
   const unsigned int NumRows() const;
   const unsigned int NumCols() const;
