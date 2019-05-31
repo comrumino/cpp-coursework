@@ -1,14 +1,3 @@
-/*
- *  1. 1st line of output:
- *      a. Max word length: <number>
- *      b. This prints the maximum length of words searched for. (For the given board above, you should set this
- *         to the number provided in description above)
- *  2. 2nd line of output:
- *      a. Number of words found: <number>
- *      b. Count of the unique words found
- *  3. 3rd line of output:
- *      a. All the unique words found, separated by a space.
- */
 #include "Board.h"
 #include "Dictionary.h"
 #include "WordFinder.h"
@@ -20,19 +9,17 @@
 #include <sstream>
 using namespace std;
 
-/*
+#if 1
 int main(int argc, char **argv) {
-  int numRows = WordGame::kDefaultBoardSize;
+  int numRows = 4;
   int numCols = numRows;
-  int maxWordSizeToLookFor = WordGame::kDefaultMaxFoundWordLength;
   string wordsFile("WordsList.txt");
 
-  WordGame wg(numRows, numCols, maxWordSizeToLookFor, wordsFile);
+  auto wg = WordGame(numRows, numCols, 0, wordsFile);
   wg.Run();
-
   return 0;
 }
-*/
+#else
 #include "TestHarness.h"
 
 TEST(Dictionary, ctor) {  // shouldn't the underlying container be a k-ary tree? but hey, who cares about data-structures besides SV
@@ -100,10 +87,21 @@ TEST(WordFinder, find_words) {
     strvector dbg = {"add", "pot", "tab"};  // "add" "pot" "tab" "boa" and then some
     auto board = Board(3, 3, dict, dbg);
     std::stringstream act;
-    auto wtf = WordFinder(dict, board, -1);
-    auto twl = wtf.FindWords();
+    auto wfr = WordFinder(dict, board, 15);
+    auto twl = wfr.FindWords();
     for (auto it=twl.begin(); it!=twl.end(); ++it)  // already sorted
         act << *it << " ";
     CHECK_EQUAL("a ab ad add apt at ba bat bo boa do ob od pa po pot ta tab to top ", act.str());
-    
 }
+
+TEST(WordGame, run) {
+    auto wg = WordGame(3, 3, 15, "WordsList.txt");
+    std::stringstream exp;
+    std::stringstream act;
+    exp << "Max word length: 15" << std::endl;
+    exp << "Number of words found: 6" << std::endl;
+    exp << "hy ic iv vc wk xiv " << std::endl;
+    wg.Run(act);
+    CHECK_EQUAL(exp.str(), act.str());
+}
+#endif

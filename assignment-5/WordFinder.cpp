@@ -13,7 +13,7 @@ typedef std::set<std::string>	  TWordsList;
 // std::vector < std::vector< bool > >	mVisited;
 // int mMaxFoundWordLength;
 
-TWordsList FragString(const std::string mstr) {
+TWordsList FragString(const std::string mstr, const int maxFragSize) {
     TWordsList frags;
     std::string frag;
     // i := length of fragment
@@ -23,6 +23,8 @@ TWordsList FragString(const std::string mstr) {
     for (auto i=0; i < mstr.length(); ++i) {
         for (auto j=i; j < mstr.length(); ++j) {
             frag = mstr.substr(i, j+1-i);
+            if (maxFragSize != -1 && frag.length() > maxFragSize)
+                continue;
             frags.insert(frag);
             std::reverse(frag.begin(), frag.end());
             frags.insert(frag);
@@ -32,7 +34,7 @@ TWordsList FragString(const std::string mstr) {
 }
 
 WordFinder::WordFinder(const Dictionary &dict, const Board &board, int maxFoundWordLength)
-    :mWords(dict), mBoard(board) {
+    :mWords(dict), mBoard(board), mMaxFoundWordLength(maxFoundWordLength){
 }
 
 TWordsList WordFinder::FindWords() {
@@ -40,7 +42,7 @@ TWordsList WordFinder::FindWords() {
     // horizontal
     TWordsList tfrags;
     for (auto i=0; i < mBoard.NumRows(); ++i) {
-        tfrags = FragString(mBoard(i));
+        tfrags = FragString(mBoard(i), mMaxFoundWordLength);
         mWords.Intersection(tfrags);
         twl.insert(tfrags.begin(), tfrags.end());
         tfrags.clear();
@@ -52,7 +54,7 @@ TWordsList WordFinder::FindWords() {
         for (auto i=0; i < mBoard.NumRows(); ++i) {
             tstr += mBoard(i, j);
         }
-        tfrags = FragString(tstr);
+        tfrags = FragString(tstr, mMaxFoundWordLength);
         mWords.Intersection(tfrags);
         twl.insert(tfrags.begin(), tfrags.end());
         tfrags.clear();
@@ -73,7 +75,7 @@ TWordsList WordFinder::FindWords() {
         for (auto j=0; j < std::min(mBoard.NumCols(), mBoard.NumRows() - i); ++j) {
             tstr += mBoard(i+j, j);
         }
-        tfrags = FragString(tstr);
+        tfrags = FragString(tstr, mMaxFoundWordLength);
         mWords.Intersection(tfrags);
         twl.insert(tfrags.begin(), tfrags.end());
         tfrags.clear();
@@ -84,7 +86,7 @@ TWordsList WordFinder::FindWords() {
         for (auto i=0; i < std::min(mBoard.NumCols()-j, mBoard.NumRows()); ++i) {
             tstr += mBoard(i, j+i);
         }
-        tfrags = FragString(tstr);
+        tfrags = FragString(tstr, mMaxFoundWordLength);
         mWords.Intersection(tfrags);
         twl.insert(tfrags.begin(), tfrags.end());
         tfrags.clear();

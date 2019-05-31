@@ -7,21 +7,17 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include <sstream>
 using namespace std;
 
 class WordGame {
 public:
   WordGame(int numRows, int numCols, int maxWordSizeToLookFor, const string &wordsFile);
   ~WordGame();
-  void Run();
-
-  static const int kDefaultBoardSize = 4;
-  static const int kMaxBoardSize = 10;
-  static const int kDefaultMaxFoundWordLength = 9;
-  static const int kMaxMaxFoundWordLength = 15;
+  void Run(std::ostream &os=std::cout);
 
 private:
-  void PrintWords(const TWordsList &);
+  void PrintWords(const TWordsList &twl, std::ostream &os=std::cout);
 
   Board *mGameBoard;
   Dictionary mWordsDictionary;

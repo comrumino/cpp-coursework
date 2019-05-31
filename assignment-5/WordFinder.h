@@ -9,7 +9,7 @@
 
 typedef std::set<std::string> TWordsList;
 
-TWordsList FragString(const std::string mstr);
+TWordsList FragString(const std::string mstr, const int maxFragSize=-1);
 
 class WordFinder {
 public:

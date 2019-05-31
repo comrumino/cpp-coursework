@@ -25,7 +25,16 @@ WordGame::~WordGame() {
     if (mGameBoard != nullptr)
         delete mGameBoard;
 }
-void WordGame::Run() {
+void WordGame::Run(std::ostream &os) {
+    auto wfr = WordFinder(mWordsDictionary, *mGameBoard, mMaxWordSizeToLookFor);
+    auto twl = wfr.FindWords();
+    os << "Max word length: " << mMaxWordSizeToLookFor << std::endl;
+    os << "Number of words found: " << twl.size() << std::endl;
+    PrintWords(twl, os);
 }
-void WordGame::PrintWords(const TWordsList &) {
+
+void WordGame::PrintWords(const TWordsList &twl, std::ostream &os) {
+    for (auto it=twl.begin(); it!=twl.end(); ++it)  // already sorted
+        os << *it << " ";
+    os << std::endl;
 }
