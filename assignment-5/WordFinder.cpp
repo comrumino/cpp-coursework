@@ -33,6 +33,9 @@ WordFinder::WordFinder(const Dictionary &dict, const Board &board, int maxFoundW
     : mWords(dict), mBoard(board), mMaxFoundWordLength(maxFoundWordLength) {}
 
 TWordsList WordFinder::FindWords() {
+    // Take the entire line either horizontally, vertically, diagonally up-to-the-right or diagonally down-to-the-right
+    // Fragment the line into any possible part forwards and backwards and see if it intersects with a word in the
+    // given list.
     TWordsList twl;
     // horizontal
     TWordsList tfrags;
@@ -54,18 +57,18 @@ TWordsList WordFinder::FindWords() {
         twl.insert(tfrags.begin(), tfrags.end());
         tfrags.clear();
     }
-    // diagnol down right
+    // diagnol: down right
     //        1 2
     //    0 a d d
     //    1 p o t
     //    2 t a b
     // avoid overlap =>
-    //    i := [0, nr)
-    //    j := [1, nc)
+    //    i := [0, NumRows)
+    //    j := [1, NumCols)
     auto nr = mBoard.NumRows();
     auto nc = mBoard.NumCols();
-    // diagnol start zero-th column and find diagnol for all i in [0, NumRows) down right
-    for (auto i = 0; i < mBoard.NumRows(); ++i) {
+    // zero-th column and find diagnol for all i in [0, NumRows)---down right
+    for (auto i = 0; i < mBoard.NumRows() - 1; ++i) {  // skip already checked corner so NumRows-1
         tstr = "";
         for (auto j = 0; j < std::min(mBoard.NumCols(), mBoard.NumRows() - i); ++j) {
             tstr += mBoard(i + j, j);
@@ -75,8 +78,8 @@ TWordsList WordFinder::FindWords() {
         twl.insert(tfrags.begin(), tfrags.end());
         tfrags.clear();
     }
-    // diagnol start zero-th row and find diagnol for all j in [1, NumCols) down right
-    for (auto j = 1; j < mBoard.NumCols(); ++j) {
+    // zero-th row and find diagnol for all j in [1, NumCols)---down right
+    for (auto j = 1; j < mBoard.NumCols() - 1; ++j) {  // skip already checked corner so NumCols-1
         tstr = "";
         for (auto i = 0; i < std::min(mBoard.NumCols() - j, mBoard.NumRows()); ++i) {
             tstr += mBoard(i, j + i);
@@ -86,8 +89,13 @@ TWordsList WordFinder::FindWords() {
         twl.insert(tfrags.begin(), tfrags.end());
         tfrags.clear();
     }
-    // diagnol start zero-th column and find diagnol for all i in [0, NumRows) up right
-    for (auto i = 0; i < mBoard.NumRows(); ++i) {
+    // diagnol: up right
+    //    0 a d d
+    //    1 p o t
+    //    2 t a b
+    //        1 2
+    // zero-th column and find diagnol for all i in [0, NumRows)---up right
+    for (auto i = 1; i < mBoard.NumRows(); ++i) {  // skip corner already checked so i=0+1
         tstr = "";
         for (auto j = 0; j < 1 + i; ++j) {
             tstr += mBoard(i - j, j);
@@ -97,8 +105,8 @@ TWordsList WordFinder::FindWords() {
         twl.insert(tfrags.begin(), tfrags.end());
         tfrags.clear();
     }
-    // diagnol start zero-th row and find diagnol for all j in [1, NumCols) up right
-    for (auto j = 1; j < mBoard.NumCols(); ++j) {
+    // last row and find diagnol for all j in [1, NumCols)---up right
+    for (auto j = 1; j < mBoard.NumCols() - 1; ++j) {  // skip corner already checked so NumCols-1
         tstr = "";
         for (auto i = 0; i < j; ++i) {
             tstr += mBoard(mBoard.NumCols() + i - j, j);
