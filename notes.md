@@ -3,7 +3,11 @@
 * Lippman Sec 3.4, 9.2.1, 9.2.3 Iterators  10.5.1 Iterator categories May 22nd
 * VTBL pdf
 * RVO pdf
-
+* Lippman Sec 16.5 Template specialization
+* Lippman Chapter 10 Generic Algorithms
+* Effective C++: Read items 37, 42, 45, 50
+* Effective C++: Items 44
+* Design Patterns: Singleton, Proxy, Template method, Prototype, Observe
 # Justifaction of value
 * learning to solve problems using the C++ language and the object paradigm
 
@@ -43,6 +47,10 @@
 * escape single quotes, double quotes, question mark, backslash
 * specify the type of a literal e.g. `L'a'`
 * double quote is a literal type char array and single quote is a literal type char
+
+## Patterns
+* [generalized hoisting](http://www.stroustrup.com/SCARY.pdf)
+* template hoisting, type independent moved into base (e.g. IsEmpty(), GetNumElements(), etc)
 
 ## Terms
 * RAII, exception safety for stack resources and locality of aquistion/release logic
@@ -87,6 +95,7 @@
 * concurrency, parrellism is normally described by Flynn's classification, multiple instruct and multiple data, tightly/loosely coupled
 * tightly/loosely coupled systems, rather vauge term to describe the MIMD group. Shared-memory ~ tightly and distributed/wan/lan ~ loosely
 * concurrent assignment, `x, y = y, x`
+* [stack unwinding](http://www.stroustrup.com/except89.pdf), when an exception is thrown find a handling in the call chain.
 
 ## Condensed quarter one
 * `for (auto element = values.begin(); element != values.end(); ++element) ` st auto `vector::iterator` or `const_iterator`
@@ -150,6 +159,9 @@
 * unordered, hash equality is the binary operator for keys used to load and write elements
 * class templates, cannot deduce template parameter types and each instantiation of a class template is an independent class with its own version of member functions
 * class-template member function, only instantiated when use so if an instance does not meet the requirements of an operation it's all good
+* template class, a class which has a class-template member (from class usage)
+* More generally, if two specializations have the same number of partial evaluated args, then we must define the partial (or full) specialization such that it disambiguates specialization.
+* Exceptions can only be one at a type so use primitive types in your exception classes
 * default template arguments, default a type for a template
 * function templates, can deduce template parameter types
 * explicit instantiation, `extern` declares the arguments for all parameters and nonextern instationation---extern is promise of instantiation elsewhere to avoid overheard
