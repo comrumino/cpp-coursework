@@ -131,6 +131,16 @@
 * downcast, by dynamic_cast mostly for debugging
 * base class, should almost always have a virtual destructor (why?)
 * Derived object has a subobject for itself and each base class which allows a reference/pointer to be bound to the base
+* task switch, doing a bit of one task followed by doing a bit of another task
+* context switch, the system operations that are performed to switch from one task to another
+    * save CPU state and instruction pointer
+    * determine the next task
+    * reload CPU state
+    * sometimes the instructions load from memory into cache and prevent CPU from executing instructions meanwhile
+* concurrency, a system performing multiple activites in parallel
+* concurrency illusion, single-core interleaves tasks and multiple activities are quick enough to feel like parallelism
+* hardware concurrency, multi-core or multi-processor systems can complete multiple activities in parallel
+* hardware threads, the number of independent tasks a processor can genuinely run concurrently
 
 ## Condensed quarter two
 * overloaded operator, redefine the built-in operation---member of class or operand of type class
