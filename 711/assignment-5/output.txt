@@ -1,0 +1,18 @@
+[archie@swanstation cprogrm711]$ script -c 'g++ -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused ./include/Main.cpp ./assignment-5/TestCharQueue1.cpp ./assignment-5/CharQueue1.cpp -L./lib -lUnitLite -o ./a.out && ./a.out' -a output.txt
+Script started on 2019-02-28 20:34:33-06:00 [TERM="xterm" TTY="/dev/pts/1" COLUMNS="144" LINES="79"]
+[01m[K./assignment-5/CharQueue1.cpp:[m[K In copy constructor ‘[01m[KCharQueue::CharQueue(const CharQueue&)[m[K’:
+[01m[K./assignment-5/CharQueue1.cpp:31:17:[m[K [01;35m[Kwarning: [m[Ksuggest parentheses around assignment used as truth value [[01;35m[K-Wparentheses[m[K]
+     while ([01;35m[K*q++ = *sq++[m[K) {
+            [01;35m[K~~~~~^~~~~~~[m[K
+[01m[K./assignment-5/CharQueue1.cpp:[m[K In member function ‘[01m[KCharQueue& CharQueue::operator=(CharQueue)[m[K’:
+[01m[K./assignment-5/CharQueue1.cpp:101:17:[m[K [01;35m[Kwarning: [m[Ksuggest parentheses around assignment used as truth value [[01;35m[K-Wparentheses[m[K]
+     while ([01;35m[K*p++ = *q++[m[K) {
+            [01;35m[K~~~~~^~~~~~[m[K
+7 tests, 0 failures, 0 errors
+
+[archie@swanstation cprogrm711]$ script -c 'g++ -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Wno-unused ./include/Main.cpp ./assignment-5/TestCharQueue2.cpp ./assignment-5/CharQueue2.cpp -L./lib -lUnitLite -o ./a.out && ./a.out' -a output.txt
+Script done on 2019-02-28 20:34:34-06:00 [COMMAND_EXIT_CODE="0"]
+Script started on 2019-02-28 20:34:49-06:00 [TERM="xterm" TTY="/dev/pts/1" COLUMNS="144" LINES="79"]
+7 tests, 0 failures, 0 errors
+
+Script done on 2019-02-28 20:34:51-06:00 [COMMAND_EXIT_CODE="0"]

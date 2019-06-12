@@ -1,0 +1,45 @@
+# 4-1 #
+[archie@swanstation cprogrm711]$ g++ ./include/Main.cpp ./assignment-4/DateTest.cpp ./assignment-4/jstronz-4-1.cpp -L./lib -lUnitLite -o ./a.out  && ./a.out
+3 tests, 0 failures, 0 errors
+
+# 4-2 #
+[archie@swanstation cprogrm711]$ g++ ./include/Main.cpp ./assignment-4/WriteTest.cpp ./assignment-4/write.cpp -L./lib -lUnitLite -o ./a.out  && ./a.out
+3 tests, 0 failures, 0 errors
+[archie@swanstation cprogrm711]$ g++ ./assignment-4/WriteMain.cpp ./assignment-4/write.cpp -o ./a.out && ./a.out 
+1
+-1
+1.01
+-1.101
+this is a false statement
+
+# 4-3 #
+[archie@swanstation cprogrm711]$ g++ ./include/Main.cpp ./assignment-4/LambdaTest.cpp -L./lib -lUnitLite -o ./a.out  && ./a.out
+1 tests, 0 failures, 0 errors
+
+# 4-4 #
+[archie@swanstation cprogrm711]$ g++ ./assignment-4/jstronz-4-4.cpp 
+[archie@swanstation cprogrm711]$ ./a.out 
+  Constructed: sc_main
+  Copied: sc_main copy
+Enter f1
+  Constructed: sc_f1
+  Copied: sc_f1 copy
+Enter f2
+  Copied: sc_f1 copy copy
+Enter f3
+Enter-exit f4
+Exit f3
+Exit f2
+  Deconstructed: sc_f1 copy copy
+  Deconstructed: sc_f1 copy
+Exit f1
+  Deconstructed: sc_f1
+  Deconstructed: sc_main copy
+  Deconstructed: sc_main
+ *  Answer:
+ *   How many instances of your class were constructed? How many instances of your class were destructed? Why?
+ *   + Objects are copied whenever passed by value and initialized with a value. Since pointers store a memory address
+ *   the desctuctor is not called within f4 and passing by reference does not call the destructor either. So,
+ *   passing by value 3 times, initialize with a value 1 time, and directly initialized 2 times creates five objects 
+ *   which are eventually desconstructed as they leave each scope they were constructed within.
+
