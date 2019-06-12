@@ -1,5 +1,5 @@
-#include "char-queue-deque.h"
 #include "TestHarness.h"
+#include "char-queue-deque.h"
 #include <iostream>
 #include <sstream>
 

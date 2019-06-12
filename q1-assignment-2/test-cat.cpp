@@ -1,7 +1,7 @@
 #include "TestHarness.h"
 #include "jstronz-2-3.h"
-#include <memory>
 #include <iostream>
+#include <memory>
 #include <sstream>
 #include <string>
 
@@ -37,7 +37,7 @@ TEST(CatTest, cat_base_case_array) {
 TEST(CatTest, cat_inductive_case_array) {
     // initialize or declare variables
     //  const char* char_arr2 = new char[3]{'3', '4', '5'};  // this does not null terminate!
-    /* 
+    /*
      * auto char_arr1 = std::make_unique<char[]>(3);
      * char_arr1[0] = '1';
      * char_arr1[1] = '2';

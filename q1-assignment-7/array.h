@@ -1,6 +1,6 @@
 #pragma once
-#include <vector>
 #include <iostream>
+#include <vector>
 
 class Array {
   public:
