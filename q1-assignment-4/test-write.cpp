@@ -2,6 +2,7 @@
 #include "write.h"
 #include <sstream>
 #include <string>
+
 TEST(Write, int) {
     std::stringstream os;
     write(os, 1);

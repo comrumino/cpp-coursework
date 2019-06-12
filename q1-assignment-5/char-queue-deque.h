@@ -1,24 +1,25 @@
 #pragma once
 #include <deque>
+#include <iostream>
 
-class CharQueue {
+class CharDeque {
   private:
     std::deque<char> queue;
 
   public:
-    CharQueue();
-    CharQueue(size_t size);
-    // CharQueue(const CharQueue& src);  // use default constructor, per prompt
+    CharDeque();
+    CharDeque(size_t size);
+    // CharDeque(const CharDeque& src);  // use default constructor, per prompt
 
     void enqueue(char ch);
     char dequeue();
 
     bool isEmpty() const;
-    void swap(CharQueue &src);
+    void swap(CharDeque &src);
 
     size_t capacity() const;
 
-    // CharQueue& operator=(CharQueue src);  // use default assignment operator, per prompt
+    // CharDeque& operator=(CharDeque src);  // use default assignment operator, per prompt
     // global function is friend of class, so can access private
-    friend std::ostream &operator<<(std::ostream &os, const CharQueue &cq);
+    friend std::ostream &operator<<(std::ostream &os, const CharDeque &cq);
 };

@@ -1,11 +1,11 @@
-#include "CharQueue2.h"
+#include "char-queue-deque.h"
 #include <deque>
 #include <iostream>
 #include <memory>
 
-CharQueue::CharQueue() : queue() {}
+CharDeque::CharDeque() : queue() {}
 
-CharQueue::CharQueue(size_t size) : queue() {
+CharDeque::CharDeque(size_t size) : queue() {
     // allow for predetermined queue size as long as it does not
     if (size > queue.max_size()) {
         queue.resize(queue.max_size());
@@ -14,9 +14,9 @@ CharQueue::CharQueue(size_t size) : queue() {
     }
 }
 
-void CharQueue::enqueue(char ch) { queue.push_back(ch); }
+void CharDeque::enqueue(char ch) { queue.push_back(ch); }
 
-char CharQueue::dequeue() {
+char CharDeque::dequeue() {
     if (!queue.empty()) {
         char front = queue.front();
         queue.pop_front();
@@ -26,17 +26,17 @@ char CharQueue::dequeue() {
     }
 }
 
-bool CharQueue::isEmpty() const { return queue.empty(); }
+bool CharDeque::isEmpty() const { return queue.empty(); }
 
-void CharQueue::swap(CharQueue &src) { // exchange contents
-    CharQueue _src(src);
+void CharDeque::swap(CharDeque &src) { // exchange contents
+    CharDeque _src(src);
     src.queue = queue;
     queue = _src.queue;
 }
 
-size_t CharQueue::capacity() const { return queue.size(); }
+size_t CharDeque::capacity() const { return queue.size(); }
 
-std::ostream &operator<<(std::ostream &os, const CharQueue &cq) {
+std::ostream &operator<<(std::ostream &os, const CharDeque &cq) {
     os << std::endl;
     os << "size: " << cq.queue.size() << std::endl;
     os << "max_size: " << cq.queue.max_size() << std::endl;

@@ -1,0 +1,11 @@
+*.out
+*.gch*
+*.o
+*.so
+out/*
+*.zip
+CPROGRM
+cmake_install.cmake
+CMakeCache.txt
+CMakeFiles/*
+Makefile

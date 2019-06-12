@@ -1,30 +1,30 @@
-#include "test-char-queue-deque.h"
+#include "char-queue-deque.h"
 #include "TestHarness.h"
 #include <iostream>
 #include <sstream>
 
-TEST(CharQueue, construct_sizes) {
+TEST(CharDeque, construct_sizes) {
     std::stringstream cqss;
-    CharQueue cq;
+    CharDeque cq;
     cqss << cq;
     CHECK_EQUAL("\nsize: 0\nmax_size: 18446744073709551615\nqueue: \n\n", cqss.str());
     cqss.str("");
-    CharQueue cq0(0);
+    CharDeque cq0(0);
     cqss << cq0;
     CHECK_EQUAL("\nsize: 0\nmax_size: 18446744073709551615\nqueue: \n\n", cqss.str());
     cqss.str("");
-    CharQueue cq1(1);
+    CharDeque cq1(1);
     cqss << cq1;
     CHECK_EQUAL("\nsize: 1\nmax_size: 18446744073709551615\nqueue: \n\n", cqss.str());
     cqss.str("");
-    CharQueue cq2(2);
+    CharDeque cq2(2);
     cqss << cq2;
     CHECK_EQUAL("\nsize: 2\nmax_size: 18446744073709551615\nqueue: \n\n", cqss.str());
 }
 
-TEST(CharQueue, enqueue) {
+TEST(CharDeque, enqueue) {
     std::stringstream cqss;
-    CharQueue cq0(0);
+    CharDeque cq0(0);
     cq0.enqueue('a');
     cq0.enqueue('b');
     cq0.enqueue('c');
@@ -32,9 +32,9 @@ TEST(CharQueue, enqueue) {
     CHECK_EQUAL("\nsize: 3\nmax_size: 18446744073709551615\nqueue: abc\n\n", cqss.str());
 }
 
-TEST(CharQueue, dequeue) {
+TEST(CharDeque, dequeue) {
     std::stringstream cqss;
-    CharQueue cq0(0);
+    CharDeque cq0(0);
     cq0.dequeue();
     cq0.enqueue('i');
     cq0.enqueue('f');
@@ -52,8 +52,8 @@ TEST(CharQueue, dequeue) {
     CHECK_EQUAL("\nsize: 2\nmax_size: 18446744073709551615\nqueue: ac\n\n", cqss.str());
 }
 
-TEST(CharQueue, isEmpty) {
-    CharQueue cq0(0);
+TEST(CharDeque, isEmpty) {
+    CharDeque cq0(0);
     CHECK_EQUAL(true, cq0.isEmpty());
     cq0.enqueue('i');
     CHECK_EQUAL(false, cq0.isEmpty());
@@ -61,12 +61,12 @@ TEST(CharQueue, isEmpty) {
     CHECK_EQUAL(true, cq0.isEmpty());
 }
 
-TEST(CharQueue, swap) {
+TEST(CharDeque, swap) {
     std::stringstream orig_cqss;
     std::stringstream orig_cq2ss;
     std::stringstream cqss;
     std::stringstream cq2ss;
-    CharQueue cq(0);
+    CharDeque cq(0);
     cq.enqueue('i');
     cq.enqueue('f');
     cq.enqueue('q');
@@ -79,7 +79,7 @@ TEST(CharQueue, swap) {
     cq.dequeue();
     cq.dequeue();
     cq.dequeue();
-    CharQueue cq2(0);
+    CharDeque cq2(0);
     cq2.enqueue('c');
     cq2.enqueue('a');
     orig_cqss << cq;
@@ -91,8 +91,8 @@ TEST(CharQueue, swap) {
     CHECK_EQUAL(orig_cqss.str(), cq2ss.str());
 }
 
-TEST(CharQueue, capacity) {
-    CharQueue cq0(0);
+TEST(CharDeque, capacity) {
+    CharDeque cq0(0);
     CHECK_EQUAL(0, cq0.capacity());
     cq0.enqueue('a');
     cq0.enqueue('b');
@@ -103,11 +103,11 @@ TEST(CharQueue, capacity) {
     CHECK_EQUAL(5, cq0.capacity());
 }
 
-TEST(CharQueue, copy_assignment) {
+TEST(CharDeque, copy_assignment) {
     std::stringstream cqss;
     std::stringstream cq2ss;
     std::stringstream cq3ss;
-    CharQueue cq(0);
+    CharDeque cq(0);
     cq.enqueue('i');
     cq.enqueue('f');
     cq.enqueue('q');
@@ -119,8 +119,8 @@ TEST(CharQueue, copy_assignment) {
     cq.enqueue('c');
     cq.dequeue();
     // create cq2 via copy and cq3 via assignment
-    CharQueue cq2(cq);
-    CharQueue cq3(0);
+    CharDeque cq2(cq);
+    CharDeque cq3(0);
     cq3 = cq;
     // preserve state of cq
     cqss << cq;

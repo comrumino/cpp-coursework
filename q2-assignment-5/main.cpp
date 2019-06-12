@@ -13,7 +13,7 @@ using namespace std;
 int main(int argc, char **argv) {
   int numRows = 4;
   int numCols = numRows;
-  string wordsFile("words-list.txt");
+  string wordsFile("q2-assignment-5/words-list.txt");
 
   auto wg = WordGame(numRows, numCols, 0, wordsFile);
   wg.Run();
@@ -24,14 +24,14 @@ int main(int argc, char **argv) {
 
 TEST(Dictionary, ctor) { // shouldn't the underlying container be a k-ary tree?
                          // but hey, who cares about data-structures besides SV
-    Dictionary dict("words-list.txt");
+    Dictionary dict("q2-assignment-5/words-list.txt");
     CHECK_EQUAL(168845, dict.Size());
     CHECK_EQUAL(true, dict.Contains("zyzzyva"));
     CHECK_EQUAL(false, dict.Contains("c***candle"));
 }
 
 TEST(Board, debug_3x3) {
-    const Dictionary dict("words-list.txt");
+    const Dictionary dict("q2-assignment-5/words-list.txt");
     strvector dbg = {"add", "pot", "tab"}; // "add" "pot" "tab" "boa" and then some
     std::stringstream exp;
     std::stringstream act;
@@ -50,7 +50,7 @@ TEST(Board, debug_3x3) {
 }
 
 TEST(Board, debug_1x3) {
-    const Dictionary dict("words-list.txt");
+    const Dictionary dict("q2-assignment-5/words-list.txt");
     strvector dbg = {"add"};
     std::stringstream exp;
     std::stringstream act;
@@ -63,7 +63,7 @@ TEST(Board, debug_1x3) {
 }
 
 TEST(Board, random_3x3) {
-    const Dictionary dict("words-list.txt");
+    const Dictionary dict("q2-assignment-5/words-list.txt");
     std::stringstream exp;
     std::stringstream act;
     exp << "vix" << std::endl << "hcv" << std::endl << "ywk" << std::endl;
@@ -84,7 +84,7 @@ TEST(FragString, result_frags) {
 }
 
 TEST(WordFinder, find_words) {
-    const Dictionary dict("words-list.txt");
+    const Dictionary dict("q2-assignment-5/words-list.txt");
     strvector dbg = {"add", "pot", "tab"}; // "add" "pot" "tab" "boa" and then some
     auto board = Board(3, 3, dict, dbg);
     std::stringstream act;
@@ -96,7 +96,7 @@ TEST(WordFinder, find_words) {
 }
 
 TEST(WordGame, run_15) {
-    auto wg = WordGame(3, 3, 15, "words-list.txt");
+    auto wg = WordGame(3, 3, 15, "q2-assignment-5/words-list.txt");
     std::stringstream exp;
     std::stringstream act;
     exp << "Max word length: 15" << std::endl;
@@ -107,7 +107,7 @@ TEST(WordGame, run_15) {
 }
 
 TEST(WordGame, run_2) {
-    auto wg = WordGame(3, 3, 2, "words-list.txt");
+    auto wg = WordGame(3, 3, 2, "q2-assignment-5/words-list.txt");
     std::stringstream exp;
     std::stringstream act;
     exp << "Max word length: 2" << std::endl;
