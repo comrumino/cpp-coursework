@@ -1,10 +1,10 @@
-/* 
+/*
  * Generate keys
  *  openssl genpkey -algorithm RSA -pkeyopt rsa_keygen_bits:4196 -out private.pem
  *  openssl rsa -in private.pem -outform PEM -pubout -out public.pem
  *
  * Create signature of ExampleLicense.txt and store as ExampleLicense.sig
- *  openssl dgst -sha256 -sign ./npview_signature_public_key.pem -out ./ExampleLicense.sig ./ExampleLicense.txt 
+ *  openssl dgst -sha256 -sign ./npview_signature_public_key.pem -out ./ExampleLicense.sig ./ExampleLicense.txt
  * Encode binary signature to base64
  *  openssl base64 -in  ./ExampleLicense.sig -out ./ExampleLicense.sig.base64
  * Decode base64 back to binary signature
@@ -22,30 +22,30 @@
  *   g++ -g3 -O1 -Wall  -I/usr/include/openssl/ -lssl -lcrypto LicenseArbiter.cpp -o a.out
  * */
 #include "license.h"
+#include <assert.h>
 #include <cstring>
+#include <fstream>
 #include <iostream>
-#include <vector>
 #include <memory>
 #include <openssl/aes.h>
-#include <openssl/evp.h>
+#include <openssl/bio.h>
 #include <openssl/dsa.h>
+#include <openssl/err.h>
+#include <openssl/evp.h>
 #include <openssl/pem.h>
 #include <openssl/ssl.h>
-#include <openssl/bio.h>
-#include <openssl/err.h>
-#include <assert.h>
-#include <string>
-#include <fstream>
 #include <streambuf>
+#include <string>
+#include <vector>
 
-std::unique_ptr<DSA, tDSA_free> createPublicDSA(const char* key) {
-    std::unique_ptr<BIO, tBIO_free> keybio(BIO_new_mem_buf((void*)key, -1), BIO_free);
+std::unique_ptr<DSA, tDSA_free> createPublicDSA(const char *key) {
+    std::unique_ptr<BIO, tBIO_free> keybio(BIO_new_mem_buf((void *)key, -1), BIO_free);
     std::unique_ptr<DSA, tDSA_free> dsa(PEM_read_bio_DSA_PUBKEY(keybio.get(), nullptr, nullptr, nullptr), DSA_free);
     return dsa;
 }
 
-void DSAVerifySignature(DSA* dsa, unsigned char* MsgHash, size_t MsgHashLen,
-                        const char* Msg, size_t MsgLen, bool& authentic) {
+void DSAVerifySignature(DSA *dsa, unsigned char *MsgHash, size_t MsgHashLen, const char *Msg, size_t MsgLen,
+                        bool &authentic) {
     EVP_PKEY *pkey = EVP_PKEY_new();
     EVP_MD_CTX *ctx = EVP_MD_CTX_create();
     EVP_PKEY_assign_DSA(pkey, dsa);
@@ -64,7 +64,7 @@ void DSAVerifySignature(DSA* dsa, unsigned char* MsgHash, size_t MsgHashLen,
 }
 
 /*
-namespace unsigned_types { 
+namespace unsigned_types {
     typedef std::basic_string<unsigned char> string;
 }
 
@@ -90,7 +90,7 @@ std::vector<unsigned char> PreferredBase64Decode(const char* encoded)
     return decoded;
 }*/
 
-void Base64Decode(std::string b64sig, unsigned char*& buffer, size_t* length) {
+void Base64Decode(std::string b64sig, unsigned char *&buffer, size_t *length) {
     size_t padding = 0;
     for (auto br = b64sig.rbegin(); br != b64sig.rend() && padding <= 2 && *br != '='; ++br, ++padding)
         ;
@@ -106,7 +106,7 @@ void Base64Decode(std::string b64sig, unsigned char*& buffer, size_t* length) {
 
 bool verifySignature(std::string publicKey, std::string plainText, std::string b64sig) {
     std::unique_ptr<DSA, tDSA_free> publicDSA(createPublicDSA(publicKey.c_str()));
-    unsigned char* encMessage;
+    unsigned char *encMessage;
     size_t encMessageLength;
     bool authentic = false;
     Base64Decode(b64sig, encMessage, &encMessageLength);

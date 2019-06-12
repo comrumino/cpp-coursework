@@ -1,10 +1,9 @@
-#include <iostream>
-#include <sstream>
 #include "TestHarness.h"
 #include "jstronz-1-3.h"
+#include <iostream>
+#include <sstream>
 
-TEST(RWDouble, stringstream)
-{
+TEST(RWDouble, stringstream) {
     std::stringstream is;
     std::stringstream os;
     const double idouble = 0.00033;
@@ -21,8 +20,7 @@ TEST(RWDouble, stringstream)
     }
 }
 
-TEST(RWFloat, stringstream)
-{
+TEST(RWFloat, stringstream) {
     std::stringstream is;
     std::stringstream os;
     const float ifloat = 0.00033;
@@ -39,9 +37,8 @@ TEST(RWFloat, stringstream)
     }
 }
 
-TEST(RWString, stringstream)
-{
-    const std::string istring("This statement is false!");  // direct initialize
+TEST(RWString, stringstream) {
+    const std::string istring("This statement is false!"); // direct initialize
     std::stringstream os;
     std::stringstream is(istring);
     // Read from istream (is) into a string and write string to ostream (os)
@@ -56,9 +53,8 @@ TEST(RWString, stringstream)
     }
 }
 
-TEST(helloRWInt, stringstream)
-{
-    const std::string istring("Hello");  // direct initialize
+TEST(helloRWInt, stringstream) {
+    const std::string istring("Hello"); // direct initialize
     std::stringstream os;
     std::stringstream is(istring);
     // Read from istream (is) into a int and write int to ostream (os)

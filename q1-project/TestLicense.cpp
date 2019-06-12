@@ -17,9 +17,9 @@ TEST(ConstraintSatisfaction, product_license) {
 
 TEST(ConstraintSatisfaction, is_expired) {
     CHECK_EQUAL(false, is_expired("9119-04-01"));
-    std::vector<std::string> expired_test_cases {"", "yyyy-mm-dd", "--",  // absurd inputs
-                                                 "2019-00-01", "2019-01-00",  // lower bound tests
-                                                 "2019-13-00", "2019-01-32"};  // upper bound tests
+    std::vector<std::string> expired_test_cases{"",           "yyyy-mm-dd", "--", // absurd inputs
+                                                "2019-00-01", "2019-01-00",       // lower bound tests
+                                                "2019-13-00", "2019-01-32"};      // upper bound tests
     for (auto invalid : expired_test_cases) {
         CHECK_EQUAL(true, is_expired(invalid));
     }
@@ -29,7 +29,7 @@ TEST(ConstraintSatisfaction, is_product) {
     CHECK_EQUAL(false, is_product(product.nplive + "-"));
     CHECK_EQUAL(false, is_product("-" + product.nplive));
     CHECK_EQUAL(false, is_product(""));
-    std::vector<std::string> product_test_cases {product.nplive, product.npview};
+    std::vector<std::string> product_test_cases{product.nplive, product.npview};
     for (auto valid : product_test_cases) {
         CHECK_EQUAL(true, is_product(valid));
     }
@@ -39,17 +39,16 @@ TEST(ConstraintSatisfaction, is_license) {
     CHECK_EQUAL(false, is_license(license.evaluation + "-"));
     CHECK_EQUAL(false, is_license("-" + license.evaluation));
     CHECK_EQUAL(false, is_license(""));
-    std::vector<std::string> license_test_cases {license.evaluation, license.enterprise,
-                                                 license.consultant, license.auditor,
-                                                 license.auditor, license.developer};
+    std::vector<std::string> license_test_cases{license.evaluation, license.enterprise, license.consultant,
+                                                license.auditor,    license.auditor,    license.developer};
     for (auto valid : license_test_cases) {
         CHECK_EQUAL(true, is_license(valid));
     }
 }
 
 TEST(ConstraintSatisfaction, is_users_rulesets_devices) {
-    std::vector<unsigned int> invalid_test_cases {0, 65536};
-    std::vector<unsigned int> valid_test_cases {1, 2, 65535};
+    std::vector<unsigned int> invalid_test_cases{0, 65536};
+    std::vector<unsigned int> valid_test_cases{1, 2, 65535};
     // users
     for (auto invalid : invalid_test_cases) {
         CHECK_EQUAL(false, is_users(invalid));
@@ -88,10 +87,9 @@ TEST(License, verifySignature) {
 
     std::cout << license << std::endl;
     bool authentic = verifySignature(publicKey, license, signature);
-    if ( authentic ) {
+    if (authentic) {
         std::cout << "Authentic" << std::endl;
     } else {
         std::cout << "Not Authentic" << std::endl;
     }
 }
-

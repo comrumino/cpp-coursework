@@ -1,20 +1,14 @@
-#include <memory>
-#include <iostream>
 #include "char-queue.h"
+#include <iostream>
+#include <memory>
 
-CharQueue::CharQueue()
-    :begin(0), count(0), size(1), queue(std::make_unique<char[]>(size + 1))
-{
-}
+CharQueue::CharQueue() : begin(0), count(0), size(1), queue(std::make_unique<char[]>(size + 1)) {}
 
-CharQueue::CharQueue(size_t _size)  // use _size instead of size so constructor doesn't shadow
-    :begin(0), count(0), size(_size ? _size : 1), queue(std::make_unique<char[]>(size + 1))
-{
-}
+CharQueue::CharQueue(size_t _size) // use _size instead of size so constructor doesn't shadow
+    : begin(0), count(0), size(_size ? _size : 1), queue(std::make_unique<char[]>(size + 1)) {}
 
-CharQueue::CharQueue(const CharQueue& src) 
-    :begin(src.begin), count(src.count), size(src.size), queue(std::make_unique<char[]>(src.size + 1))
-{
+CharQueue::CharQueue(const CharQueue &src)
+    : begin(src.begin), count(src.count), size(src.size), queue(std::make_unique<char[]>(src.size + 1)) {
     // get pointers and copy queue character by character so that the copy is deep
     auto q = queue.get();
     auto sq = src.queue.get();
@@ -26,12 +20,12 @@ CharQueue::CharQueue(const CharQueue& src)
 }
 
 void CharQueue::enqueue(char ch) {
-    if (ch == '\0') {  // CharQueue assumes that enqueued characters are not null, so do nothing
+    if (ch == '\0') { // CharQueue assumes that enqueued characters are not null, so do nothing
         return;
     }
     queue[(begin + count) % size] = ch;
     count++;
-    if (count == size) {  // resize when the queue is at capacity
+    if (count == size) { // resize when the queue is at capacity
         size_t newsize = size + (size >> 3) + (size < 9 ? 3 : 6);
         auto _queue = std::make_unique<char[]>(newsize + 1);
         auto q = queue.get();
@@ -53,18 +47,16 @@ char CharQueue::dequeue() {
     if (!isEmpty()) {
         --count;
         char ch = queue[begin++];
-        begin = begin % size;  // make sure begin is never the terminating null character
+        begin = begin % size; // make sure begin is never the terminating null character
         return ch;
-    } else {  // when the queue is empty return null char
-        return '\0'; 
+    } else { // when the queue is empty return null char
+        return '\0';
     }
 }
 
-bool CharQueue::isEmpty() const {
-    return count == 0;
-}
+bool CharQueue::isEmpty() const { return count == 0; }
 
-void CharQueue::swap(CharQueue& src) {  // exchange contents
+void CharQueue::swap(CharQueue &src) { // exchange contents
     CharQueue _src(src);
     src.size = size;
     src.begin = begin;
@@ -76,11 +68,9 @@ void CharQueue::swap(CharQueue& src) {  // exchange contents
     queue = std::move(_src.queue);
 }
 
-size_t CharQueue::capacity() const {
-   return size; 
-}
+size_t CharQueue::capacity() const { return size; }
 
-CharQueue& CharQueue::operator=(CharQueue src) {
+CharQueue &CharQueue::operator=(CharQueue src) {
     size = src.size;
     begin = src.begin;
     count = src.count;
@@ -96,7 +86,7 @@ CharQueue& CharQueue::operator=(CharQueue src) {
     return *this;
 }
 
-std::ostream& operator<<(std::ostream& os, const CharQueue& cq) {
+std::ostream &operator<<(std::ostream &os, const CharQueue &cq) {
     os << std::endl;
     os << "size: " << cq.size << std::endl;
     os << "begin: " << cq.begin << std::endl;
@@ -112,5 +102,5 @@ std::ostream& operator<<(std::ostream& os, const CharQueue& cq) {
         os << *p++;
     }
     os << std::endl << std::endl;
-    return os;  // return ostream to allow chaining
+    return os; // return ostream to allow chaining
 }

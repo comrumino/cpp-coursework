@@ -1,8 +1,8 @@
 #include "constraint_satisfaction.h"
+#include <cstdio>
+#include <iostream>
 #include <string>
 #include <vector>
-#include <iostream>
-#include <cstdio>
 
 const bool is_expired(std::string date) {
     // is suffices to verify the following conditions:
@@ -82,8 +82,7 @@ const bool is_devices(unsigned int devices) {
 
 ConstraintSatisfaction::ConstraintSatisfaction(std::string prdct, std::string lcns, std::string exp, std::string usrs,
                                                std::string rlsts, std::string devs, const bool signature)
-    :product(prdct), license(lcns), expiration(exp), signature(signature)
-{
+    : product(prdct), license(lcns), expiration(exp), signature(signature) {
     std::sscanf(usrs.c_str(), "%u", &users);
     std::sscanf(rlsts.c_str(), "%u", &rulesets);
     std::sscanf(devs.c_str(), "%u", &devices);
@@ -112,20 +111,12 @@ const bool ConstraintSatisfaction::is_valid() {
 
 NPLiveConstraint::NPLiveConstraint(std::string prdct, std::string lcns, std::string exp, std::string usrs,
                                    std::string rlsts, std::string devs, const bool signature)
-    :ConstraintSatisfaction(prdct, lcns, exp, usrs, rlsts, devs, signature)
-{
-}
+    : ConstraintSatisfaction(prdct, lcns, exp, usrs, rlsts, devs, signature) {}
 
-const bool NPLiveConstraint::is_discretionary() {
-   return false;
-}
+const bool NPLiveConstraint::is_discretionary() { return false; }
 
 NPViewConstraint::NPViewConstraint(std::string prdct, std::string lcns, std::string exp, std::string usrs,
                                    std::string rlsts, std::string devs, const bool signature)
-    :ConstraintSatisfaction(prdct, lcns, exp, usrs, rlsts, devs, signature)
-{
-}
+    : ConstraintSatisfaction(prdct, lcns, exp, usrs, rlsts, devs, signature) {}
 
-const bool NPViewConstraint::is_discretionary() {
-   return false;
-}
+const bool NPViewConstraint::is_discretionary() { return false; }

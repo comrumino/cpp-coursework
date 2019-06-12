@@ -1,10 +1,9 @@
-#include <iostream>
-#include <sstream>
 #include "TestHarness.h"
 #include "jstronz-2-1.h"
+#include <iostream>
+#include <sstream>
 
-TEST(int_ptr_swap, int)
-{
+TEST(int_ptr_swap, int) {
     int a = 1;
     int b = 2;
     std::stringstream s_expected_swap;
@@ -19,8 +18,7 @@ TEST(int_ptr_swap, int)
     CHECK_EQUAL(s_expected_swap.str(), s_test_ptr.str());
 }
 
-TEST(int_ref_swap, int)
-{
+TEST(int_ref_swap, int) {
     int a = 1;
     int b = 2;
     std::stringstream s_expected_swap;

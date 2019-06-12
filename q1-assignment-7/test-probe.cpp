@@ -3,7 +3,7 @@
 #include <iostream>
 #include <sstream>
 
-TEST(Probe, ctor) {  // verify inc_ctor works for the trivial case since dtor depends on ctor to be tested properly
+TEST(Probe, ctor) { // verify inc_ctor works for the trivial case since dtor depends on ctor to be tested properly
     Probe prb("ctor");
     prb.inc_ctor();
     CHECK_EQUAL(1, prb.get_ctor_calls());
@@ -19,12 +19,12 @@ TEST(Probe, dtor) {
     try {
         prb.inc_dtor();
         CHECK_FAIL("An error should have been thrown since `dtor_calls > ctor_calls`.");
-    } catch(int err_code) {
+    } catch (int err_code) {
         CHECK_EQUAL(1, err_code);
     }
 }
 
-TEST(Probe, inst) {  // verify inst count is the difference between ctor_calls and dtor_calls
+TEST(Probe, inst) { // verify inst count is the difference between ctor_calls and dtor_calls
     Probe prb("inst");
     prb.inc_ctor();
     prb.inc_ctor();
@@ -32,7 +32,7 @@ TEST(Probe, inst) {  // verify inst count is the difference between ctor_calls a
     CHECK_EQUAL(1, prb.get_inst_count());
 }
 
-TEST(Probe, static_probe) {  // verify that static probe works as expected, check ostreams of Overhead and nop_probe
+TEST(Probe, static_probe) { // verify that static probe works as expected, check ostreams of Overhead and nop_probe
     Probe nop_probe("nop");
     Overhead ovrhd0 = Overhead();
     std::stringstream res_probe;

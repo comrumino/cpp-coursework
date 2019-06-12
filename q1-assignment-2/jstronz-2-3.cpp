@@ -1,10 +1,9 @@
+#include "jstronz-2-3.h"
+#include <cstring>
 #include <iostream>
 #include <string>
-#include <cstring>
-#include "jstronz-2-3.h"
 
-char* cat(const char* char_arr1, const char* char_arr2)
-{
+char *cat(const char *char_arr1, const char *char_arr2) {
     // allocate a result array using the size of inputs
     auto res = new char[strlen(char_arr1) + strlen(char_arr2) + 1];
     auto p = res;
@@ -21,7 +20,4 @@ char* cat(const char* char_arr1, const char* char_arr2)
     return res;
 }
 
-std::string cat(const std::string& string1, const std::string& string2)
-{
-    return string1 + string2;
-}
+std::string cat(const std::string &string1, const std::string &string2) { return string1 + string2; }

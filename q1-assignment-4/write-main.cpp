@@ -1,9 +1,8 @@
+#include "write.h"
 #include <iostream>
 #include <string>
-#include "write.h"
-int main()
-{
-    const std::string newline("\n");  // streams convert to \r\n for windows automatically
+int main() {
+    const std::string newline("\n"); // streams convert to \r\n for windows automatically
 
     write(std::cout, 1);
     write(std::cout, newline);

@@ -1,9 +1,8 @@
-#include <sstream>
-#include <string>
 #include "TestHarness.h"
 #include "write.h"
-TEST(Write, int)
-{
+#include <sstream>
+#include <string>
+TEST(Write, int) {
     std::stringstream os;
     write(os, 1);
     CHECK_EQUAL("1", os.str());
@@ -12,9 +11,7 @@ TEST(Write, int)
     CHECK_EQUAL("-1", os.str());
 }
 
-
-TEST(Write, float)
-{
+TEST(Write, float) {
     std::stringstream os;
     write(os, 1.01f);
     CHECK_EQUAL("1.01", os.str());
@@ -23,8 +20,7 @@ TEST(Write, float)
     CHECK_EQUAL("-1.101", os.str());
 }
 
-TEST(Write, string)
-{
+TEST(Write, string) {
     std::stringstream os;
     const std::string strng("this is a false statement");
     write(os, strng);

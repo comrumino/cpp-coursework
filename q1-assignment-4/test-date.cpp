@@ -1,14 +1,12 @@
-#include <sstream>
-#include <string>
-#include <iostream>
-#include <sstream>
 #include "TestHarness.h"
 #include "jstronz-4-1.h"
+#include <iostream>
+#include <sstream>
+#include <string>
 
-TEST(DateTest, add_day)
-{
+TEST(DateTest, add_day) {
     Date date;
-    
+
     std::stringstream ymd;
     ymd << date.year << date.month << date.day;
     CHECK_EQUAL("000", ymd.str());
@@ -18,8 +16,7 @@ TEST(DateTest, add_day)
     CHECK_EQUAL("001", ymd.str());
 }
 
-TEST(DateTest, add_month)
-{
+TEST(DateTest, add_month) {
     Date date;
 
     std::stringstream ymd;
@@ -31,8 +28,7 @@ TEST(DateTest, add_month)
     CHECK_EQUAL("010", ymd.str());
 }
 
-TEST(DateTest, add_year)
-{
+TEST(DateTest, add_year) {
     Date date;
 
     std::stringstream ymd;

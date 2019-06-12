@@ -68,7 +68,7 @@ TWordsList WordFinder::FindWords() {
     auto nr = mBoard.NumRows();
     auto nc = mBoard.NumCols();
     // zero-th column and find diagnol for all i in [0, NumRows)---down right
-    for (auto i = 0; i < mBoard.NumRows() - 1; ++i) {  // skip already checked corner so NumRows-1
+    for (auto i = 0; i < mBoard.NumRows() - 1; ++i) { // skip already checked corner so NumRows-1
         tstr = "";
         for (auto j = 0; j < std::min(mBoard.NumCols(), mBoard.NumRows() - i); ++j) {
             tstr += mBoard(i + j, j);
@@ -79,7 +79,7 @@ TWordsList WordFinder::FindWords() {
         tfrags.clear();
     }
     // zero-th row and find diagnol for all j in [1, NumCols)---down right
-    for (auto j = 1; j < mBoard.NumCols() - 1; ++j) {  // skip already checked corner so NumCols-1
+    for (auto j = 1; j < mBoard.NumCols() - 1; ++j) { // skip already checked corner so NumCols-1
         tstr = "";
         for (auto i = 0; i < std::min(mBoard.NumCols() - j, mBoard.NumRows()); ++i) {
             tstr += mBoard(i, j + i);
@@ -95,7 +95,7 @@ TWordsList WordFinder::FindWords() {
     //    2 t a b
     //        1 2
     // zero-th column and find diagnol for all i in [0, NumRows)---up right
-    for (auto i = 1; i < mBoard.NumRows(); ++i) {  // skip corner already checked so i=0+1
+    for (auto i = 1; i < mBoard.NumRows(); ++i) { // skip corner already checked so i=0+1
         tstr = "";
         for (auto j = 0; j < 1 + i; ++j) {
             tstr += mBoard(i - j, j);
@@ -106,7 +106,7 @@ TWordsList WordFinder::FindWords() {
         tfrags.clear();
     }
     // last row and find diagnol for all j in [1, NumCols)---up right
-    for (auto j = 1; j < mBoard.NumCols() - 1; ++j) {  // skip corner already checked so NumCols-1
+    for (auto j = 1; j < mBoard.NumCols() - 1; ++j) { // skip corner already checked so NumCols-1
         tstr = "";
         for (auto i = 0; i < j; ++i) {
             tstr += mBoard(mBoard.NumCols() + i - j, j);

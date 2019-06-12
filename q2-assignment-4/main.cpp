@@ -62,7 +62,7 @@ inline QueueBase::QueueBase(const QueueBase &other)
 inline int QueueBase::Size() const {
     if (IsEmpty()) // m_Head == -1 && m_Tail == -1
         return 0;
-    else if (IsFull()) // m_Head % m_Capacity == m_Tail % m_Capacity 
+    else if (IsFull()) // m_Head % m_Capacity == m_Tail % m_Capacity
         return m_Capacity;
     else if (m_Head > m_Tail)
         return m_Head - m_Tail;
@@ -105,7 +105,10 @@ template <typename T> class Queue : public QueueBase {
 
 template <typename T> Queue<T>::Queue(unsigned int capacity) : QueueBase(capacity), m_Array(new T[m_Capacity]) {}
 
-template <typename T> Queue<T>::~Queue() { if (m_Array != nullptr) delete[] m_Array; }
+template <typename T> Queue<T>::~Queue() {
+    if (m_Array != nullptr)
+        delete[] m_Array;
+}
 
 template <typename T> Queue<T>::Queue(const Queue<T> &other) : QueueBase(other), m_Array(new T[m_Capacity]) {
     Copy(other);
@@ -185,7 +188,7 @@ template <typename T> template <typename T2> void Queue<T>::Copy(const Queue<T2>
         m_Tail = 0;
         if (other.m_Head > other.m_Tail) { // elements are contiguous
             for (int i = other.m_Tail; i < other.m_Head; ++i) {
-                m_Array[m_Head] = other.m_Array[i];  
+                m_Array[m_Head] = other.m_Array[i];
                 ++m_Head;
             }
         } else { // elements are not contiguous so do from start to head and tail to end
@@ -337,8 +340,8 @@ TEST(Queue, Empty) {
     Queue<int> q(2); // head = tail = -1
     CHECK_EQUAL(true, q.IsEmpty());
     CHECK_EQUAL(false, q.IsFull());
-    q.Push(1);       // head = tail = 0
-    q.Pop();         // head = tail = -1 (queue is empty)
+    q.Push(1); // head = tail = 0
+    q.Pop();   // head = tail = -1 (queue is empty)
 
     try {
         q.Pop(); // this must throw an exception

@@ -1,7 +1,7 @@
-#include <iostream>
-#include <sstream>
 #include "TestHarness.h"
 #include "char-queue.h"
+#include <iostream>
+#include <sstream>
 
 TEST(CharQueue, construct_sizes) {
     std::stringstream cqss;

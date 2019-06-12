@@ -2,10 +2,10 @@
 #include <deque>
 
 class CharQueue {
-private:
+  private:
     std::deque<char> queue;
 
-public:
+  public:
     CharQueue();
     CharQueue(size_t size);
     // CharQueue(const CharQueue& src);  // use default constructor, per prompt
@@ -14,11 +14,11 @@ public:
     char dequeue();
 
     bool isEmpty() const;
-    void swap(CharQueue& src);
+    void swap(CharQueue &src);
 
     size_t capacity() const;
 
     // CharQueue& operator=(CharQueue src);  // use default assignment operator, per prompt
     // global function is friend of class, so can access private
-    friend std::ostream& operator<<(std::ostream& os, const CharQueue& cq);
+    friend std::ostream &operator<<(std::ostream &os, const CharQueue &cq);
 };

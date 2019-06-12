@@ -1,7 +1,7 @@
+#include "test-char-queue-deque.h"
+#include "TestHarness.h"
 #include <iostream>
 #include <sstream>
-#include "TestHarness.h"
-#include "test-char-queue-deque.h"
 
 TEST(CharQueue, construct_sizes) {
     std::stringstream cqss;

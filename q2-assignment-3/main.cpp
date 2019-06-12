@@ -35,7 +35,7 @@ bool ParenthesisChecker::IsWellFormed(const string &str) {
         if (*it == '[' || *it == '{' || *it == '(') { // is open, set expectation
             pstack.push(bracket_open_close.find(*it)->second);
         } else if (*it == ']' || *it == '}' || *it == ')') { // is it close, then check if it does not expectations
-            if (pstack.empty() || pstack.top() != *it) // if empty or not as expected, no good
+            if (pstack.empty() || pstack.top() != *it)       // if empty or not as expected, no good
                 valid = false;
             else
                 pstack.pop();
