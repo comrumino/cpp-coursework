@@ -5,12 +5,7 @@
 #include <sstream>
 #include <string>
 
-static std::string dequeIntName = typeid(std::deque<int>).name();
-static std::string dequeCharName = typeid(std::deque<char>).name();
-static std::string dequeStringName = typeid(std::deque<std::string>).name();
-static std::string listIntName = typeid(std::list<int>).name();
-static std::string listCharName = typeid(std::list<char>).name();
-static std::string listStringName = typeid(std::list<std::string>).name();
+#define RUN_MAIN 1
 
 class BaseException {
   public:
@@ -62,29 +57,24 @@ Queue<qContainer> &Queue<qContainer>::operator=(const Queue<qContainer2> &other)
 
 template <typename qContainer> std::string Queue<qContainer>::describe() const {
     std::stringstream desc;
-    std::string containerName(typeid(qContainer).name());
-    std::string prettyContainerName(containerName); // init w/ default value
-    if (containerName == dequeIntName)
-        prettyContainerName = "Queue<deque<int>>";
-    if (containerName == dequeCharName)
-        prettyContainerName = "Queue<deque<char>>";
-    if (containerName == dequeStringName)
-        prettyContainerName = "Queue<deque<string>>";
-    if (containerName == listIntName)
-        prettyContainerName = "Queue<list<int>>";
-    if (containerName == listCharName)
-        prettyContainerName = "Queue<list<char>>";
-    if (containerName == listStringName)
-        prettyContainerName = "Queue<list<string>>";
-
-    desc << "qContainer: " << prettyContainerName;
+    desc << "inside Queue base";
     return desc.str();
 }
+
+template <> std::string Queue<std::deque<int>>::describe() const {
+    std::stringstream desc;
+    desc << "inside Queue<deque<int>>";
+    return desc.str();
+}
+
 template <typename qContainer> void Queue<qContainer>::push(const Elmt &e) { mContainer.push_back(e); }
 
 template <typename qContainer> int Queue<qContainer>::size() const { return mContainer.size(); }
 
 template <typename qContainer> typename Queue<qContainer>::Elmt Queue<qContainer>::pop() {
+#if RUN_MAIN
+    std::cout << describe() << std::endl;
+#endif
     Elmt rv;
     if (!mContainer.empty()) {
         rv = mContainer.front();
@@ -95,7 +85,7 @@ template <typename qContainer> typename Queue<qContainer>::Elmt Queue<qContainer
     return rv;
 }
 
-#if 1
+#if RUN_MAIN
 // Please don't modify
 int main(int argc, char **argv) {
     Queue<std::deque<int>> q;
@@ -109,14 +99,10 @@ int main(int argc, char **argv) {
 
     Queue<std::deque<char>> q2;
     q2.push('c');
-    std::cout << q.describe() << " popped the value " << q.pop() << std::endl;
+    std::cout << q2.pop() << std::endl;
 
-    std::cout << q2.describe() << " popped the value " << q2.pop() << std::endl;
-    try {
-        q2.pop();
-    } catch (QueueEmptyException exc) {
-        std::cout << q2.describe() << " had thrown an exception '" << exc.message() << "'" << std::endl;
-    }
+    std::cout << q.pop() << std::endl;
+    q = q2;
 }
 #else
 #include "TestHarness.h"
@@ -128,7 +114,7 @@ TEST(Queue, DequeueInt) {
     q.push(3);
     CHECK_EQUAL(1, q.pop());
     CHECK_EQUAL(2, q.size());
-    CHECK_EQUAL("qContainer: Queue<deque<int>>", q.describe());
+    CHECK_EQUAL("inside Queue<deque<int>>", q.describe());
 }
 
 TEST(Queue, DequeueChar) {
@@ -136,7 +122,7 @@ TEST(Queue, DequeueChar) {
     q2.push('c');
     CHECK_EQUAL('c', q2.pop());
     CHECK_EQUAL(0, q2.size());
-    CHECK_EQUAL("qContainer: Queue<deque<char>>", q2.describe());
+    CHECK_EQUAL("inside Queue base", q2.describe());
 }
 
 TEST(Queue, ListString) {
@@ -144,7 +130,7 @@ TEST(Queue, ListString) {
     qListStr.push("hello world");
     CHECK_EQUAL("hello world", qListStr.pop());
     CHECK_EQUAL(0, qListStr.size());
-    CHECK_EQUAL("qContainer: Queue<list<string>>", qListStr.describe());
+    CHECK_EQUAL("inside Queue base", qListStr.describe());
     std::string exc_msg = "";
     try {
         qListStr.pop();
