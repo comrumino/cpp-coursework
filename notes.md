@@ -19,6 +19,7 @@
 
 ## Design Philosophy
 * encapsulation, coupling, cohesion, shared data, and synchronization (starting, waiting, and in-background)
+* concurrent data structures should consider contention, false-sharing, and data proximity
 * easy to use right, hard to use wrong
 * procedural paradigm, algorithms are required to solve our problem (provide a function values to provide answer)
 * data-driven paradigm, the relationships between data and its abstractions is often more important than algorithms
@@ -28,6 +29,7 @@
 * object-orientated paradigm, adds inheritance to polymorphism to object-based paradigm
 * a function is where logically separate computation starts---best point to think about correct code and catch errors
 * is it easy to know when a boundary condition is violated    
+* test design, consider scalability of multi-threaded applications and explore possibility of contention
 
 ## Type Conversion
 * nonbool -> if value == 0 then false, so nonzero is true
@@ -190,6 +192,15 @@
 * mutex, (mutual exclusion) synchronization primitive used to lock the associated data while being accessed and unlocked when done
     * protect the right data---deadlocks, too much, or too little
 * oversubscription, when the number of threads running decreases performance due to task switching overhead
+* cache ping-pong, passing data back and forth between caches many times
+* mutex cache ping-pong, allows the system to schedule another ready-to-run thread while waiting for the mutex
+* atomic operation cache ping-pong, at the processor level causes a stall which does not allow anything else to run
+* high contention, processor one is waiting to update a value and processor two is currently updating; processor one has to wait for two to finish and for the change to propagate
+* cache-lines, blocks of memory which store 32/64 bytes of data
+* false sharing, the cache-line is shared between threads and the data is not which results in cache ping-pong 
+* scalability, the application can take advantage of additional processors (see Amdahl's law)
+* lock-free queue, this could still be a time-sink so consider separate work queue per thread (post work to local queue, check local queue for work, and check global queue for work if local is empty)
+* work stealing, a design which allows a thread with no work to steal work from a thread with a full queue
 
 
 ## Shared pointers
