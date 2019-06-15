@@ -18,14 +18,15 @@
 * if the comment and code disagree, both are most likely wrong
 
 ## Design Philosophy
+* encapsulation, coupling, cohesion, shared data, and synchronization (starting, waiting, and in-background)
 * easy to use right, hard to use wrong
 * procedural paradigm, algorithms are required to solve our problem (provide a function values to provide answer)
 * data-driven paradigm, the relationships between data and its abstractions is often more important than algorithms
-* functional paradigm, composition of functions without state and mutable data are independent of execution order---so, the functions can be executed in parrallel...
+* functional paradigm, composition of functions without state and mutable data are independent of execution order---so, the functions can be executed in parallel...
 * logical programs, logical expressions or statements to encapsulate the data and functions    
 * object-based paradigm, organization is based on interactions of objects so that ultimately a solution can be found
-* object-orientatd paradigm, adds inheritcance to polymorphism to object-based paradigm
-* a function is where logically separate copmutation starts---best point to think about correct code and catch errors
+* object-orientated paradigm, adds inheritance to polymorphism to object-based paradigm
+* a function is where logically separate computation starts---best point to think about correct code and catch errors
 * is it easy to know when a boundary condition is violated    
 
 ## Type Conversion
@@ -56,7 +57,7 @@
 * clash, two incompatible declarations within the same scope
 * pre-conditions, function argument requirements to run properly (doc if always good arguments, not too slow, not too complicated).
 * post-conditions, the promis of what is returned
-* invariant, a set of constraints which make the state valid (a rule for object value)
+* invariant, a rules/statement which is always true
 * state, the value of an object
 * valid state, the idea of a valid value
 * lvalues persist and rvalues are ephemeral
@@ -121,16 +122,6 @@
 * downcast, by dynamic_cast mostly for debugging
 * base class, should almost always have a virtual destructor (why?)
 * Derived object has a subobject for itself and each base class which allows a reference/pointer to be bound to the base
-* task switch, doing a bit of one task followed by doing a bit of another task
-* context switch, the system operations that are performed to switch from one task to another
-    * save CPU state and instruction pointer
-    * determine the next task
-    * reload CPU state
-    * sometimes the instructions load from memory into cache and prevent CPU from executing instructions meanwhile
-* concurrency, a system performing multiple activites in parallel
-* concurrency illusion, single-core interleaves tasks and multiple activities are quick enough to feel like parallelism
-* hardware concurrency, multi-core or multi-processor systems can complete multiple activities in parallel
-* hardware threads, the number of independent tasks a processor can genuinely run concurrently
 
 ## Condensed quarter two
 * overloaded operator, redefine the built-in operation---member of class or operand of type class
@@ -174,6 +165,32 @@
 * trailing return types, `auto fcn(It beg, It end) -> typename remove_reference<decltype(*beg)>::type` if the function template return type is a related type of a template type parameter, instantiation of all possibilities is burdensome
 * type transformation template, metaprogramming, tranform a given template type parameter to a related type
 * variadic template, varying number of template arguments---use template parmeter pack
+
+## Condensed concurrency
+* task switch, doing a bit of one task followed by doing a bit of another task
+* context switch, the system operations that are performed to switch from one task to another
+    * save CPU state and instruction pointer
+    * determine the next task
+    * reload CPU state
+    * sometimes the instructions load from memory into cache and prevent CPU from executing instructions meanwhile
+* concurrency, a system performing multiple activites in parallel
+* concurrency illusion, single-core interleaves tasks and multiple activities are quick enough to feel like parallelism
+* hardware concurrency, multi-core or multi-processor systems can complete multiple activities in parallel
+* hardware threads, the number of independent tasks a processor can genuinely run concurrently
+* task parallelism, takes the parts of a task and does them concurrently (a task is divided in terms of processing)
+* data parallelism, takes the parts of data and process them concurrently (a task is divided in terms of data)
+* conveinently concurrent, a task which is easily made parallel in terms of processing or data
+* cost benefit, added complexity (likeli-hood of bugs), performance gain, overhead of thread spawning, and separation of concerns
+* client/server application, thread for each connection will at some point reduce overall performance due to task switching
+* abstraction penalty, the cost of using high-level facilities in terms of performance (but increased coherence and decreased errors)
+* data race, concurrent modification of the same object resulting in undefined behavior
+* lock-free programming, (difficult to get right) desing the data structure and its invariants so that modifcations are done as a series of indivisible changes which preserves the invariants
+* transaction, series of reads and writes followed by a commit all done in a single step. if can't proceed, then restarted
+* uniform initialization syntax, one use is to avoid "C++'s most vexing parse" (like accidental prototype of thread)
+* mutex, (mutual exclusion) synchronization primitive used to lock the associated data while being accessed and unlocked when done
+    * protect the right data---deadlocks, too much, or too little
+* oversubscription, when the number of threads running decreases performance due to task switching overhead
+
 
 ## Shared pointers
 * shared pointer, syntax `std::shared_ptr<int[]> sharedValues = std::make_shared<int[]>(20);` allows multiple clients to share access to that dynamically allocated heap memory by using reference counting use unique pointer unless you really need sharing
