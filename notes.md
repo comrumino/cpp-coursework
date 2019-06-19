@@ -201,6 +201,9 @@
 * scalability, the application can take advantage of additional processors (see Amdahl's law)
 * lock-free queue, this could still be a time-sink so consider separate work queue per thread (post work to local queue, check local queue for work, and check global queue for work if local is empty)
 * work stealing, a design which allows a thread with no work to steal work from a thread with a full queue
+* thread-safe, no data loss or corruption, all invariants are upheld, and no race conditions
+* serialization, preventing genuine concurrent access and requires threads to access it serially
+* atomic action, indivisble sequence of primitive operations that must be complete without interruption
 
 
 ## Shared pointers
