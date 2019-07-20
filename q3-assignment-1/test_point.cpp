@@ -1,8 +1,8 @@
 #include "TestHarness.h"
 #include "point.h"
-#include <string>
-#include <sstream>
 #include <iostream>
+#include <sstream>
+#include <string>
 
 TEST(Point, stream_operator) { // verify trivial class, streams as expected
     Point pt(0, 1);
@@ -10,7 +10,6 @@ TEST(Point, stream_operator) { // verify trivial class, streams as expected
     ss << pt;
     CHECK_EQUAL("(0,1)", ss.str());
 }
-
 
 TEST(Point, direct_ctor) {
     Point pt(1, 0);
@@ -20,7 +19,7 @@ TEST(Point, direct_ctor) {
 }
 
 TEST(Point, default_ctor) {
-    Point pt;  // reminder, Point pt() is a vexing parse
+    Point pt; // reminder, Point pt() is a vexing parse
     std::stringstream ss;
     ss << pt;
     CHECK_EQUAL("(0,0)", ss.str());
@@ -56,4 +55,3 @@ TEST(Point, equality) {
     CHECK_EQUAL(1, pt0 == pt0);
     CHECK_EQUAL(1, pt1 == pt1);
 }
-
