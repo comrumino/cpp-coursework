@@ -1,20 +1,29 @@
 #pragma once
 #include <iostream>
-class Point
-{
+
+class Point {
 public:
 
- Point();
+ Point();  // default ctor
 
- Point(int x, int y);
+ Point(int x, int y);  // direct ctor
 
- Point(const Point& other);
+ Point(const Point& other);  // copy ctor
 
- Point(Point &&other);
+ Point(Point &&other);  // move ctor
 
  ~Point();
- 
+ int getX() const;
+ int getY() const;
+ void setX(int rhs_x_coord);
+ void setY(int rhs_y_coord);
+ Point& operator=(const Point& rhs);
+ bool operator==(const Point& rhs);
+ friend std::ostream &operator<<(std::ostream &os, const Point &point); 
 private:
- int myX{ 0 };
- int myY{ 0 };
+ int x_coord{ 0 };
+ int y_coord{ 0 };
 };
+
+
+

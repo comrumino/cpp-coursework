@@ -12,17 +12,18 @@ void trim(std::string& sourceString, std::string const& trimmables) {
 };
 void eat(std::istream& sourceStream, std::string const& edibles) {
     char lead_char = '\0';
-    while (sourceStream.cur != sourceStream.end) {
-        lead_char = sourceStream.peek();
-        if (edibles.find(lead_char) != -1) {
-            sourceStream.seekg(1, sourceStream.cur);
-        } else {
-            //sourceStream.seekg(-1, sourceStream.cur);
-            //lead_char = sourceStream.peek();
-            //sourceStream.ignore(std::numeric_limits<std::streamsize>::max(), lead_char);
-            break;
+    if (sourceStream) {
+        while (sourceStream.cur != sourceStream.end) {
+            lead_char = sourceStream.peek();
+            if (edibles.find(lead_char) != -1) {
+                sourceStream.seekg(1, sourceStream.cur);
+            } else {
+                break;
+            }
+    
         }
-
+    } else {
+        std::cout << "An istream with error state was provided to eat. Skipping it..." << std::endl;
     }
 };
 

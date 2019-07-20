@@ -5,11 +5,11 @@ using Points = std::vector<Point>;
 
 class VectorGraphic {
     public:
-        VectorGraphic();
-        ~VectorGraphic();
+        VectorGraphic() = default;
+        ~VectorGraphic() = default;
 
-        void addPoint(const Point& p);    
-        void removePoint(const Point& p);
+        void addPoint(const Point& point);    
+        void removePoint(const Point& point);
         void erasePoint(int index);
 
         void openShape();
@@ -25,7 +25,6 @@ class VectorGraphic {
         Point getPoint(int index) const;
 
     private:
-        Points myPath;
-
-        // ...
+        Points points;
+        bool is_open = false;
 };
