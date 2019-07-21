@@ -25,6 +25,7 @@ class VectorGraphic {
 
     int getPointCount() const;
     Point getPoint(int index) const;
+    friend std::ostream & operator<<(std::ostream &os, const VectorGraphic& vg);
 
   private:
     Points points;

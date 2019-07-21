@@ -99,3 +99,18 @@ Point VectorGraphic::getPoint(int index) const {
     }
     return points.at(index);
 }
+std::ostream &operator<<(std::ostream &os, const VectorGraphic &vg) {
+    std::string closed = (vg.isClosed()) ? "true" : "false";
+    os << "<VectorGraphic closed=\"" << closed << "\"";
+    if (vg.getPointCount() == 0) {
+        os << "/>\n";
+    } else {
+        os << ">\n";
+        for (auto pt : vg.points) {
+            os << pt << "\n";
+        }
+        os << "</VectorGraphic>";
+    }
+    return os;
+}
+

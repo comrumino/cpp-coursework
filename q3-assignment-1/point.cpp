@@ -45,6 +45,6 @@ bool Point::operator==(const Point &rhs) {
 }
 
 std::ostream &operator<<(std::ostream &os, const Point &point) {
-    os << "(" << point.x_coord << "," << point.y_coord << ")";
+    os << "<Point x=\"" << point.x_coord << "\" y=\"" << point.y_coord << "\"/>";
     return os;
 }

@@ -111,6 +111,14 @@ TEST(VectorGraphic, get_width_height) {
         CHECK_EQUAL(!i ? i : std::pow(2, i), vector_graphic.getWidth());
         CHECK_EQUAL(!i ? i : std::pow(3, i), vector_graphic.getHeight());
     }
+    std::stringstream ss;
+    ss << vector_graphic;
+    std::string exp = "<VectorGraphic closed=\"true\">\n"
+                      "<Point x=\"0\" y=\"0\"/>\n"
+                      "<Point x=\"2\" y=\"3\"/>\n"
+                      "<Point x=\"4\" y=\"9\"/>\n"
+                      "</VectorGraphic>";
+    CHECK_EQUAL(ss.str(), exp);
     for (int i = points.size() - 1; i >= 0; --i) {
         CHECK_EQUAL(!i ? i : std::pow(2, i), vector_graphic.getWidth());
         CHECK_EQUAL(!i ? i : std::pow(3, i), vector_graphic.getHeight());

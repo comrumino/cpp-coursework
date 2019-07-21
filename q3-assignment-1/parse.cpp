@@ -4,13 +4,25 @@
 #include <limits>
 #include <map>
 #include <regex>
+#include <fstream>
 #include <sstream>
 #include <string>
 
 void trim(std::string &sourceString, std::string const &trimmables) {
+    std::string::reverse_iterator tmp = sourceString.rend();
+    bool read_only = false;
     for (auto rit = sourceString.rbegin(); rit != sourceString.rend(); ++rit) {
-        if (trimmables.find(*rit) != -1)
-            sourceString.erase((rit + 1).base());
+        if (trimmables.find(*rit) != -1) {
+            if (!read_only) {
+                sourceString.erase((rit + 1).base());
+            }
+        } else {
+            tmp = rit + 1;
+            read_only = true;
+        }
+    }
+    for (auto rit = tmp; rit != sourceString.rend(); ++rit) {
+        sourceString.erase((rit + 1).base());
     }
 };
 
@@ -62,7 +74,7 @@ bool valid_tag_close(std::string::iterator &it, const std::string tag_name) {
 
 std::string vectorgraphic_regex =
     "(?:<VectorGraphic\\s+(?:(closed)\\s*)=\\s*\"(?:(false|true)\"|'(false|true)')\\s*(>|/>)|</VectorGraphic>)";
-std::string point_regex = "<Point\\s+(x|y)\\s*?=\\s*?(?:\"([0-9]*)\"|'([0-9]*)')\\s*\\s+(x|y)\\s*?=\\s*?(?:\"([0-9]*)"
+std::string point_regex = "<Point\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)\"|'([^']*)')\\s*\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)"
                           "\"|'([0-9]*)')(>(?:\\s*\\n?)</Point>|(?:\\s*\\n?)/>)";
 std::regex xml("(?:" + vectorgraphic_regex + "|" + point_regex + ")");
 
@@ -90,7 +102,7 @@ void tag_context(bool &elmnt, bool &exit, const std::string msg, bool expected_e
     }
 }
 
-void parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_graphics) {
+bool parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_graphics) {
     std::smatch match;
     std::string group = "";
     std::vector<std::string> attributes;
@@ -106,7 +118,7 @@ void parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_grap
         for (auto iit = it->begin(); iit != it->end(); iit++) {
             group = *iit;
             if (group != "") {
-                if (group.find("</VectorGraphic>") != -1) {
+                if (group.find("</VectorGraphic>") != -1 && group.find("<VectorGraphic") == -1) {
                     tag_context(vg_elmnt, exit, "Malformed xml: VectorGraphic end tag before start tag", true);
                     if (exit) {
                         break;
@@ -203,4 +215,48 @@ void parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_grap
             break;
         }
     }
+    return !exit;
+}
+
+bool read_file(const std::string infile, std::ostream &fcontent) {
+    std::ifstream fhandle(infile, std::ios::in);
+    std::string line;
+    bool success = false;
+    fcontent.clear();
+    if (!fhandle.good()) {
+        std::cout << "File not found: " << infile << std::endl;
+    } else if (fhandle.is_open()) {
+        while (std::getline(fhandle, line)) {
+            trim(line, " \t\n\r");
+            fcontent << line;
+        }
+        fhandle.close();
+        success = true;
+    }
+    return success;
+}
+
+bool from_file(const std::string infile, std::vector<VectorGraphic>& vector_graphics) {
+    std::stringstream fcontent;
+    if (!read_file(infile, fcontent)) {
+        return false;
+    } else if (!parse_xml(fcontent.str(), vector_graphics)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+bool to_file(const std::string outfile, std::vector<VectorGraphic>& vector_graphics) {
+    std::ofstream fhandle(outfile);
+    bool success = false;
+    if (!fhandle.good()) {
+        std::cout << "Failed to create output file " << outfile << std::endl;
+    } else if (fhandle.is_open()) {
+        for (auto vg : vector_graphics) {
+            fhandle << vg << std::endl;
+        }
+        success = true;
+    }
+    return success;
 }

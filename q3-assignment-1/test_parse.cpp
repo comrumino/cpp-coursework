@@ -5,6 +5,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
+#include <fstream>
 
 TEST(trim, trim_quote) {
     const std::string trimmables("\"");
@@ -25,6 +26,13 @@ TEST(trim, trim_empty_trimmables) {
     std::string quoted_value("\"value\"");
     trim(quoted_value, trimmables);
     CHECK_EQUAL("\"value\"", quoted_value);
+}
+
+TEST(trim, trim_spaced) {
+    const std::string trimmables(" ");
+    std::string quoted_value(" fee fie foe foo ");
+    trim(quoted_value, trimmables);
+    CHECK_EQUAL("fee fie foe foo", quoted_value);
 }
 
 TEST(trim, trim_hmmm_bert) {
@@ -75,7 +83,7 @@ TEST(eat, eat_error_istream) {
 
 // example unit tests
 TEST(trimBeginning, Parse) {
-    std::string actual{"  \tHello"};
+    std::string actual{" \t Hello"};
     trim(actual, " \t\n");
 
     CHECK_EQUAL("Hello", actual);
@@ -177,7 +185,6 @@ TEST(xml, xml_point_good) {
     }
 }
 TEST(xml, xml_point_bad) {
-    /*
     std::string complete_xml = "<VectorGraphic closed=\"true\">"
                                "  <Point x=\"0\" y=\"0\" />\n"
                                "  <Point x=\"10\" y=\"0\"></Point>\n"
@@ -186,10 +193,57 @@ TEST(xml, xml_point_bad) {
                                "  <Point x='0\"' y=\"null\" />\n"
                                "</VectorGraphic>";
     std::vector<VectorGraphic> vector_graphics;
-    CHECK_EQUAL(4, vector_graphics.size());
     parse_xml(complete_xml, vector_graphics);
-    std::string empty_element = "<VectorGraphic closed=\"false\"/>";
-    parse_xml(empty_element, vector_graphics);
-    parse_xml(complete_xml+empty_element, vector_graphics);
-    */
+    CHECK_EQUAL(0, vector_graphics.size());
+}
+TEST(xml, from_file) {
+    std::string complete_xml = "<VectorGraphic closed=\"true\">"
+                               "  <Point x=\"0\" y=\"0\" />\n"
+                               "  <Point x=\"10\" y=\"0\"></Point>\n"
+                               "  <Point x=\"10\" y='10\'>  \n   </Point>\n"
+                               "     </VectorGraphic>";
+    std::vector<VectorGraphic> vector_graphics;
+    const std::string infile = "Testing_from_file.xml";
+    // create the file
+    std::ofstream fhandle(infile);
+    if (fhandle.good()) {
+        fhandle << complete_xml;
+    } else {
+        std::cout << "File handle was not good." << std::endl;
+        CHECK_EQUAL(0, fhandle.good());
+    }
+    fhandle.close();
+    // run tests
+    from_file(infile, vector_graphics);
+    CHECK_EQUAL(1, vector_graphics.size());
+    CHECK_EQUAL(3, vector_graphics.at(0).getPointCount());
+    CHECK_EQUAL(0, std::remove(infile.c_str()));
+}
+
+TEST(xml, to_file) {
+    std::vector<VectorGraphic> vector_graphics;
+    VectorGraphic vector_graphic;
+    Points points{Point(0, 0), Point(10, 0), Point(0, 10)};
+    // populate vector_graphics data to serialize
+    vector_graphic.closeShape();
+    for (auto pt : points) {
+        vector_graphic.addPoint(pt);
+    }
+    vector_graphics.push_back(vector_graphic);
+    // spot check data before serialize
+    CHECK_EQUAL(1, vector_graphics.size());
+    CHECK_EQUAL(3, vector_graphics.at(0).getPointCount());
+    // serialize
+    const std::string outfile = "Testing.xml";
+    std::ofstream fhandle(outfile);
+    to_file(outfile, vector_graphics);
+    // 
+    std::stringstream fcontent;
+    read_file(outfile, fcontent);
+    std::string expected_xml = "<VectorGraphic closed=\"true\">"
+                               "<Point x=\"0\" y=\"0\"/>"
+                               "<Point x=\"10\" y=\"0\"/>"
+                               "<Point x=\"0\" y=\"10\"/>"
+                               "</VectorGraphic>";
+    CHECK_EQUAL(expected_xml, fcontent.str());
 }
