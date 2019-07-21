@@ -5,10 +5,13 @@ using Points = std::vector<Point>;
 
 class VectorGraphic {
   public:
-    VectorGraphic() = default;
-    ~VectorGraphic() = default;
-    VectorGraphic(const VectorGraphic &rhs);
-    VectorGraphic &operator=(const VectorGraphic &rhs);
+    // Rule of 5, in this case default definitions would have sufficed. Even so
+    VectorGraphic(); // default ctor
+    ~VectorGraphic(); // default dtor
+    VectorGraphic(const VectorGraphic &rhs); // copy ctor
+    VectorGraphic(VectorGraphic &&rhs) noexcept; // copy ctor
+    VectorGraphic &operator=(const VectorGraphic &rhs);  // assign ctor
+    VectorGraphic &operator=(VectorGraphic &&rhs) noexcept;  // move assign ctor
 
     void addPoint(const Point &point);
     void removePoint(const Point &point);

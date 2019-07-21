@@ -2,29 +2,18 @@
 #include "point.h"
 #include <algorithm>
 #include <vector>
-/*
-class BaseException {
-  public:
-    BaseException() {}
-    virtual ~BaseException() {}
 
-    virtual const char *message() const noexcept = 0;
-};
-
-class VectorGraphicEmptyException : public BaseException {
-  public:
-    VectorGraphicEmptyException() = default;
-    const char *message() const noexcept override;
-};
-
-const char *VectorGraphicEmptyException::message() const noexcept { return "VectorGraphicEmpty"; }
 VectorGraphic::VectorGraphic() {
+    /* std::cout << "Point default ctor" << std::endl; */
 }
 VectorGraphic::~VectorGraphic() {
+    // std::cout << "Point default dtor" << std::endl;
 }
-*/
 VectorGraphic::VectorGraphic(const VectorGraphic &rhs) : points{rhs.points}, is_open{rhs.is_open} {
     // std::cout << "VectorGraphic direct ctor" << std::endl;
+}
+VectorGraphic::VectorGraphic(VectorGraphic &&other) noexcept
+    : points{std::exchange(other.points, Points())},  is_open{std::exchange(other.is_open, false)} {
 }
 VectorGraphic &VectorGraphic::operator=(const VectorGraphic &rhs) {
     // std::cout << "VectorGraphic assign ctor" << std::endl;
@@ -32,6 +21,11 @@ VectorGraphic &VectorGraphic::operator=(const VectorGraphic &rhs) {
         this->points = rhs.points;
         this->is_open = rhs.is_open;
     }
+    return *this;
+}
+VectorGraphic &VectorGraphic::operator=(VectorGraphic &&other) noexcept {
+    std::swap(points, other.points);
+    std::swap(is_open, other.is_open);
     return *this;
 }
 

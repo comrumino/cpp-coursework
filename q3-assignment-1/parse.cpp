@@ -2,11 +2,17 @@
 #include "vectorgraphic.h"
 #include <iostream>
 #include <limits>
-#include <map>
 #include <regex>
 #include <fstream>
 #include <sstream>
 #include <string>
+
+std::string::size_type sz;
+const std::string vectorgraphic_regex = "(?:<VectorGraphic\\s+(?:(closed)\\s*)=\\s*\"(?:(false|true)\"|'(false|true)')"
+                                  "\\s*(>|/>)|</VectorGraphic>)";
+const std::string point_regex = "<Point\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)\"|'([^']*)')\\s*"
+                          "\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)\"|'([0-9]*)')(>(?:\\s*\\n?)</Point>|(?:\\s*\\n?)/>)";
+const std::regex xml("(?:" + vectorgraphic_regex + "|" + point_regex + ")");
 
 void trim(std::string &sourceString, std::string const &trimmables) {
     std::string::reverse_iterator tmp = sourceString.rend();
@@ -25,7 +31,6 @@ void trim(std::string &sourceString, std::string const &trimmables) {
         sourceString.erase((rit + 1).base());
     }
 };
-
 void eat(std::istream &sourceStream, std::string const &edibles) {
     char lead_char = '\0';
     if (sourceStream) {
@@ -41,43 +46,6 @@ void eat(std::istream &sourceStream, std::string const &edibles) {
         std::cout << "An istream with error state was provided to eat. Skipping it..." << std::endl;
     }
 };
-std::string::size_type sz;
-/*bool valid_tag_open(std::string::iterator &it) {
-    return false;
-}
-bool valid_tag_close() {
-    return false;
-}
-bool valid_start_tag() {
-    // valid_tag_open
-    // valid_tag_close
-    return false;
-}
-bool is_empty() {
-    return false;
-}
-
-bool valid_element_close(std::string::iterator &it, const std::string tag_name) {
-    // "/>" or "</tag_name>"
-    return false;
-}
-
-bool valid_tag_close(std::string::iterator &it, const std::string tag_name) {
-    // >
-    return false;
-}*/
-
-/*std::map<std::string, int> pickup_attributes(std::string::iterator &it){
-    std::map<std::string, int> attributes;
-    return attributes;
-}*/
-
-std::string vectorgraphic_regex =
-    "(?:<VectorGraphic\\s+(?:(closed)\\s*)=\\s*\"(?:(false|true)\"|'(false|true)')\\s*(>|/>)|</VectorGraphic>)";
-std::string point_regex = "<Point\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)\"|'([^']*)')\\s*\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)"
-                          "\"|'([0-9]*)')(>(?:\\s*\\n?)</Point>|(?:\\s*\\n?)/>)";
-std::regex xml("(?:" + vectorgraphic_regex + "|" + point_regex + ")");
-
 int xml_find(std::vector<std::string> &attributes, const std::string &value) {
     int offset = 0;
     for (auto el : attributes) {
@@ -92,7 +60,6 @@ int xml_find(std::vector<std::string> &attributes, const std::string &value) {
         return offset;
     }
 }
-
 void tag_context(bool &elmnt, bool &exit, const std::string msg, bool expected_elmnt) {
     if (elmnt == expected_elmnt) {
         elmnt = !elmnt;
@@ -101,7 +68,6 @@ void tag_context(bool &elmnt, bool &exit, const std::string msg, bool expected_e
         exit = true;
     }
 }
-
 bool parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_graphics) {
     std::smatch match;
     std::string group = "";
@@ -165,7 +131,7 @@ bool parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_grap
                                 break;
                         }
                         vg.addPoint(pt); // move?
-                        pt = Point(0, 0);
+                        // pt = Point(0, 0);
                         attributes.clear();
                         pt_elmnt = !pt_elmnt;
                     } else if (attributes.size() >= 5) {
@@ -217,7 +183,6 @@ bool parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_grap
     }
     return !exit;
 }
-
 bool read_file(const std::string infile, std::ostream &fcontent) {
     std::ifstream fhandle(infile, std::ios::in);
     std::string line;
@@ -235,7 +200,6 @@ bool read_file(const std::string infile, std::ostream &fcontent) {
     }
     return success;
 }
-
 bool from_file(const std::string infile, std::vector<VectorGraphic>& vector_graphics) {
     std::stringstream fcontent;
     if (!read_file(infile, fcontent)) {
@@ -246,7 +210,6 @@ bool from_file(const std::string infile, std::vector<VectorGraphic>& vector_grap
         return true;
     }
 }
-
 bool to_file(const std::string outfile, std::vector<VectorGraphic>& vector_graphics) {
     std::ofstream fhandle(outfile);
     bool success = false;
