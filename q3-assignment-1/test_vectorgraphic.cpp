@@ -36,6 +36,7 @@ TEST(VectorGraphic, get_point) {
 
 TEST(VectorGraphic, remove_point) {
     Points points{Point(0, 0), Point(0, 1), Point(1, 0)};
+    Point outside_point(1, 1);
     VectorGraphic vector_graphic;
     for (int i = 0; i < points.size(); ++i) {
         vector_graphic.addPoint(points[i]);
@@ -44,6 +45,15 @@ TEST(VectorGraphic, remove_point) {
         CHECK_EQUAL(points[i], vector_graphic.getPoint(i));
     }
     CHECK_EQUAL(points.size(), vector_graphic.getPointCount());
+    // attempt to remove point not in vector_graphic
+    bool caught = false;
+    try {
+        vector_graphic.removePoint(outside_point);
+    } catch (...) {
+        caught = true;
+    }
+    CHECK_EQUAL(false, caught);
+    // remove points in vector graphic
     for (int i = 0; i < points.size(); ++i) {
         vector_graphic.removePoint(points[i]);
         if (i == points.size() - 1) {
@@ -101,7 +111,6 @@ TEST(VectorGraphic, open_close) {
     CHECK_EQUAL(false, vector_graphic.isOpen());
     CHECK_EQUAL(true, vector_graphic.isClosed());
 }
-
 TEST(VectorGraphic, get_width_height) {
     VectorGraphic vector_graphic;
     // powers of 2 and powers 3 are relatively prime, so this is good enough
@@ -124,4 +133,15 @@ TEST(VectorGraphic, get_width_height) {
         CHECK_EQUAL(!i ? i : std::pow(3, i), vector_graphic.getHeight());
         vector_graphic.erasePoint(i);
     }
+}
+TEST(VectorGraphic, get_width_height_negatives) {
+    // check negatives are okay
+    VectorGraphic vector_graphic;
+    Points points{Point(-1, -1), Point(1, 1)};
+    for (int i = 0; i < points.size(); ++i) {
+        vector_graphic.addPoint(points[i]);
+    }
+    CHECK_EQUAL(2, vector_graphic.getPointCount());
+    CHECK_EQUAL(2, vector_graphic.getWidth());
+    CHECK_EQUAL(2, vector_graphic.getHeight());
 }

@@ -1,24 +1,24 @@
 #include "parse.h"
 #include "vectorgraphic.h"
+#include <fstream>
 #include <iostream>
 #include <limits>
 #include <regex>
-#include <fstream>
 #include <sstream>
 #include <string>
 
-std::string::size_type sz;
 const std::string vectorgraphic_regex = "(?:<VectorGraphic\\s+(?:(closed)\\s*)=\\s*\"(?:(false|true)\"|'(false|true)')"
-                                  "\\s*(>|/>)|</VectorGraphic>)";
+                                        "\\s*(>|/>)|</VectorGraphic>)";
 const std::string point_regex = "<Point\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)\"|'([^']*)')\\s*"
-                          "\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)\"|'([0-9]*)')(>(?:\\s*\\n?)</Point>|(?:\\s*\\n?)/>)";
+                                "\\s+(x|y)\\s*?=\\s*?(?:\"([^\"]*)\"|'([^']*)')(>(?:\\s*\\n?)</Point>|(?:\\s*\\n?)/>)";
 const std::regex xml("(?:" + vectorgraphic_regex + "|" + point_regex + ")");
 
 void trim(std::string &sourceString, std::string const &trimmables) {
+    // drop contiguous edibles from start and end of source until first not if edibles
     std::string::reverse_iterator tmp = sourceString.rend();
     bool read_only = false;
     for (auto rit = sourceString.rbegin(); rit != sourceString.rend(); ++rit) {
-        if (trimmables.find(*rit) != -1) {
+        if (trimmables.find(*rit) != npos) {
             if (!read_only) {
                 sourceString.erase((rit + 1).base());
             }
@@ -30,13 +30,14 @@ void trim(std::string &sourceString, std::string const &trimmables) {
     for (auto rit = tmp; rit != sourceString.rend(); ++rit) {
         sourceString.erase((rit + 1).base());
     }
-};
+}
 void eat(std::istream &sourceStream, std::string const &edibles) {
+    // drop contiguous edibles from start of source until first not if edibles
     char lead_char = '\0';
     if (sourceStream) {
         while (sourceStream.cur != sourceStream.end) {
-            lead_char = sourceStream.peek();
-            if (edibles.find(lead_char) != -1) {
+            lead_char = static_cast<char>(sourceStream.peek());
+            if (edibles.find(lead_char) != npos) {
                 sourceStream.seekg(1, sourceStream.cur);
             } else {
                 break;
@@ -45,9 +46,10 @@ void eat(std::istream &sourceStream, std::string const &edibles) {
     } else {
         std::cout << "An istream with error state was provided to eat. Skipping it..." << std::endl;
     }
-};
-int xml_find(std::vector<std::string> &attributes, const std::string &value) {
-    int offset = 0;
+}
+size_t xml_find(std::vector<std::string> &attributes, const std::string &value) {
+    // search vector for attribute and return npos if not found
+    size_t offset = 0;
     for (auto el : attributes) {
         if (el == value) {
             break;
@@ -55,12 +57,13 @@ int xml_find(std::vector<std::string> &attributes, const std::string &value) {
         offset += 1;
     }
     if (attributes.size() == offset) {
-        return -1;
+        return npos;
     } else {
         return offset;
     }
 }
 void tag_context(bool &elmnt, bool &exit, const std::string msg, bool expected_elmnt) {
+    // validate context of parsed tag and report malformed cases
     if (elmnt == expected_elmnt) {
         elmnt = !elmnt;
     } else {
@@ -68,14 +71,56 @@ void tag_context(bool &elmnt, bool &exit, const std::string msg, bool expected_e
         exit = true;
     }
 }
+
+template <class T, class T2> void move_back(T &&t, T2 &&t2) {
+    // explicitly show that vector push back is moving the object
+    t.push_back(std::forward<T2>(t2));
+}
+
+void set_point(Point &point, std::string coord, std::vector<std::string> &attributes, bool &exit) {
+    // validate attribute values and set point
+    int coord_value = 0;
+    std::string tmp_attr_value = "";
+    try {
+        if (exit)
+            return;
+        tmp_attr_value = attributes.at(xml_find(attributes, coord) + 1);
+        coord_value = std::stoi(tmp_attr_value, &sz);
+        if (std::to_string(coord_value) != tmp_attr_value) {
+            throw std::invalid_argument("Inaccurate parse by stoi");
+        }
+        if (coord == "x") {
+            point.setX(coord_value);
+        } else {
+            point.setY(coord_value);
+        }
+    } catch (...) {
+        tag_context(exit, exit, "Malformed xml: invalid Point value for " + coord, true);
+    }
+}
+
+void set_vectorgraphic(VectorGraphic &vectorgraphic, std::vector<std::string> &attributes, bool &exit) {
+    // validate attribute values and set vectorgraphic accordingly
+    std::string tmp_attr_value = "";
+    try {
+        tmp_attr_value = attributes.at(xml_find(attributes, "closed") + 1);
+        if (tmp_attr_value == "true") {
+            vectorgraphic.closeShape();
+        } else {
+            vectorgraphic.openShape();
+        }
+    } catch (...) {
+        tag_context(exit, exit, "Malformed xml: Failed to parse VectorGraphic", true);
+    }
+}
+
 bool parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_graphics) {
+    // validate and populate vector graphics
     std::smatch match;
     std::string group = "";
     std::vector<std::string> attributes;
     VectorGraphic vg;
     Point pt;
-    int attr_value = 0;
-    std::string tmp_attr_value = "";
     bool vg_elmnt = false;
     bool pt_elmnt = false;
     bool exit = false;
@@ -83,99 +128,53 @@ bool parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_grap
          it++) {
         for (auto iit = it->begin(); iit != it->end(); iit++) {
             group = *iit;
-            if (group != "") {
-                if (group.find("</VectorGraphic>") != -1 && group.find("<VectorGraphic") == -1) {
-                    tag_context(vg_elmnt, exit, "Malformed xml: VectorGraphic end tag before start tag", true);
-                    if (exit) {
-                        break;
-                    } else {
-                        vector_graphics.push_back(vg);
-                        vg = VectorGraphic();
-                    }
-                } else if (group.find("<VectorGraphic") != -1) {
-                    tag_context(vg_elmnt, exit, "Malformed xml: nested VectorGraphic is not supported", false);
-                    if (exit)
-                        break;
-                } else if (group.find("<Point ") != -1) {
-                    tag_context(pt_elmnt, exit, "Malformed xml: nested Point is not supported", false);
-                    if (exit)
-                        break;
-                } else if (vg_elmnt && pt_elmnt) { // point subelement
-                    if (attributes.size() <= 4 + 1) {
-                        attributes.push_back(group);
-                    }
-                    if (attributes.size() == 5 && xml_find(attributes, "x") != -1 && xml_find(attributes, "y") != -1) {
-                        try {
-                            attributes.push_back(group);
-                            tmp_attr_value = attributes.at(xml_find(attributes, "x") + 1);
-                            if (tmp_attr_value.find_first_not_of("0123456789") == std::string::npos) {
-                                attr_value = std::stoi(tmp_attr_value, &sz);
-                                pt.setX(attr_value);
-                            } else {
-                                tag_context(exit, exit, "Malformed xml: invalid Point x value", true);
-                                if (exit)
-                                    break;
-                            }
-                            tmp_attr_value = attributes.at(xml_find(attributes, "y") + 1);
-                            if (tmp_attr_value.find_first_not_of("0123456789") == std::string::npos) {
-                                attr_value = std::stoi(tmp_attr_value, &sz);
-                                pt.setY(attr_value);
-                            } else {
-                                tag_context(exit, exit, "Malformed xml: invalid Point y value", true);
-                                if (exit)
-                                    break;
-                            }
-                        } catch (...) {
-                            tag_context(exit, exit, "Malformed xml: invalid Point values", true);
-                            if (exit)
-                                break;
-                        }
-                        vg.addPoint(pt); // move?
-                        // pt = Point(0, 0);
+            if (group == "")
+                continue;
+            if (group.find("</VectorGraphic>") != npos && group.find("<VectorGraphic") == -1) {
+                tag_context(vg_elmnt, exit, "Malformed xml: VectorGraphic end tag before start tag", true);
+                if (!exit) {
+                    move_back(vector_graphics, vg);
+                }
+            } else if (group.find("<VectorGraphic") != npos) {
+                tag_context(vg_elmnt, exit, "Malformed xml: nested VectorGraphic is not supported", false);
+            } else if (group.find("<Point ") != npos) {
+                tag_context(pt_elmnt, exit, "Malformed xml: nested Point is not supported", false);
+            } else if (vg_elmnt && pt_elmnt) { // point subelement
+                if (attributes.size() <= 5) {  //
+                    attributes.push_back(group);
+                }
+                if (attributes.size() == 5 && xml_find(attributes, "x") != npos && xml_find(attributes, "y") != npos) {
+                    attributes.push_back(group);
+                    set_point(pt, "x", attributes, exit);
+                    set_point(pt, "y", attributes, exit);
+                    if (!exit) {
+                        vg.addPoint(pt);
                         attributes.clear();
                         pt_elmnt = !pt_elmnt;
-                    } else if (attributes.size() >= 5) {
-                        tag_context(exit, exit, "Malformed xml: Failed to parse Point", true);
-                        if (exit)
-                            break;
                     }
-                } else if (group.find("</Point>") != -1) {
-                    tag_context(pt_elmnt, exit, "Malformed xml: Point end tag before a start tag", true);
-                    if (exit)
-                        break;
-                } else if (vg_elmnt) { // VectorGraphic tag
-                    if (group != ">" && attributes.size() < 1) {
-                        attributes.push_back(group);
-                    } else if (attributes.size() == 1) {
-                        attributes.push_back(group);
-                        try {
-                            tmp_attr_value = attributes.at(xml_find(attributes, "closed") + 1);
-                            if (tmp_attr_value == "true") {
-                                vg.closeShape();
-                            } else {
-                                vg.openShape();
-                            }
-                        } catch (...) {
-                            tag_context(exit, exit, "Malformed xml: Failed to parse VectorGraphic", true);
-                            if (exit)
-                                break;
-                        }
-                    } else if (group == "/>") {
-                        attributes.clear();
-                        vector_graphics.push_back(vg);
-                        vg = VectorGraphic();
-                        vg_elmnt = !vg_elmnt;
-                    } else if (group == ">") {
-                        attributes.clear();
-                    }
-                } else if (group == ">") {
-                    ; // nothing to do
-                } else {
-                    tag_context(exit, exit, "Malformed xml: non-empty but not in VectorGraphic or Point", true);
-                    if (exit)
-                        break;
+                } else if (attributes.size() >= 5) {
+                    tag_context(exit, exit, "Malformed xml: Failed to parse Point", true);
                 }
+            } else if (group.find("</Point>") != npos) {
+                tag_context(pt_elmnt, exit, "Malformed xml: Point end tag before a start tag", true);
+            } else if (vg_elmnt) { // VectorGraphic tag
+                if (group != ">" && attributes.size() < 1) {
+                    attributes.push_back(group);
+                } else if (attributes.size() == 1) {
+                    attributes.push_back(group);
+                    set_vectorgraphic(vg, attributes, exit);
+                } else if (group == "/>") {
+                    attributes.clear();
+                    move_back(vector_graphics, vg);
+                    vg_elmnt = !vg_elmnt;
+                } else if (group == ">") {
+                    attributes.clear();
+                }
+            } else {
+                tag_context(exit, exit, "Malformed xml: non-empty but not in VectorGraphic or Point", true);
             }
+            if (exit)
+                break;
         }
         if (exit) {
             break;
@@ -184,6 +183,7 @@ bool parse_xml(std::string complete_xml, std::vector<VectorGraphic> &vector_grap
     return !exit;
 }
 bool read_file(const std::string infile, std::ostream &fcontent) {
+    // reads file into fcontent returns success as bool
     std::ifstream fhandle(infile, std::ios::in);
     std::string line;
     bool success = false;
@@ -200,7 +200,8 @@ bool read_file(const std::string infile, std::ostream &fcontent) {
     }
     return success;
 }
-bool from_file(const std::string infile, std::vector<VectorGraphic>& vector_graphics) {
+bool from_file(const std::string infile, std::vector<VectorGraphic> &vector_graphics) {
+    // reads file into fcontent and calls parse_xml on fcontent then returns success as bool
     std::stringstream fcontent;
     if (!read_file(infile, fcontent)) {
         return false;
@@ -210,7 +211,8 @@ bool from_file(const std::string infile, std::vector<VectorGraphic>& vector_grap
         return true;
     }
 }
-bool to_file(const std::string outfile, std::vector<VectorGraphic>& vector_graphics) {
+bool to_file(const std::string outfile, std::vector<VectorGraphic> &vector_graphics) {
+    // streams vector_graphics into outfile and returns success as bool
     std::ofstream fhandle(outfile);
     bool success = false;
     if (!fhandle.good()) {

@@ -4,7 +4,7 @@
 #include <vector>
 
 VectorGraphic::VectorGraphic() {
-    /* std::cout << "Point default ctor" << std::endl; */
+    // std::cout << "Point default ctor" << std::endl;
 }
 VectorGraphic::~VectorGraphic() {
     // std::cout << "Point default dtor" << std::endl;
@@ -13,7 +13,8 @@ VectorGraphic::VectorGraphic(const VectorGraphic &rhs) : points{rhs.points}, is_
     // std::cout << "VectorGraphic direct ctor" << std::endl;
 }
 VectorGraphic::VectorGraphic(VectorGraphic &&other) noexcept
-    : points{std::exchange(other.points, Points())},  is_open{std::exchange(other.is_open, false)} {
+    : points{std::exchange(other.points, Points())}, is_open{std::exchange(other.is_open, false)} {
+    // std::cout << "VectorGraphic move ctor" << std::endl;
 }
 VectorGraphic &VectorGraphic::operator=(const VectorGraphic &rhs) {
     // std::cout << "VectorGraphic assign ctor" << std::endl;
@@ -24,24 +25,24 @@ VectorGraphic &VectorGraphic::operator=(const VectorGraphic &rhs) {
     return *this;
 }
 VectorGraphic &VectorGraphic::operator=(VectorGraphic &&other) noexcept {
+    // std::cout << "VectorGraphic move assign ctor" << std::endl;
     std::swap(points, other.points);
     std::swap(is_open, other.is_open);
     return *this;
 }
-
+void VectorGraphic::openShape() { is_open = true; }
+void VectorGraphic::closeShape() { is_open = false; }
 void VectorGraphic::addPoint(const Point &point) { points.push_back(point); }
 void VectorGraphic::removePoint(const Point &point) {
+    // removes point if it is in points, otherwise nop
     points.erase(std::remove(points.begin(), points.end(), point), points.end());
 }
 void VectorGraphic::erasePoint(int index) {
+    // given an index take return the point at (index mod size), error is thrown if size is 0
     removePoint(getPoint(index)); // use removePoint to ensure error handling
 }
-void VectorGraphic::openShape() { is_open = true; }
-void VectorGraphic::closeShape() { is_open = false; }
-bool VectorGraphic::isOpen() const { return is_open; }
-bool VectorGraphic::isClosed() const { return !isOpen(); }
-
 int VectorGraphic::getWidth() const {
+    // return the x_coord distance as max(points) - min(points)
     Point point;
     int min = point.getX();
     int max = point.getX();
@@ -62,6 +63,7 @@ int VectorGraphic::getWidth() const {
     return max - min;
 }
 int VectorGraphic::getHeight() const {
+    // return the y_coord distance as max(points) - min(points)
     Point point;
     int min = point.getY();
     int max = point.getY();
@@ -81,9 +83,9 @@ int VectorGraphic::getHeight() const {
     }
     return max - min;
 }
-int VectorGraphic::getPointCount() const { return points.size(); }
+int VectorGraphic::getPointCount() const { return static_cast<int>(points.size()); }
 Point VectorGraphic::getPoint(int index) const {
-    int points_sz = points.size();
+    int points_sz = getPointCount();
     if (points_sz == 0) { // modulo operation is undefined if modulus is zero
         return points.at(points_sz);
     }
@@ -107,4 +109,3 @@ std::ostream &operator<<(std::ostream &os, const VectorGraphic &vg) {
     }
     return os;
 }
-

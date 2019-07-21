@@ -2,10 +2,10 @@
 #include "parse.h"
 #include "point.h"
 #include "vectorgraphic.h"
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <fstream>
 
 TEST(trim, trim_quote) {
     const std::string trimmables("\"");
@@ -13,35 +13,30 @@ TEST(trim, trim_quote) {
     trim(quoted_value, trimmables);
     CHECK_EQUAL("value", quoted_value);
 }
-
 TEST(trim, trim_empty_quoted) {
     const std::string trimmables("\"");
     std::string quoted_value("");
     trim(quoted_value, trimmables);
     CHECK_EQUAL("", quoted_value);
 }
-
 TEST(trim, trim_empty_trimmables) {
     const std::string trimmables("");
     std::string quoted_value("\"value\"");
     trim(quoted_value, trimmables);
     CHECK_EQUAL("\"value\"", quoted_value);
 }
-
 TEST(trim, trim_spaced) {
     const std::string trimmables(" ");
     std::string quoted_value(" fee fie foe foo ");
     trim(quoted_value, trimmables);
     CHECK_EQUAL("fee fie foe foo", quoted_value);
 }
-
 TEST(trim, trim_hmmm_bert) {
     const std::string trimmables({-1, '\0'});
     std::string quoted_value({-1, '\0'});
     trim(quoted_value, trimmables);
     CHECK_EQUAL("", quoted_value);
 }
-
 TEST(eat, eat_padded_1) {
     const std::string edible(" \t\n");
     std::istringstream padded_string("  string \t\n ");
@@ -88,35 +83,30 @@ TEST(trimBeginning, Parse) {
 
     CHECK_EQUAL("Hello", actual);
 }
-
 TEST(trimEnd, Parse) {
     std::string actual{"Hello  \n\n\n\t"};
     trim(actual, " \t\n");
 
     CHECK_EQUAL("Hello", actual);
 }
-
 TEST(trimBeginningAndEnd, Parse) {
     std::string actual{"  Hello\n\t"};
     trim(actual, " \t\n");
 
     CHECK_EQUAL("Hello", actual);
 }
-
 TEST(trimNone, Parse) {
     std::string actual{"Hello"};
     trim(actual);
 
     CHECK_EQUAL("Hello", actual);
 }
-
 TEST(trimEmpty, Parse) {
     std::string actual;
     trim(actual);
 
     CHECK_EQUAL("", actual);
 }
-
 TEST(trimEverything, Parse) {
     std::string actual{"Hello 1234"};
     std::string trimmables{"Hello 0123456789"};
@@ -124,7 +114,6 @@ TEST(trimEverything, Parse) {
 
     CHECK_EQUAL("", actual);
 }
-
 TEST(eatNothing, Parse) {
     std::istringstream stream{"Hello"};
     eat(stream, "123456789");
@@ -134,7 +123,6 @@ TEST(eatNothing, Parse) {
 
     CHECK_EQUAL("Hello", actual.str());
 }
-
 TEST(eatSomething, Parse) {
     std::istringstream stream{"4320Hello"};
     eat(stream, "1234567890");
@@ -144,7 +132,6 @@ TEST(eatSomething, Parse) {
 
     CHECK_EQUAL("Hello", actual.str());
 }
-
 TEST(eatSomeLeadingWhitespace, Parse) {
     std::istringstream stream{"   I had leading whitespace"};
     eat(stream);
@@ -185,22 +172,24 @@ TEST(xml, xml_point_good) {
     }
 }
 TEST(xml, xml_point_bad) {
-    std::string complete_xml = "<VectorGraphic closed=\"true\">"
-                               "  <Point x=\"0\" y=\"0\" />\n"
-                               "  <Point x=\"10\" y=\"0\"></Point>\n"
-                               "  <Point x=\"10\" y='10\'>  \n   </Point>\n"
-                               "  <Point x='0\"' y=\"'10\" />\n"
-                               "  <Point x='0\"' y=\"null\" />\n"
-                               "</VectorGraphic>";
+    std::string vg_start = "<VectorGraphic closed=\"true\">";
+    std::string vg_end = "</VectorGraphic>";
+    std::vector<std::string> bad_points{"  <Point x=\"10\" y='-1-0-'>  \n   </Point>\n",
+                                        "  <Point x='0\"' y=\"'10\" />\n", "  <Point x='0\"' y=\"null\" />\n"};
+    std::string complete_xml = "";
     std::vector<VectorGraphic> vector_graphics;
-    parse_xml(complete_xml, vector_graphics);
-    CHECK_EQUAL(0, vector_graphics.size());
+    for (auto bad_point : bad_points) {
+        complete_xml = vg_start + bad_point + vg_end;
+        parse_xml(complete_xml, vector_graphics);
+        CHECK_EQUAL(0, vector_graphics.size());
+        vector_graphics.clear();
+    }
 }
 TEST(xml, from_file) {
     std::string complete_xml = "<VectorGraphic closed=\"true\">"
                                "  <Point x=\"0\" y=\"0\" />\n"
                                "  <Point x=\"10\" y=\"0\"></Point>\n"
-                               "  <Point x=\"10\" y='10\'>  \n   </Point>\n"
+                               "  <Point x=\"10\" y='10'>  \n   </Point>\n"
                                "     </VectorGraphic>";
     std::vector<VectorGraphic> vector_graphics;
     const std::string infile = "Testing_from_file.xml";
@@ -237,7 +226,7 @@ TEST(xml, to_file) {
     const std::string outfile = "Testing.xml";
     std::ofstream fhandle(outfile);
     to_file(outfile, vector_graphics);
-    // 
+    //
     std::stringstream fcontent;
     read_file(outfile, fcontent);
     std::string expected_xml = "<VectorGraphic closed=\"true\">"
