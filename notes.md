@@ -1,4 +1,15 @@
-# Justifaction of value
+# General Implementation Considerations
+* simplicity
+    * built-ins, class member functions, standard library, 3rd party library, and roll your own
+    * reduce pre-condition tests with compile-time errors... this isn't Python
+* cohesion and coherence
+    * separate context specific logic from common members functions
+    * predictable behavior
+* adherence to standards (UML/C++)
+* test driven development
+
+
+# Justification of value
 * learning to solve problems using the C++ language and the object paradigm
 
 ## Philosophical jokes
@@ -18,6 +29,7 @@
 * if the comment and code disagree, both are most likely wrong
 
 ## Design Philosophy
+* [rule of five](https://en.cppreference.com/w/cpp/language/rule_of_three)
 * encapsulation, coupling, cohesion, shared data, and synchronization (starting, waiting, and in-background)
 * concurrent data structures should consider contention, false-sharing, and data proximity
 * easy to use right, hard to use wrong
@@ -205,6 +217,51 @@
 * serialization, preventing genuine concurrent access and requires threads to access it serially
 * atomic action, indivisble sequence of primitive operations that must be complete without interruption
 
+## Condensed Q3
+* bitmap, are unstructured (a list of colored dots such as BMP, JPG, GIF, and TIFF)
+* vector, are structured (geometric definitions)
+* unstructured, flat, raw generally refer to bitmaps
+* structured, generally refers to vectors
+* unstructured surface, a dot matrix used in printers and monitors
+* primary point, defines the point a curve passes through
+* relative point handles, the two points that are relative to the primary point in a curve
+* curve, set of relative point handles and a primary point
+* shape, an ordered set of points
+* closed, the term used to describe if there is a line between the first point and last point in the ordered set of points
+* Archetypal rectangle, a rectangle for which all lines a rotated either 0 or 90 degrees
+* lvalue, something that can appear on the LHS of an assignment
+* rvalue, cannot appear on the LHS of an assignment
+* rvalue reference, is a reference to something nobody else can assign to, safe to steal its value
+* universal reference, `T&&` can be treated as an lvalue reference or an rvalue reference (a.k.a. forward reference)
+* parameters, the variables referenced in the function
+* argument, the expressions evaluated at the location where the function is called
+* move semantics, compiler moves the objects (non const arguments, leave in state that is destructor safe)
+    * move operations defined by compiler iff no copy operations defined, no move operations defined, no destructor defined in the class
+* `std::move`, a cast to an rvalue, doesn't actually move anything, the object can become empty in the previous context
+* `std::forward`, produces an rvalue from an universal-reference/rvalue only (Myeres' rule #25)
+* persistence, data continues to exists after a process exits
+* transparent persistence, complexitys of periodic saving are hiddent from object use
+* serialization, the process of transforming an object into sequentially stored/transferred bits
+* file format, a defined convention for encoding a file
+* POD, plain old data, contiguous sequence of bytes in memory
+* scene, collection of objects and their orientation to each other
+* layer, colection of graphics, no width and height
+* locking, disable modification
+* z-layer, dictates the order in which graphics are drawn
+* synergy, worth more in its whole than the parts
+* LSP, liskov substituion principle, if S is subtype of T then S may replace T
+* smart_pointers, reference count to same object
+* unique_ptr, retains exclusive ownership
+* weak_ptr, does not affect shared_ptr count
+* fundamental collections, generic collections that are the foundation to collections desgined for a precise use, (i.e. list, deque, vector)
+* weakest link, the part of a design which should be optimized in an ad hoc manner when its worth it
+* list, element access is linear
+* deque, efficient start/end insertion/removal, random access, start/end operations don't invalidate iterators otherwise iterators are invalidated
+* Horizontal alignment, placement relative to the archetypal rectangle
+* assignment of self is no operator `if (this != &rhs) { value = rhs.value; } return *this`
+* be aware of which operators invalidate the iterator
+* first-class concept, an idea the is represented in a system in a well-defined manner (e.g. as a class)
+* second-class concept, an idea that pervades the system but is not consistenly used or defined.
 
 ## Shared pointers
 * shared pointer, syntax `std::shared_ptr<int[]> sharedValues = std::make_shared<int[]>(20);` allows multiple clients to share access to that dynamically allocated heap memory by using reference counting use unique pointer unless you really need sharing
