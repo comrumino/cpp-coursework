@@ -1,16 +1,16 @@
+# Justification of value
+* F. Brooks in No Silver Bullet, states four steps to grow. The third step is episodes of advanced formal education with top designers
+* learning to solve problems using the C++ language and the object paradigm
+
 # General Implementation Considerations
-* simplicity
+* simplicity (minimize the accidental complexity, the complexity brought in when solving the problem)
     * built-ins, class member functions, standard library, 3rd party library, and roll your own
     * reduce pre-condition tests with compile-time errors... this isn't Python
 * cohesion and coherence
-    * separate context specific logic from common members functions
-    * predictable behavior
+    * separation of concerns, (separate context specific logic from common member functions)
+    * self-documenting and predictable behavior
 * adherence to standards (UML/C++)
 * test driven development
-
-
-# Justification of value
-* learning to solve problems using the C++ language and the object paradigm
 
 ## Philosophical jokes
 * what software architects do is make something up and get everyone else to believe

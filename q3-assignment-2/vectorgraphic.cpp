@@ -1,31 +1,10 @@
 #include "vectorgraphic.h"
 #include "point.h"
+#include "marshaller.h"
 #include <algorithm>
 #include <vector>
 
-VectorGraphic::VectorGraphic() {
-    // std::cout << "Point default ctor" << std::endl;
-}
-VectorGraphic::~VectorGraphic() {
-    // std::cout << "Point default dtor" << std::endl;
-}
-VectorGraphic::VectorGraphic(const VectorGraphic &rhs) : points{rhs.points}, is_open{rhs.is_open} {
-    // std::cout << "VectorGraphic direct ctor" << std::endl;
-}
-VectorGraphic::VectorGraphic(VectorGraphic &&other) noexcept
-    : points{std::exchange(other.points, Points())}, is_open{std::exchange(other.is_open, false)},
-      stream_as{std::exchange(other.stream_as, stream_as)} {
-    // std::cout << "VectorGraphic move ctor" << std::endl;
-}
-VectorGraphic &VectorGraphic::operator=(const VectorGraphic &rhs) {
-    // std::cout << "VectorGraphic assign ctor" << std::endl;
-    if (this != &rhs) {
-        this->points = rhs.points;
-        this->is_open = rhs.is_open;
-        this->stream_as = rhs.stream_as;
-    }
-    return *this;
-}
+namespace geom {
 void VectorGraphic::openShape() { is_open = true; }
 void VectorGraphic::closeShape() { is_open = false; }
 void VectorGraphic::addPoint(const Point &point) { points.push_back(point); }
@@ -74,42 +53,51 @@ int VectorGraphic::getHeight() const {
     return max - min;
 }
 int VectorGraphic::getPointCount() const { return static_cast<int>(points.size()); }
-Point VectorGraphic::getPoint(unsigned int index) const {
+const Point &VectorGraphic::getPoint(unsigned int index) const {
     return points.at(index);
 }
-std::ostream &VectorGraphic::as_human_readable(std::ostream &os) const {
-    std::string closed = (isClosed()) ? " is closed" : " is not closed";
+std::ostream &operator<<(std::ostream &os, const VectorGraphic &vg) {
+    if (vg.markup == marshaller::Markup::xml) {
+        return marshaller::xml(os, vg);
+    } else {
+        return marshaller::human_readable(os, vg);
+    }
+}
+}
+
+
+namespace marshaller {
+std::ostream &human_readable(std::ostream &os, const geom::VectorGraphic &vg) {
+    std::string closed = (vg.isClosed()) ? " is closed" : " is not closed";
     os << "VectorGraphic" << closed;
-    if (getPointCount() == 0) {
+    if (vg.getPointCount() == 0) {
         os << " and does not have points." << std::endl;
     } else {
         os << " and has points:" << std::endl;;
-        for (auto pt : points) {
+        for (auto i = 0; i < vg.getPointCount(); ++i) {
+            auto& pt = vg.getPoint(i);
             os << "  ";
-            pt.as_human_readable(os);
-            os << "\n";
+            marshaller::human_readable(os, pt);
+            os << std::endl;
         }
     }
     return os;
 }
-std::ostream &VectorGraphic::as_xml(std::ostream &os) const {
-    std::string closed = (isClosed()) ? "true" : "false";
+std::ostream &xml(std::ostream &os, const geom::VectorGraphic &vg) {
+    std::string closed = (vg.isClosed()) ? "true" : "false";
     os << "<VectorGraphic closed=\"" << closed << "\"";
-    if (getPointCount() == 0) {
-        os << "/>\n";
+    if (vg.getPointCount() == 0) {
+        os << "/>" << std::endl;
     } else {
-        os << ">\n";
-        for (auto pt : points) {
-            os << pt << "\n";
+        os << ">" << std::endl;
+        for (auto i = 0; i < vg.getPointCount(); ++i) {
+            auto& pt = vg.getPoint(i);
+            marshaller::xml(os, pt);
+            os << std::endl;
         }
         os << "</VectorGraphic>";
     }
     return os;
 }
-std::ostream &operator<<(std::ostream &os, const VectorGraphic &vg) {
-    if (vg.stream_as == "xml") {
-        return vg.as_xml(os);
-    } else {
-        return os;
-    }
 }
+

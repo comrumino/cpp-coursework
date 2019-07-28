@@ -7,22 +7,20 @@
 #include <string>
 
 TEST(VectorGraphic, count) {
-    VectorGraphic vector_graphic;
+    geom::VectorGraphic vector_graphic;
     CHECK_EQUAL(0, vector_graphic.getPointCount());
 }
-
 TEST(VectorGraphic, add_point) {
-    Points points{Point(0, 0), Point(0, 1), Point(1, 0)};
-    VectorGraphic vector_graphic;
+    geom::Points points{geom::Point(0, 0), geom::Point(0, 1), geom::Point(1, 0)};
+    geom::VectorGraphic vector_graphic;
     for (int i = 0; i < points.size(); ++i) {
         vector_graphic.addPoint(points[i]);
         CHECK_EQUAL(i + 1, vector_graphic.getPointCount());
     }
 }
-
 TEST(VectorGraphic, get_point) {
-    Point point(1, 2);
-    VectorGraphic vector_graphic;
+    geom::Point point(1, 2);
+    geom::VectorGraphic vector_graphic;
     bool caught = false;
     try {
         vector_graphic.getPoint(0);
@@ -33,11 +31,10 @@ TEST(VectorGraphic, get_point) {
     vector_graphic.addPoint(point);
     CHECK_EQUAL(point, vector_graphic.getPoint(0));
 }
-
 TEST(VectorGraphic, remove_point) {
-    Points points{Point(0, 0), Point(0, 1), Point(1, 0)};
-    Point outside_point(1, 1);
-    VectorGraphic vector_graphic;
+    geom::Points points{geom::Point(0, 0), geom::Point(0, 1), geom::Point(1, 0)};
+    geom::Point outside_point(1, 1);
+    geom::VectorGraphic vector_graphic;
     for (int i = 0; i < points.size(); ++i) {
         vector_graphic.addPoint(points[i]);
     }
@@ -78,8 +75,8 @@ TEST(VectorGraphic, remove_point) {
 }
 
 TEST(VectorGraphic, erase_point) {
-    Points points{Point(0, 0), Point(0, 1), Point(1, 0)};
-    VectorGraphic vector_graphic;
+    geom::Points points{geom::Point(0, 0), geom::Point(0, 1), geom::Point(1, 0)};
+    geom::VectorGraphic vector_graphic;
     bool caught = false;
     try {
         vector_graphic.erasePoint(0);
@@ -99,9 +96,8 @@ TEST(VectorGraphic, erase_point) {
         }
     }
 }
-
 TEST(VectorGraphic, open_close) {
-    VectorGraphic vector_graphic;
+    geom::VectorGraphic vector_graphic;
     CHECK_EQUAL(false, vector_graphic.isOpen());
     CHECK_EQUAL(true, vector_graphic.isClosed());
     vector_graphic.openShape();
@@ -112,9 +108,9 @@ TEST(VectorGraphic, open_close) {
     CHECK_EQUAL(true, vector_graphic.isClosed());
 }
 TEST(VectorGraphic, get_width_height) {
-    VectorGraphic vector_graphic;
+    geom::VectorGraphic vector_graphic;
     // powers of 2 and powers 3 are relatively prime, so this is good enough
-    Points points{Point(0, 0), Point(2, 3), Point(4, 9)};
+    geom::Points points{geom::Point(0, 0), geom::Point(2, 3), geom::Point(4, 9)};
     for (int i = 0; i < points.size(); ++i) {
         vector_graphic.addPoint(points[i]);
         CHECK_EQUAL(!i ? i : std::pow(2, i), vector_graphic.getWidth());
@@ -136,8 +132,8 @@ TEST(VectorGraphic, get_width_height) {
 }
 TEST(VectorGraphic, get_width_height_negatives) {
     // check negatives are okay
-    VectorGraphic vector_graphic;
-    Points points{Point(-1, -1), Point(1, 1)};
+    geom::VectorGraphic vector_graphic;
+    geom::Points points{geom::Point(-1, -1), geom::Point(1, 1)};
     for (int i = 0; i < points.size(); ++i) {
         vector_graphic.addPoint(points[i]);
     }
@@ -146,23 +142,148 @@ TEST(VectorGraphic, get_width_height_negatives) {
     CHECK_EQUAL(2, vector_graphic.getHeight());
 }
 TEST(VectorGraphic, stream_operator) {
-    VectorGraphic vector_graphic;
+    geom::VectorGraphic vector_graphic;
     std::stringstream ss;
-    vector_graphic.addPoint(Point());
+    vector_graphic.addPoint(geom::Point());
     vector_graphic.closeShape();
-    vector_graphic.as_human_readable(ss);
+    marshaller::human_readable(ss, vector_graphic);
     std::string exp = "VectorGraphic is closed and has points:\n"
                       "  (0, 0)\n";
     CHECK_EQUAL(ss.str(), exp);
     ss.str("");
     vector_graphic.openShape();
-    vector_graphic.as_human_readable(ss);
+    marshaller::human_readable(ss, vector_graphic);
     exp = "VectorGraphic is not closed and has points:\n"
           "  (0, 0)\n";
     CHECK_EQUAL(ss.str(), exp);
     ss.str("");
     vector_graphic.erasePoint(0);
-    vector_graphic.as_human_readable(ss);
+    marshaller::human_readable(ss, vector_graphic);
     exp = "VectorGraphic is not closed and does not have points.\n";
     CHECK_EQUAL(ss.str(), exp);
 }
+/*
+// provided unit tests
+TEST(ctor, VectorGraphic) {
+ geom::VectorGraphic vg;
+ CHECK_EQUAL(0, vg.getPointCount());
+ CHECK_EQUAL(true, vg.isClosed());
+ CHECK_EQUAL(false, vg.isOpen());
+}
+
+TEST(insertPoint, VectorGraphic)
+{
+ geom::VectorGraphic vg;
+    vg.addPoint(geom::Point{1, 1});
+ CHECK_EQUAL(1, vg.getPointCount());
+    
+    vg.addPoint(geom::Point{2, 2});
+ CHECK_EQUAL(2, vg.getPointCount());
+}
+
+TEST(removePoint, VectorGraphic)
+{
+ geom::VectorGraphic vg;
+    vg.addPoint(geom::Point{1, 1});
+    vg.addPoint(geom::Point{2, 2});
+    vg.removePoint(geom::Point{1, 1});
+    
+ CHECK_EQUAL(1, vg.getPointCount());
+ CHECK_EQUAL(geom::Point(2, 2), vg.getPoint(0));
+}
+
+TEST(erasePoint, VectorGraphic)
+{
+ geom::VectorGraphic vg;
+    vg.addPoint(geom::Point{1, 1});
+    vg.addPoint(geom::Point{2, 2});
+    vg.addPoint(geom::Point{3, 3});
+ vg.erasePoint(1);
+    
+ CHECK_EQUAL(2, vg.getPointCount());
+ CHECK_EQUAL(geom::Point(1, 1), vg.getPoint(0));
+ CHECK_EQUAL(geom::Point(3, 3), vg.getPoint(1));
+}
+
+TEST(erasePointOutOfRange, VectorGraphic)
+{
+ geom::VectorGraphic vg;
+    vg.addPoint(geom::Point{1, 1});
+    vg.addPoint(geom::Point{2, 2});
+    vg.addPoint(geom::Point{3, 3});
+    
+    try
+    {
+     vg.erasePoint(5);
+    }
+    catch (std::out_of_range&)
+    {
+        CHECK_EQUAL(3, vg.getPointCount());
+        return;
+    }
+ CHECK(false); // should have caught exception
+}
+
+TEST(equality, VectorGraphic)
+{
+ geom::VectorGraphic vg1;
+    vg1.addPoint(geom::Point{1, 1});
+    vg1.addPoint(geom::Point{2, 2});
+    vg1.addPoint(geom::Point{3, 3});
+    
+ geom::VectorGraphic vg2;
+    vg2.addPoint(geom::Point{1, 1});
+    vg2.addPoint(geom::Point{2, 2});
+    vg2.addPoint(geom::Point{3, 3});
+    
+ CHECK(vg1 == vg2);
+}
+
+TEST(inequality, VectorGraphic)
+{
+ geom::VectorGraphic vg1;
+    vg1.addPoint(geom::Point{1, 1});
+    vg1.addPoint(geom::Point{1, 2});
+    vg1.addPoint(geom::Point{1, 3});
+    
+ geom::VectorGraphic vg2;
+    vg2.addPoint(geom::Point{2, 1});
+    vg2.addPoint(geom::Point{2, 2});
+    vg2.addPoint(geom::Point{2, 3});
+    
+ CHECK(vg1 != vg2);
+    
+    geom::VectorGraphic vg3;
+    vg3.addPoint(geom::Point{1, 1});
+    vg3.addPoint(geom::Point{1, 2});
+    vg3.addPoint(geom::Point{1, 3});
+    vg3.openShape();
+    
+    CHECK(vg3 != vg1);
+}
+TEST(closeShape, VectorGraphic) {
+ geom::VectorGraphic vg;
+ vg.closeShape();
+ CHECK_EQUAL(true, vg.isClosed());
+ CHECK_EQUAL(false, vg.isOpen());
+}
+TEST(openShape, VectorGraphic) {
+ geom::VectorGraphic vg;
+ vg.openShape();
+ CHECK_EQUAL(false, vg.isClosed());
+ CHECK_EQUAL(true, vg.isOpen());
+}
+TEST(widthHeight, VectorGraphic) {
+    geom::VectorGraphic vectorGraphic;
+    vectorGraphic.addPoint(geom::Point{0, 2});
+    vectorGraphic.addPoint(geom::Point{4, 3});
+    vectorGraphic.addPoint(geom::Point{5, 8});
+    vectorGraphic.addPoint(geom::Point{2, 1});
+    CHECK_EQUAL(5, vectorGraphic.getWidth());
+    CHECK_EQUAL(7, vectorGraphic.getHeight());
+    
+    vectorGraphic.erasePoint(2);
+    CHECK_EQUAL(4, vectorGraphic.getWidth());
+    CHECK_EQUAL(2, vectorGraphic.getHeight());
+}
+*/
