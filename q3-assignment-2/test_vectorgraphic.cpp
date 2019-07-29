@@ -146,19 +146,19 @@ TEST(VectorGraphic, stream_operator) {
     std::stringstream ss;
     vector_graphic.addPoint(geom::Point());
     vector_graphic.closeShape();
-    marshaller::human_readable(ss, vector_graphic);
+    ss << vector_graphic.get_human_readable();
     std::string exp = "VectorGraphic is closed and has points:\n"
                       "  (0, 0)\n";
     CHECK_EQUAL(ss.str(), exp);
     ss.str("");
     vector_graphic.openShape();
-    marshaller::human_readable(ss, vector_graphic);
+    ss << vector_graphic.get_human_readable();
     exp = "VectorGraphic is not closed and has points:\n"
           "  (0, 0)\n";
     CHECK_EQUAL(ss.str(), exp);
     ss.str("");
     vector_graphic.erasePoint(0);
-    marshaller::human_readable(ss, vector_graphic);
+    ss << vector_graphic.get_human_readable();
     exp = "VectorGraphic is not closed and does not have points.\n";
     CHECK_EQUAL(ss.str(), exp);
 }
@@ -176,7 +176,7 @@ TEST(insertPoint, VectorGraphic)
  geom::VectorGraphic vg;
     vg.addPoint(geom::Point{1, 1});
  CHECK_EQUAL(1, vg.getPointCount());
-    
+
     vg.addPoint(geom::Point{2, 2});
  CHECK_EQUAL(2, vg.getPointCount());
 }
@@ -187,7 +187,7 @@ TEST(removePoint, VectorGraphic)
     vg.addPoint(geom::Point{1, 1});
     vg.addPoint(geom::Point{2, 2});
     vg.removePoint(geom::Point{1, 1});
-    
+
  CHECK_EQUAL(1, vg.getPointCount());
  CHECK_EQUAL(geom::Point(2, 2), vg.getPoint(0));
 }
@@ -199,7 +199,7 @@ TEST(erasePoint, VectorGraphic)
     vg.addPoint(geom::Point{2, 2});
     vg.addPoint(geom::Point{3, 3});
  vg.erasePoint(1);
-    
+
  CHECK_EQUAL(2, vg.getPointCount());
  CHECK_EQUAL(geom::Point(1, 1), vg.getPoint(0));
  CHECK_EQUAL(geom::Point(3, 3), vg.getPoint(1));
@@ -211,7 +211,7 @@ TEST(erasePointOutOfRange, VectorGraphic)
     vg.addPoint(geom::Point{1, 1});
     vg.addPoint(geom::Point{2, 2});
     vg.addPoint(geom::Point{3, 3});
-    
+
     try
     {
      vg.erasePoint(5);
@@ -230,12 +230,12 @@ TEST(equality, VectorGraphic)
     vg1.addPoint(geom::Point{1, 1});
     vg1.addPoint(geom::Point{2, 2});
     vg1.addPoint(geom::Point{3, 3});
-    
+
  geom::VectorGraphic vg2;
     vg2.addPoint(geom::Point{1, 1});
     vg2.addPoint(geom::Point{2, 2});
     vg2.addPoint(geom::Point{3, 3});
-    
+
  CHECK(vg1 == vg2);
 }
 
@@ -245,20 +245,20 @@ TEST(inequality, VectorGraphic)
     vg1.addPoint(geom::Point{1, 1});
     vg1.addPoint(geom::Point{1, 2});
     vg1.addPoint(geom::Point{1, 3});
-    
+
  geom::VectorGraphic vg2;
     vg2.addPoint(geom::Point{2, 1});
     vg2.addPoint(geom::Point{2, 2});
     vg2.addPoint(geom::Point{2, 3});
-    
+
  CHECK(vg1 != vg2);
-    
+
     geom::VectorGraphic vg3;
     vg3.addPoint(geom::Point{1, 1});
     vg3.addPoint(geom::Point{1, 2});
     vg3.addPoint(geom::Point{1, 3});
     vg3.openShape();
-    
+
     CHECK(vg3 != vg1);
 }
 TEST(closeShape, VectorGraphic) {
@@ -281,7 +281,7 @@ TEST(widthHeight, VectorGraphic) {
     vectorGraphic.addPoint(geom::Point{2, 1});
     CHECK_EQUAL(5, vectorGraphic.getWidth());
     CHECK_EQUAL(7, vectorGraphic.getHeight());
-    
+
     vectorGraphic.erasePoint(2);
     CHECK_EQUAL(4, vectorGraphic.getWidth());
     CHECK_EQUAL(2, vectorGraphic.getHeight());

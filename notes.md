@@ -5,10 +5,16 @@
 # General Implementation Considerations
 * simplicity (minimize the accidental complexity, the complexity brought in when solving the problem)
     * built-ins, class member functions, standard library, 3rd party library, and roll your own
-    * reduce pre-condition tests with compile-time errors... this isn't Python
+    * compile-time verification eliminates the need for run-time check... this isn't Python
 * cohesion and coherence
     * separation of concerns, (separate context specific logic from common member functions)
     * self-documenting and predictable behavior
+* ease of extension/contraction
+    * greater flexibility is smaller increments of capability; flexibility is ease of change 
+    * generality is availability of smaller subsets, generality is usability without change
+    * virtual machine approach, to avoid a chain of data transforming components design extensions that are useful in designing many such programs
+    * "uses" hierarchy, restrict the "uses" relation so that its graph is loop free
+    * "uses" criteria, A is simpler because it uses B and B is not substantially more complex because it is not allowed to use A
 * adherence to standards (UML/C++)
 * test driven development
 

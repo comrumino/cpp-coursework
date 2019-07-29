@@ -1,10 +1,8 @@
 #include "TestHarness.h"
+#include "framework.h"
 #include "test_xml_case.h"
 #include "tinyxml2.h"
 #include "vectorgraphic.h"
-#include "framework.h"
-
-
 
 TEST(marshaller, file_write_xml) {
     // to writable location
@@ -14,7 +12,6 @@ TEST(marshaller, file_write_xml) {
     CHECK_EQUAL(0, marshaller::file::write(doc, fname));
     // to non-writable location
     CHECK_EQUAL(1, marshaller::file::write(doc, "/path/that/does/not/exist" + fname));
-
 }
 TEST(marshaller, file_read_xml) {
     // to writable location
@@ -25,7 +22,6 @@ TEST(marshaller, file_read_xml) {
     // to non-writable location
     CHECK_EQUAL(1, marshaller::file::read(doc, "/path/that/does/not/exist" + fname));
 }
-
 
 /*
 TEST(xml, xml_to_file) {
@@ -79,4 +75,3 @@ TEST(xml, xml_point_bad) {
     }
 }
 */
-

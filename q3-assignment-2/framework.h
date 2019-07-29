@@ -1,55 +1,55 @@
 #pragma once
-#include <list>
-#include <string>
-#include <memory>
 #include "point.h"
 #include "vectorgraphic.h"
-
+#include <list>
+#include <memory>
+#include <string>
 
 namespace framework {
 using HVectorGraphic = std::unique_ptr<geom::VectorGraphic>;
-    class PlacedGraphic {
-        public:
-            void setPlacementPoint (geom::Point const& placement);
-            geom::Point const& getPlacementPoint () const;
+class PlacedGraphic {
+  public:
+    void setPlacementPoint(geom::Point const &placement);
+    geom::Point const &getPlacementPoint() const;
 
-            void setGraphic (HVectorGraphic const& graphic);
-            HVectorGraphic const& getGraphic () const;
-  
-        private:
-            geom::Point placementPoint;
-            HVectorGraphic graphic;
-    };
+    void setGraphic(HVectorGraphic const &graphic);
+    HVectorGraphic const &getGraphic() const;
 
-    class Layer {
-    private:
-        typedef std::list<PlacedGraphic> PlacedGraphicCollection;
+  private:
+    geom::Point placementPoint;
+    HVectorGraphic graphic;
+};
 
-    public:
-        typedef PlacedGraphicCollection::iterator PlacedGraphicIterator;
+class Layer {
+  private:
+    typedef std::list<PlacedGraphic> PlacedGraphicCollection;
 
-        // insert, remove, iteration support.
+  public:
+    typedef PlacedGraphicCollection::iterator PlacedGraphicIterator;
 
-        // accessors to alias.
+    // insert, remove, iteration support.
 
-    private:
-        PlacedGraphicCollection graphics;
-        std::string alias;
-    };
+    // accessors to alias.
 
-    class Scene {
-    private:
-        typedef std::list<Layer> LayerCollection;
+  private:
+    PlacedGraphicCollection graphics;
+    std::string alias;
+};
 
-    public: typedef LayerCollection::iterator LayerIterator;
+class Scene {
+  private:
+    typedef std::list<Layer> LayerCollection;
 
-            // insert, remove, iteration support.
+  public:
+    typedef LayerCollection::iterator LayerIterator;
 
-            // accessors to width and height.
+    // insert, remove, iteration support.
 
-    private:
-        LayerCollection layers;
-        int width;
-        int height;
-    };
-}
+    // accessors to width and height.
+
+  private:
+    LayerCollection layers;
+    int width;
+    int height;
+};
+} // namespace framework

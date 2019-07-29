@@ -7,12 +7,10 @@
 TEST(Point, stream_operator) { // verify trivial class, streams as expected
     geom::Point pt(0, 1);
     std::stringstream ss;
-    marshaller::xml(ss, pt);
+    ss.str(pt.get_xml());
     CHECK_EQUAL("<Point x=\"0\" y=\"1\"/>", ss.str());
-    ss.str("");
-    marshaller::human_readable(ss, pt);
+    ss.str(pt.get_human_readable());
     CHECK_EQUAL("(0, 1)", ss.str());
-
 }
 
 TEST(Point, direct_ctor) {

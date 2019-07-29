@@ -1,10 +1,14 @@
 #pragma clang diagnostic ignored "-Wc++17-extensions"
 #include "tinyxml2.h"
+#include "marshaller.h"
 #include <string>
+#include <iostream>
 
+namespace marshaller {
+}
 namespace marshaller::file {
 
-bool read(tinyxml2::XMLDocument& doc, const std::string infile) {
+bool read(tinyxml2::XMLDocument &doc, const std::string infile) {
     doc.LoadFile(infile.c_str());
     tinyxml2::XMLError error_id = doc.ErrorID();
     if (error_id != 0) {
@@ -14,10 +18,8 @@ bool read(tinyxml2::XMLDocument& doc, const std::string infile) {
     }
 }
 
-bool write(tinyxml2::XMLDocument& doc, const std::string outfile, bool compact) {
+bool write(tinyxml2::XMLDocument &doc, const std::string outfile, bool compact) {
     return doc.SaveFile(outfile.c_str(), compact);
 }
 
-
-}
-
+} // namespace marshaller::file
