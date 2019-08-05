@@ -12,9 +12,7 @@ namespace framework {
 // class PlacedGraphic
 void PlacedGraphic::setPlacementPoint(const geom::Point &placement) { placementPoint = placement; }
 const geom::Point &PlacedGraphic::getPlacementPoint() const { return placementPoint; }
-void PlacedGraphic::setGraphic(const HVectorGraphic &param_graphic) {
-    graphic = param_graphic;
-}
+void PlacedGraphic::setGraphic(const HVectorGraphic &param_graphic) { graphic = param_graphic; }
 HVectorGraphic const &PlacedGraphic::getGraphic() const { return graphic; }
 void Layer::addGraphic(PlacedGraphic &pg) { graphics.push_back(std::move(pg)); }
 bool operator==(const PlacedGraphic &lhs, const PlacedGraphic &rhs) {
@@ -50,7 +48,8 @@ const int Attribute::getIntValue() const {
 };
 const bool Attribute::getBoolValue() const {
     auto lower_value = value;
-    std::transform(lower_value.begin(), lower_value.end(), lower_value.begin(), [](unsigned char c){ return std::tolower(c); });
+    std::transform(lower_value.begin(), lower_value.end(), lower_value.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
     if (lower_value == "false" || lower_value == "0") {
         return false;
     } else if (lower_value == "true" || lower_value == "1") {
@@ -62,10 +61,11 @@ const bool Attribute::getBoolValue() const {
 
 const Attribute &Element::getAttribute(const std::string name) const {
     auto it = std::find_if(attributes.begin(), attributes.end(),
-                           [&](const Attribute & attr) { return attr.getName() == name; });
+                           [&](const Attribute &attr) { return attr.getName() == name; });
     if (it != attributes.end()) {
         return *it;
-    } else { throw std::invalid_argument{"No attribute with the name " + name + " was found"};
+    } else {
+        throw std::invalid_argument{"No attribute with the name " + name + " was found"};
     }
 }
 
@@ -79,7 +79,7 @@ framework::Element elementFromXML(const tinyxml2::XMLNode *xml_node) {
     // throw for invalid values, if not Document or Element create framework::Element and return
     // otherwise, convert both Document and Element to Element and create framework::Element
     if (xml_node == nullptr) {
-        throw std::invalid_argument{ "For elementFromXML xml_node must not be a nullptr" };
+        throw std::invalid_argument{"For elementFromXML xml_node must not be a nullptr"};
     } else if (xml_node->ToText() != nullptr) {
         framework_elmnt = framework::Element("text", framework::ElementType::text);
         xml_node->Accept(&printer);
@@ -110,24 +110,24 @@ framework::Element elementFromXML(const tinyxml2::XMLNode *xml_node) {
         auto xml_elmnt = xml_node->ToElement();
         framework_elmnt = framework::Element(xml_elmnt->Name());
         // add attributes
-        for (const tinyxml2::XMLAttribute* attr=xml_elmnt->FirstAttribute(); attr; attr=attr->Next() ) {
+        for (const tinyxml2::XMLAttribute *attr = xml_elmnt->FirstAttribute(); attr; attr = attr->Next()) {
             auto framework_attr = Attribute(attr->Name(), attr->Value());
             framework_elmnt.addAttribute(framework_attr);
         }
         // add children
         if (!xml_elmnt->NoChildren()) {
-            for (const tinyxml2::XMLNode* c = xml_elmnt->FirstChild(); c; c = c->NextSibling()) {
+            for (const tinyxml2::XMLNode *c = xml_elmnt->FirstChild(); c; c = c->NextSibling()) {
                 auto framework_child = elementFromXML(c);
                 framework_elmnt.addChild(framework_child);
             }
         }
         return framework_elmnt;
     } else {
-        throw std::invalid_argument{ "Failed to determine element type within elementFromXML" };
+        throw std::invalid_argument{"Failed to determine element type within elementFromXML"};
     }
 }
 
-tinyxml2::XMLNode* elementToXML(const framework::Element &framework_elmnt, tinyxml2::XMLDocument &doc) {
+tinyxml2::XMLNode *elementToXML(const framework::Element &framework_elmnt, tinyxml2::XMLDocument &doc) {
     if (framework_elmnt.isElement()) {
         auto isValidTag = false;
         auto name = framework_elmnt.getName();
@@ -147,7 +147,7 @@ tinyxml2::XMLNode* elementToXML(const framework::Element &framework_elmnt, tinyx
             }
             return xml_elmnt;
         } else {
-            throw std::invalid_argument{ "Invalid elementToXML elemnt tag " + name };
+            throw std::invalid_argument{"Invalid elementToXML elemnt tag " + name};
         }
     } else if (framework_elmnt.isDocument()) {
         for (auto child : framework_elmnt.getAllChildren()) {
@@ -170,7 +170,7 @@ tinyxml2::XMLNode* elementToXML(const framework::Element &framework_elmnt, tinyx
     } else if (framework_elmnt.isText()) {
         return doc.NewText(framework_elmnt.getAttribute("value").getStrValue().c_str());
     } else {
-        throw std::invalid_argument{ "Unexpected framework element type!" };
+        throw std::invalid_argument{"Unexpected framework element type!"};
     }
 }
 
@@ -192,11 +192,11 @@ bool isSaneElement(const framework::Element &elmnt, const std::string &name) {
 
 geom::Point readPoint(const framework::Element &pointElmnt) {
     if (pointElmnt.getName() != geom::Point::name)
-        throw std::runtime_error{ "Expected tag " + geom::Point::name };
+        throw std::runtime_error{"Expected tag " + geom::Point::name};
     if (pointElmnt.getAttributeCount() != 2)
-        throw std::runtime_error{ "Malformed element attributes for " + geom::Point::name };
+        throw std::runtime_error{"Malformed element attributes for " + geom::Point::name};
     if (pointElmnt.getChildCount() != 0)
-        throw std::runtime_error{ "Malformed element children for " + geom::Point::name };
+        throw std::runtime_error{"Malformed element children for " + geom::Point::name};
     auto x = pointElmnt.getAttribute("x").getIntValue();
     auto y = pointElmnt.getAttribute("y").getIntValue();
     return geom::Point(x, y);
@@ -204,9 +204,9 @@ geom::Point readPoint(const framework::Element &pointElmnt) {
 
 HVectorGraphic readVectorGraphic(const framework::Element &vectorGraphicElmnt) {
     if (vectorGraphicElmnt.getName() != geom::VectorGraphic::name)
-        throw std::runtime_error{ "Expected tag " + geom::VectorGraphic::name };
+        throw std::runtime_error{"Expected tag " + geom::VectorGraphic::name};
     if (vectorGraphicElmnt.getAttributeCount() != 1)
-        throw std::runtime_error{ "Malformed element attributes for " + geom::VectorGraphic::name };
+        throw std::runtime_error{"Malformed element attributes for " + geom::VectorGraphic::name};
     geom::VectorGraphic vectorGraphic;
     if (vectorGraphicElmnt.getAttribute("closed").getBoolValue()) {
         vectorGraphic.closeShape();
@@ -224,33 +224,33 @@ HVectorGraphic readVectorGraphic(const framework::Element &vectorGraphicElmnt) {
 
 framework::PlacedGraphic readPlacedGraphic(const framework::Element &placedGraphicElmnt) {
     if (placedGraphicElmnt.getName() != framework::PlacedGraphic::name)
-        throw std::runtime_error{ "Expected tag " + framework::PlacedGraphic::name};
+        throw std::runtime_error{"Expected tag " + framework::PlacedGraphic::name};
     if (placedGraphicElmnt.getAttributeCount() != 2)
-        throw std::runtime_error{ "Malformed element attributes for " + framework::PlacedGraphic::name };
+        throw std::runtime_error{"Malformed element attributes for " + framework::PlacedGraphic::name};
     framework::PlacedGraphic placedGraphic;
     auto x = placedGraphicElmnt.getAttribute("x").getIntValue();
     auto y = placedGraphicElmnt.getAttribute("y").getIntValue();
-    
+
     placedGraphic.setPlacementPoint(geom::Point{x, y});
-    
-    for (const auto& vectorGraphicElmnt: placedGraphicElmnt.getAllChildren()) {
+
+    for (const auto &vectorGraphicElmnt : placedGraphicElmnt.getAllChildren()) {
         if (!isSaneElement(vectorGraphicElmnt, "VectorGraphic"))
             continue;
         const auto hVectorGraphic = readVectorGraphic(vectorGraphicElmnt);
         placedGraphic.setGraphic(hVectorGraphic);
     }
-    
+
     return placedGraphic;
 }
 
 framework::Layer readLayer(const framework::Element &layerElmnt) {
     if (layerElmnt.getName() != framework::Layer::name)
-        throw std::runtime_error{ "Expected tag " + framework::Layer::name};
+        throw std::runtime_error{"Expected tag " + framework::Layer::name};
     if (layerElmnt.getAttributeCount() != 1)
-        throw std::runtime_error{ "Malformed element attributes for " + framework::Layer::name };
+        throw std::runtime_error{"Malformed element attributes for " + framework::Layer::name};
     Layer layer;
     layer.setAlias(layerElmnt.getAttribute("alias").getStrValue());
-    for (const auto& placedGraphicElmnt: layerElmnt.getAllChildren()) {
+    for (const auto &placedGraphicElmnt : layerElmnt.getAllChildren()) {
         if (!isSaneElement(placedGraphicElmnt, "PlacedGraphic"))
             continue;
         auto placedGraphic = readPlacedGraphic(placedGraphicElmnt);
@@ -260,15 +260,15 @@ framework::Layer readLayer(const framework::Element &layerElmnt) {
 }
 framework::Scene readScene(const framework::Element &sceneElmnt) {
     if (sceneElmnt.getName() != framework::Scene::name)
-        throw std::runtime_error{ "Expected tag " + framework::Scene::name};
+        throw std::runtime_error{"Expected tag " + framework::Scene::name};
     if (sceneElmnt.getAttributeCount() != 2)
-        throw std::runtime_error{ "Malformed element attributes for " + framework::Scene::name };
+        throw std::runtime_error{"Malformed element attributes for " + framework::Scene::name};
     framework::Scene scene;
     auto width = sceneElmnt.getAttribute("width").getIntValue();
     auto height = sceneElmnt.getAttribute("height").getIntValue();
     scene.setWidth(width);
     scene.setHeight(height);
-    for (const auto& layerElmnt: sceneElmnt.getAllChildren()) {
+    for (const auto &layerElmnt : sceneElmnt.getAllChildren()) {
         if (!isSaneElement(layerElmnt, "Layer"))
             continue;
         auto layer = readLayer(layerElmnt);
@@ -330,10 +330,10 @@ framework::Element writeScene(const framework::Scene &scene) {
     ss.str("");
     ss << scene.getHeight();
     scene_elmnt.addAttribute(framework::Attribute("height", ss.str()));
-    for (auto layer: scene.getLayerCollection()) {
+    for (auto layer : scene.getLayerCollection()) {
         auto layer_elmnt = writeLayer(layer);
         scene_elmnt.addChild(layer_elmnt);
     }
     return scene_elmnt;
 }
-}
+} // namespace framework::io

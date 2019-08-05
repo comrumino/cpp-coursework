@@ -1,11 +1,11 @@
-#include "marshaller.h"
 #include "framework.h"
+#include "marshaller.h"
 #include "tinyxml2.h"
 #include <iostream>
 #include <string>
 #include <vector>
 
-# if 0
+#if 0
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         std::cout << "Please run this program with two arguments: infile and outfile" << std::endl;

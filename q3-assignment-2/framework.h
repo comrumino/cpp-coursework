@@ -75,47 +75,50 @@ class Scene {
 bool operator!=(const Scene &lhs, const Scene &rhs);
 
 class Attribute {
-    public:
-        Attribute(const std::string &attr_name, const std::string &attr_value) : name{attr_name}, value{attr_value} {}
-        const std::string &getName() const { return name; }
-        const std::string &getStrValue() const { return value; }
-        const int getIntValue() const;
-        const bool getBoolValue() const;
-    private:
-        std::string name;
-        std::string value;
+  public:
+    Attribute(const std::string &attr_name, const std::string &attr_value) : name{attr_name}, value{attr_value} {}
+    const std::string &getName() const { return name; }
+    const std::string &getStrValue() const { return value; }
+    const int getIntValue() const;
+    const bool getBoolValue() const;
+
+  private:
+    std::string name;
+    std::string value;
 };
 
 enum class ElementType { element, document, comment, declaration, text, unknown };
 class Element {
-    public:
-        Element(const std::string &elmnt_name, const ElementType &elmnt_type=ElementType::element) : name{elmnt_name}, type{elmnt_type} {}
-        const std::string &getName() const { return name; }
-        const std::vector<Attribute> &getAllAttributes() const { return attributes; }
-        int getAttributeCount() const { return attributes.size(); }
-        const Attribute &getAttribute(const std::string name) const;
-        void addAttribute(const Attribute &attr) { attributes.push_back(attr); }
-        int getChildCount() const { return children.size(); }
-        const std::vector<Element> &getAllChildren() const { return children; }
-        const Element getChild(const unsigned int &i) const { return children.at(i); }
-        void addChild(const Element &elmnt) { children.push_back(elmnt); }
-        bool isElement() const { return (type == ElementType::element); }
-        bool isDocument() const { return type == ElementType::document; }
-        bool isComment() const { return type == ElementType::comment; }
-        bool isDeclaration() const { return type == ElementType::declaration; }
-        bool isText() const { return type == ElementType::text; }
-        bool isUnknown() const { return type == ElementType::unknown; }
-    private:
-        std::string name;
-        ElementType type;
-        std::vector<Attribute> attributes;
-        std::vector<Element> children;
+  public:
+    Element(const std::string &elmnt_name, const ElementType &elmnt_type = ElementType::element)
+        : name{elmnt_name}, type{elmnt_type} {}
+    const std::string &getName() const { return name; }
+    const std::vector<Attribute> &getAllAttributes() const { return attributes; }
+    int getAttributeCount() const { return attributes.size(); }
+    const Attribute &getAttribute(const std::string name) const;
+    void addAttribute(const Attribute &attr) { attributes.push_back(attr); }
+    int getChildCount() const { return children.size(); }
+    const std::vector<Element> &getAllChildren() const { return children; }
+    const Element getChild(const unsigned int &i) const { return children.at(i); }
+    void addChild(const Element &elmnt) { children.push_back(elmnt); }
+    bool isElement() const { return (type == ElementType::element); }
+    bool isDocument() const { return type == ElementType::document; }
+    bool isComment() const { return type == ElementType::comment; }
+    bool isDeclaration() const { return type == ElementType::declaration; }
+    bool isText() const { return type == ElementType::text; }
+    bool isUnknown() const { return type == ElementType::unknown; }
+
+  private:
+    std::string name;
+    ElementType type;
+    std::vector<Attribute> attributes;
+    std::vector<Element> children;
 };
 } // namespace framework
 namespace framework::io {
 
-framework::Element elementFromXML(const tinyxml2::XMLNode* elmnt);
-tinyxml2::XMLNode* elementToXML(const framework::Element &framework_elmnt, tinyxml2::XMLDocument &doc);
+framework::Element elementFromXML(const tinyxml2::XMLNode *elmnt);
+tinyxml2::XMLNode *elementToXML(const framework::Element &framework_elmnt, tinyxml2::XMLDocument &doc);
 
 bool isSaneElement(const framework::Element &elmnt, const std::string &name);
 // read
@@ -130,5 +133,4 @@ framework::Element writeVectorGraphic(const HVectorGraphic &vectorGraphic);
 framework::Element writePlacedGraphic(const framework::PlacedGraphic &placedGraphic);
 framework::Element writeLayer(const framework::Layer &layer);
 framework::Element writeScene(const framework::Scene &scene);
-} //namespace framework::io
-
+} // namespace framework::io

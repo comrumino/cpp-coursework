@@ -1,15 +1,15 @@
 #include "TestHarness.h"
+#include "framework.h"
 #include "parse.h"
 #include "point.h"
-#include "vectorgraphic.h"
-#include "framework.h"
-#include "tinyxml2.h"
 #include "test_xml_case.h"
+#include "tinyxml2.h"
+#include "vectorgraphic.h"
+#include <algorithm>
 #include <cmath>
 #include <iostream>
 #include <sstream>
 #include <string>
-#include <algorithm>
 
 TEST(framework_Attribute, getStr_getInt) {
     framework::Attribute attr_x("x", "0");
@@ -52,8 +52,7 @@ TEST(framework_Element, addAttribute_getAttributeCount_getAllAttributes_getAttri
     using namespace framework;
     using AttrsColl = std::vector<std::vector<Attribute>>;
     Element framework_elmnt(geom::Point::name);
-    AttrsColl attrs_coll = {{Attribute("x", "0"), Attribute("y", "1")}, 
-                            {Attribute("x", "1"), Attribute("y", "0")}};
+    AttrsColl attrs_coll = {{Attribute("x", "0"), Attribute("y", "1")}, {Attribute("x", "1"), Attribute("y", "0")}};
     std::vector<Element> elmnts;
     // addAttribute && getAttributeCount
     for (auto attrs : attrs_coll) {
@@ -66,21 +65,21 @@ TEST(framework_Element, addAttribute_getAttributeCount_getAllAttributes_getAttri
         elmnts.push_back(framework_elmnt);
     }
     // getAllAttributes
-    for (int i = 0; i < elmnts.size(); i++) {  // element iteration
+    for (int i = 0; i < elmnts.size(); i++) { // element iteration
         auto elmnt = elmnts.at(i);
         auto elmnt_attrs = elmnt.getAllAttributes();
         auto expected_attr_vec = attrs_coll.at(i);
-        for (int j = 0; j < expected_attr_vec.size(); j++) {  // attrs of element iteration
+        for (int j = 0; j < expected_attr_vec.size(); j++) { // attrs of element iteration
             auto expected_attr = expected_attr_vec.at(j);
             CHECK_EQUAL(expected_attr.getName(), elmnt_attrs.at(j).getName());
             CHECK_EQUAL(attrs_coll.at(i).at(j).getIntValue(), elmnt_attrs.at(j).getIntValue());
         }
     }
     // getAttribute
-    for (int i = 0; i < elmnts.size(); i++) {  // element iteration
+    for (int i = 0; i < elmnts.size(); i++) { // element iteration
         auto elmnt = elmnts.at(i);
         auto expected_attr_vec = attrs_coll.at(i);
-        for (int j = 0; j < expected_attr_vec.size(); j++) {  // attrs of element iteration
+        for (int j = 0; j < expected_attr_vec.size(); j++) { // attrs of element iteration
             auto expected_attr = expected_attr_vec.at(j);
             auto elmnt_attr = elmnt.getAttribute(expected_attr.getName());
             CHECK_EQUAL(expected_attr.getName(), elmnt_attr.getName());
@@ -92,7 +91,7 @@ TEST(framework_Element, addChild_getChildCount_getAllChildren_getChild) {
     using namespace framework;
     using AttrsColl = std::vector<std::vector<Attribute>>;
     Element pt_elmnt(geom::Point::name);
-    AttrsColl attrs_coll = {{Attribute("x", "0"), Attribute("y", "4")}, 
+    AttrsColl attrs_coll = {{Attribute("x", "0"), Attribute("y", "4")},
                             {Attribute("x", "4"), Attribute("y", "0")},
                             {Attribute("x", "2"), Attribute("y", "2")}};
     std::vector<Element> expected_children;
@@ -111,7 +110,7 @@ TEST(framework_Element, addChild_getChildCount_getAllChildren_getChild) {
     CHECK_EQUAL(expected_children.size(), vg_elmnt.getChildCount());
     // getAllChildren
     auto actual_children = vg_elmnt.getAllChildren();
-    for (int i = 0; i < expected_children.size(); i++) {  // element iteration
+    for (int i = 0; i < expected_children.size(); i++) { // element iteration
         auto expected_child = expected_children.at(i);
         auto actual_child = actual_children.at(i);
         CHECK_EQUAL(expected_child.getName(), actual_child.getName());
@@ -119,7 +118,7 @@ TEST(framework_Element, addChild_getChildCount_getAllChildren_getChild) {
         CHECK_EQUAL(expected_child.getAttribute("x").getIntValue(), actual_child.getAttribute("x").getIntValue());
     }
     // getChild
-    for (int i = 0; i < expected_children.size(); i++) {  // element iteration
+    for (int i = 0; i < expected_children.size(); i++) { // element iteration
         auto expected_child = expected_children.at(i);
         auto actual_child = vg_elmnt.getChild(i);
         CHECK_EQUAL(expected_child.getName(), actual_child.getName());
@@ -130,7 +129,7 @@ TEST(framework_Element, addChild_getChildCount_getAllChildren_getChild) {
 TEST(framework_io, elementFromXML_unknown) {
     tinyxml2::XMLDocument doc;
     std::string doc_input(xml_case::unknown + xml_case::play);
-    doc.Parse(doc_input.c_str()); 
+    doc.Parse(doc_input.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.FirstChild());
     CHECK_EQUAL("unknown", framework_elmnt.getName());
     CHECK_EQUAL(xml_case::unknown, framework_elmnt.getAttribute("value").getStrValue());
@@ -140,7 +139,7 @@ TEST(framework_io, elementFromXML_unknown) {
 TEST(framework_io, elementFromXML_declaration) {
     tinyxml2::XMLDocument doc;
     std::string doc_input(xml_case::declaration + xml_case::play);
-    doc.Parse(doc_input.c_str()); 
+    doc.Parse(doc_input.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.FirstChild());
     CHECK_EQUAL("declaration", framework_elmnt.getName());
     CHECK_EQUAL(xml_case::declaration, framework_elmnt.getAttribute("value").getStrValue());
@@ -150,7 +149,7 @@ TEST(framework_io, elementFromXML_declaration) {
 TEST(framework_io, elementFromXML_text) {
     tinyxml2::XMLDocument doc;
     std::string doc_input(xml_case::text + xml_case::play);
-    doc.Parse(doc_input.c_str()); 
+    doc.Parse(doc_input.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.FirstChild());
     CHECK_EQUAL("text", framework_elmnt.getName());
     CHECK_EQUAL(true, framework_elmnt.isText());
@@ -159,7 +158,7 @@ TEST(framework_io, elementFromXML_text) {
 TEST(framework_io, elementFromXML_comment) {
     tinyxml2::XMLDocument doc;
     std::string doc_input(xml_case::comment + xml_case::play);
-    doc.Parse(doc_input.c_str()); 
+    doc.Parse(doc_input.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.FirstChild());
     CHECK_EQUAL("comment", framework_elmnt.getName());
     CHECK_EQUAL(xml_case::comment, framework_elmnt.getAttribute("value").getStrValue());
@@ -168,7 +167,7 @@ TEST(framework_io, elementFromXML_comment) {
 }
 TEST(framework_io, elementFromXML_document) {
     tinyxml2::XMLDocument doc;
-    doc.Parse(xml_case::play.c_str()); 
+    doc.Parse(xml_case::play.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.ToDocument());
     CHECK_EQUAL("document", framework_elmnt.getName());
     CHECK_EQUAL(0, framework_elmnt.getAttributeCount());
@@ -182,23 +181,23 @@ TEST(framework_io, elementFromXML_document) {
 }
 TEST(framework_io, elementFromXML_point_good) {
     tinyxml2::XMLDocument doc;
-    doc.Parse(xml_case::point_good.c_str()); 
+    doc.Parse(xml_case::point_good.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.RootElement());
     CHECK_EQUAL("Point", framework_elmnt.getName());
     CHECK_EQUAL(true, framework_elmnt.isElement());
     for (auto attr : framework_elmnt.getAllAttributes()) {
         if (attr.getName() == "x") {
-            CHECK_EQUAL(1, attr.getIntValue()); 
+            CHECK_EQUAL(1, attr.getIntValue());
         } else if (attr.getName() == "y") {
             CHECK_EQUAL(2, attr.getIntValue());
         } else {
-            CHECK_EQUAL(false, true);  // unexpected attribute name
+            CHECK_EQUAL(false, true); // unexpected attribute name
         }
     }
 }
 TEST(framework_io, elementFromXML_count_1_uncommented) {
     tinyxml2::XMLDocument doc;
-    doc.Parse(xml_case::good_count_1_uncommented.c_str()); 
+    doc.Parse(xml_case::good_count_1_uncommented.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.ToDocument());
     CHECK_EQUAL("document", framework_elmnt.getName());
     // Scene
@@ -251,7 +250,7 @@ TEST(framework_io, elementFromXML_count_1_uncommented) {
 }
 TEST(framework_io, elementFromXML_count_2_uncommented) {
     tinyxml2::XMLDocument doc;
-    doc.Parse(xml_case::good_count_2_uncommented.c_str()); 
+    doc.Parse(xml_case::good_count_2_uncommented.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.ToDocument());
     // Scene
     framework_elmnt = framework_elmnt.getChild(0);
@@ -358,7 +357,7 @@ TEST(framework_io, elementFromXML_count_2_uncommented) {
 }
 TEST(framework_io, io_Point_VectorGraphic_PlacedGraphic_Layer_Scene) {
     tinyxml2::XMLDocument doc;
-    doc.Parse(xml_case::good_count_2_uncommented.c_str()); 
+    doc.Parse(xml_case::good_count_2_uncommented.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.ToDocument());
     auto scene_elmnt = framework_elmnt.getChild(0);
     auto layer_elmnt = scene_elmnt.getChild(0);
@@ -415,12 +414,13 @@ TEST(framework_io, io_Point_VectorGraphic_PlacedGraphic_Layer_Scene) {
     CHECK_EQUAL(layer_elmnt.getChildCount(), written_layer_elmnt.getChildCount());
     // writeScene
     auto written_scene_elmnt = framework::io::writeScene(scene);
-    CHECK_EQUAL(scene_elmnt.getAttribute("height").getIntValue(), written_scene_elmnt.getAttribute("height").getIntValue());
+    CHECK_EQUAL(scene_elmnt.getAttribute("height").getIntValue(),
+                written_scene_elmnt.getAttribute("height").getIntValue());
     CHECK_EQUAL(scene_elmnt.getChildCount(), written_scene_elmnt.getChildCount());
 }
 TEST(framework_io, elementFromXML_bad) {
     tinyxml2::XMLDocument doc;
-    doc.Parse(xml_case::point_bad.c_str()); 
+    doc.Parse(xml_case::point_bad.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.RootElement());
     bool thrown = false;
     try {
@@ -434,33 +434,32 @@ TEST(framework_io, elementFromXML_bad) {
 }
 TEST(framework_io, elementToXML_good) {
     tinyxml2::XMLDocument doc;
-    doc.Parse(xml_case::point_good.c_str()); 
+    doc.Parse(xml_case::point_good.c_str());
     auto framework_elmnt = framework::io::elementFromXML(doc.RootElement());
     doc.Clear();
     auto xml_elmnt = framework::io::elementToXML(framework_elmnt, doc);
     // translate and check
     tinyxml2::XMLPrinter printer;
-    xml_elmnt->Accept( &printer );
+    xml_elmnt->Accept(&printer);
     std::string xml_str(printer.CStr());
     trim(xml_str, "\n\t\r");
     CHECK_EQUAL(xml_case::point_good, xml_str);
 }
 TEST(framework_io, elementToXML) {
     tinyxml2::XMLDocument doc;
-    doc.Parse(xml_case::complete_w_comment.c_str()); 
+    doc.Parse(xml_case::complete_w_comment.c_str());
     auto elmnt = framework::io::elementFromXML(doc.ToDocument());
     doc.Clear();
-    static_cast<void>(framework::io::elementToXML(elmnt, doc));  // cast to void since doc is referenced and updated 
+    static_cast<void>(framework::io::elementToXML(elmnt, doc)); // cast to void since doc is referenced and updated
     auto comment_elmnt = doc.NewComment("My crufty comment!");
     doc.InsertFirstChild(comment_elmnt);
     // translate and check
     tinyxml2::XMLPrinter printer;
-    doc.Accept( &printer );
+    doc.Accept(&printer);
     std::string xml_str(printer.CStr());
     auto newline = std::string("\n");
-    xml_str.erase(std::remove_if(xml_str.begin(),
-                                 xml_str.end(),
-                                 [newline](unsigned char c){ return newline.find_first_of(c) != std::string::npos; }),
+    xml_str.erase(std::remove_if(xml_str.begin(), xml_str.end(),
+                                 [newline](unsigned char c) { return newline.find_first_of(c) != std::string::npos; }),
                   xml_str.end());
     CHECK_EQUAL(xml_case::expected_w_comment, xml_str);
 }
