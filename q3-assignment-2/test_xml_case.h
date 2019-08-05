@@ -2,6 +2,7 @@
 #include <string>
 
 namespace xml_case {
+
 static const std::string play{"<Play/>"};
 static const std::string unknown{"<!DOCTYPE PLAY SYSTEM \"play.dtd\">"};
 static const std::string declaration{"<?xml version=\"1.0\"?>"};

@@ -7,6 +7,7 @@
 #include <vector>
 
 namespace framework {
+
 using HVectorGraphic = std::shared_ptr<geom::VectorGraphic>;
 
 class PlacedGraphic {
@@ -115,11 +116,12 @@ class Element {
     std::vector<Element> children;
 };
 } // namespace framework
-namespace framework::io {
 
+namespace framework::io {
+// translate framework elements from/to XML
 framework::Element elementFromXML(const tinyxml2::XMLNode *elmnt);
 tinyxml2::XMLNode *elementToXML(const framework::Element &framework_elmnt, tinyxml2::XMLDocument &doc);
-
+// sanity check helper
 bool isSaneElement(const framework::Element &elmnt, const std::string &name);
 // read
 geom::Point readPoint(const framework::Element &pointElmnt);

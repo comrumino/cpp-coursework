@@ -3,6 +3,7 @@
 #include <vector>
 
 namespace geom {
+
 using Points = std::vector<Point>;
 
 class VectorGraphic {

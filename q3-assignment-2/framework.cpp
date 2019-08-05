@@ -189,7 +189,7 @@ bool isSaneElement(const framework::Element &elmnt, const std::string &name) {
         return true;
     }
 }
-
+// framework::io read
 geom::Point readPoint(const framework::Element &pointElmnt) {
     if (pointElmnt.getName() != geom::Point::name)
         throw std::runtime_error{"Expected tag " + geom::Point::name};
@@ -201,7 +201,6 @@ geom::Point readPoint(const framework::Element &pointElmnt) {
     auto y = pointElmnt.getAttribute("y").getIntValue();
     return geom::Point(x, y);
 }
-
 HVectorGraphic readVectorGraphic(const framework::Element &vectorGraphicElmnt) {
     if (vectorGraphicElmnt.getName() != geom::VectorGraphic::name)
         throw std::runtime_error{"Expected tag " + geom::VectorGraphic::name};
@@ -221,7 +220,6 @@ HVectorGraphic readVectorGraphic(const framework::Element &vectorGraphicElmnt) {
     const auto hVectorGraphic = std::make_shared<geom::VectorGraphic>(vectorGraphic);
     return hVectorGraphic;
 }
-
 framework::PlacedGraphic readPlacedGraphic(const framework::Element &placedGraphicElmnt) {
     if (placedGraphicElmnt.getName() != framework::PlacedGraphic::name)
         throw std::runtime_error{"Expected tag " + framework::PlacedGraphic::name};
@@ -242,7 +240,6 @@ framework::PlacedGraphic readPlacedGraphic(const framework::Element &placedGraph
 
     return placedGraphic;
 }
-
 framework::Layer readLayer(const framework::Element &layerElmnt) {
     if (layerElmnt.getName() != framework::Layer::name)
         throw std::runtime_error{"Expected tag " + framework::Layer::name};
@@ -276,7 +273,7 @@ framework::Scene readScene(const framework::Element &sceneElmnt) {
     }
     return scene;
 }
-
+// framework::io write
 framework::Element writePoint(const geom::Point &point) {
     framework::Element pt_elmnt(geom::Point::name);
     std::stringstream ss;

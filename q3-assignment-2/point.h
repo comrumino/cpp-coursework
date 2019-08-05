@@ -5,6 +5,7 @@
 #include <string>
 
 namespace geom {
+
 class Point {
   public:
     static inline const std::string name{"Point"};
@@ -35,5 +36,4 @@ class Point {
 };
 bool operator==(const Point &lhs, const Point &rhs);
 bool operator!=(const Point &lhs, const Point &rhs);
-
 } // namespace geom

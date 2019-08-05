@@ -5,6 +5,7 @@
 #include <vector>
 
 namespace geom {
+
 void VectorGraphic::openShape() { is_open = true; }
 void VectorGraphic::closeShape() { is_open = false; }
 void VectorGraphic::addPoint(const Point &point) { points.push_back(point); }

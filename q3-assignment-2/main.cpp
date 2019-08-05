@@ -5,7 +5,12 @@
 #include <string>
 #include <vector>
 
-#if 0
+#if 1
+// to test:
+// [[ -e OutVectorGraphic.xml ]] && rm OutVectorGraphic.xml
+// g++ $(ls ./*\.cpp ./*\.h | grep -v test)
+// ./a.out VectorGraphic.xml OutVectorGraphic.xml
+// cat ./OutVectorGraphic.xml
 int main(int argc, char *argv[]) {
     if (argc != 3) {
         std::cout << "Please run this program with two arguments: infile and outfile" << std::endl;
@@ -19,7 +24,7 @@ int main(int argc, char *argv[]) {
     }
     auto elmnt = framework::io::elementFromXML(doc.ToDocument());
     doc.Clear();
-    static_cast<void>(framework::io::elementToXML(elmnt, doc));  // cast to void since doc is referenced and updated 
+    static_cast<void>(framework::io::elementToXML(elmnt, doc)); // cast to void since doc is referenced and updated
     auto comment_elmnt = doc.NewComment("My crufty comment!");
     doc.InsertFirstChild(comment_elmnt);
     auto write_code = marshaller::file::write(doc, outfile);

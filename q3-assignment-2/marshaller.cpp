@@ -15,9 +15,7 @@ bool read(tinyxml2::XMLDocument &doc, const std::string infile) {
         return 0;
     }
 }
-
 bool write(tinyxml2::XMLDocument &doc, const std::string outfile, bool compact) {
     return doc.SaveFile(outfile.c_str(), compact);
 }
-
 } // namespace marshaller::file
