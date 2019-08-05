@@ -7,7 +7,8 @@ using Points = std::vector<Point>;
 
 class VectorGraphic {
   public:
-    // Rule of 5, in this case default definitions would have sufficed. Even so
+    static inline const std::string name{"VectorGraphic"};
+    // Rule of 5 in an explicit way
     VectorGraphic() = default;                                    // default ctor
     ~VectorGraphic() = default;                                   // default dtor
     VectorGraphic(const VectorGraphic &rhs) = default;            // copy ctor

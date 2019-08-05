@@ -69,7 +69,7 @@ std::string VectorGraphic::get_human_readable() const {
         }
     }
     ss << std::endl;
-    return ss.str();  // copy elision
+    return ss.str(); // copy elision
 }
 std::string VectorGraphic::get_xml() const {
     std::stringstream ss;
@@ -84,9 +84,6 @@ std::string VectorGraphic::get_xml() const {
         }
         ss << "</VectorGraphic>";
     }
-    return ss.str();  // copy elision
+    return ss.str(); // copy elision
 }
 } // namespace geom
-
-namespace marshaller {
-} // namespace marshaller

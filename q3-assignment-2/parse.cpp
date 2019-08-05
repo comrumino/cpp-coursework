@@ -22,16 +22,17 @@ void trim(std::string &sourceString, std::string const &trimmables) {
 }
 void eat(std::istream &sourceStream, std::string const &edibles) {
     // drop contiguous edibles from start of source until first not if edibles
-    char lead_char = '\0';
+    int nextchar;
     if (sourceStream) {
-        while (sourceStream.cur != sourceStream.end) {
-            lead_char = static_cast<char>(sourceStream.peek());
-            if (edibles.find(lead_char) != npos) {
-                sourceStream.seekg(1, sourceStream.cur);
+
+        while ((nextchar = sourceStream.peek()) != EOF) {
+            if (edibles.find(static_cast<char>(nextchar)) != std::string::npos) {
+                sourceStream.get();
             } else {
                 break;
             }
         }
+
     } else {
         std::cout << "An istream with error state was provided to eat. Skipping it..." << std::endl;
     }

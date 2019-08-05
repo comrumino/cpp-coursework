@@ -6,9 +6,7 @@
 namespace geom {
 void Point::setX(int rhs_x_coord) { x_coord = rhs_x_coord; }
 void Point::setY(int rhs_y_coord) { y_coord = rhs_y_coord; }
-std::ostream &operator<<(std::ostream &os, const Point &point) {
-    return marshaller::markup_stream<Point>(os, point);
-}
+std::ostream &operator<<(std::ostream &os, const Point &point) { return marshaller::markup_stream<Point>(os, point); }
 bool operator==(const Point &lhs, const Point &rhs) { return rhs.getX() == lhs.getX() && rhs.getY() == lhs.getY(); }
 bool operator!=(const Point &lhs, const Point &rhs) { return !(lhs == rhs); }
 
@@ -25,6 +23,4 @@ std::string Point::get_xml() const {
 }
 } // namespace geom
 
-namespace marshaller {
-
-} // namespace marshaller
+namespace marshaller {} // namespace marshaller

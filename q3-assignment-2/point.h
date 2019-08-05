@@ -7,7 +7,8 @@
 namespace geom {
 class Point {
   public:
-    // Rule of 5, in this case default definitions would have sufficed. Even so
+    static inline const std::string name{"Point"};
+    // Rule of 5 in an explicit way
     constexpr Point(int x, int y) : x_coord{x}, y_coord{y} {}
 
     Point() = default;                                // default ctor
@@ -34,7 +35,5 @@ class Point {
 };
 bool operator==(const Point &lhs, const Point &rhs);
 bool operator!=(const Point &lhs, const Point &rhs);
-} // namespace geom
 
-namespace marshaller {
-} // namespace marshaller
+} // namespace geom
