@@ -19,14 +19,7 @@ int main(int argc, char *argv[]) {
     }
     auto elmnt = framework::io::elementFromXML(doc.ToDocument());
     doc.Clear();
-    for (auto child : elmnt.getAllChildren()) {
-        if (!framework::io::isSaneElement(child, "Scene"))
-            continue;
-        auto scene = framework::io::readScene(child);
-        auto scene_elmnt = framework::io::writeScene(scene);
-        auto xml_scene = framework::io::elementToXML(scene_elmnt, doc);
-        doc.InsertEndChild(xml_scene);
-    }
+    framework::io::elementToXML(elmnt, doc);
     auto comment_elmnt = doc.NewComment("My crufty comment!");
     doc.InsertFirstChild(comment_elmnt);
     auto write_code = marshaller::file::write(doc, outfile);

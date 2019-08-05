@@ -151,10 +151,14 @@ tinyxml2::XMLNode* elementToXML(const framework::Element &framework_elmnt, tinyx
         }
     } else if (framework_elmnt.isDocument()) {
         for (auto child : framework_elmnt.getAllChildren()) {
-            auto xml_child = elementToXML(child, doc);
-            doc.InsertEndChild(xml_child);
+            if (!framework::io::isSaneElement(child, "Scene"))
+                continue;
+            auto scene = framework::io::readScene(child);
+            auto scene_elmnt = framework::io::writeScene(scene);
+            auto xml_scene = framework::io::elementToXML(scene_elmnt, doc);
+            doc.InsertEndChild(xml_scene);
         }
-        return doc.ToDocument();
+        return nullptr;
     } else if (framework_elmnt.isComment()) {
         auto comment = framework_elmnt.getAttribute("value").getStrValue();
         std::cout << "converting framework element comment to xml comment (\"" << comment << "\")" << std::endl;
