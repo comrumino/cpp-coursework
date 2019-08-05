@@ -381,7 +381,7 @@ TEST(framework_io, elementFromXML_count_2_uncommented) {
     CHECK_EQUAL(2, pt_elmnt.getAttributeCount());
     CHECK_EQUAL(0, pt_elmnt.getChildCount());
 }
-TEST(framework_io, read_Point_VectorGraphic_PlacedGraphic_Layer_Scene) {
+TEST(framework_io, io_Point_VectorGraphic_PlacedGraphic_Layer_Scene) {
     tinyxml2::XMLDocument doc;
     doc.Parse(xml_case::good_count_2_uncommented.c_str()); 
     auto framework_elmnt = framework::io::elementFromXML(doc.ToDocument());
@@ -415,6 +415,33 @@ TEST(framework_io, read_Point_VectorGraphic_PlacedGraphic_Layer_Scene) {
     auto scene = framework::io::readScene(scene_elmnt);
     CHECK_EQUAL(800, scene.getWidth());
     CHECK_EQUAL(2, scene.getLayerCount());
+    // writePoint
+    auto written_pt_elmnt = framework::io::writePoint(pt);
+    auto pt_x = written_pt_elmnt.getAttribute("x").getIntValue();
+    CHECK_EQUAL(pt_elmnt.getAttribute("x").getIntValue(), pt_x);
+    CHECK_EQUAL(0, written_pt_elmnt.getChildCount());
+    // writeVectorGraphic
+    auto written_vg_elmnt = framework::io::writeVectorGraphic(vg);
+    auto vg_closed = written_vg_elmnt.getAttribute("closed").getBoolValue();
+    CHECK_EQUAL(vg_elmnt.getAttribute("closed").getBoolValue(), vg_closed);
+    CHECK_EQUAL(pt_x, written_vg_elmnt.getChild(0).getAttribute("x").getIntValue());
+    CHECK_EQUAL(3, written_vg_elmnt.getChildCount());
+    // writePlacedGraphic
+    auto written_pg_elmnt = framework::io::writePlacedGraphic(pg);
+    auto pg_x = written_pg_elmnt.getAttribute("x").getIntValue();
+    CHECK_EQUAL(pg_elmnt.getAttribute("x").getIntValue(), pg_x);
+    CHECK_EQUAL(vg_closed, written_pg_elmnt.getChild(0).getAttribute("closed").getBoolValue());
+    CHECK_EQUAL(pg_elmnt.getChildCount(), written_pg_elmnt.getChildCount());
+    // writeLayer
+    auto written_layer_elmnt = framework::io::writeLayer(layer);
+    auto layer_alias = written_layer_elmnt.getAttribute("alias").getStrValue();
+    CHECK_EQUAL(layer_elmnt.getAttribute("alias").getStrValue(), layer_alias);
+    CHECK_EQUAL(pg_x, written_layer_elmnt.getChild(0).getAttribute("x").getIntValue());
+    CHECK_EQUAL(layer_elmnt.getChildCount(), written_layer_elmnt.getChildCount());
+    // writeScene
+    auto written_scene_elmnt = framework::io::writeScene(scene);
+    CHECK_EQUAL(scene_elmnt.getAttribute("height").getIntValue(), written_scene_elmnt.getAttribute("height").getIntValue());
+    CHECK_EQUAL(scene_elmnt.getChildCount(), written_scene_elmnt.getChildCount());
 }
 TEST(framework_io, elementFromXML_bad) {
     tinyxml2::XMLDocument doc;

@@ -33,12 +33,13 @@ class Layer {
     typedef PlacedGraphicCollection::iterator PlacedGraphicIterator;
 
     void addGraphic(PlacedGraphic &pg);
-    const PlacedGraphicCollection &getGraphicCollection() const;
+    const PlacedGraphicCollection &getGraphicCollection() const { return graphics; }
+
     const std::string &getAlias() const;
     void setAlias(const std::string &alias);
     PlacedGraphicIterator begin() { return graphics.begin(); }
     PlacedGraphicIterator end() { return graphics.end(); }
-    int getPlacedGraphicCount() { return static_cast<int>(std::distance(begin(), end())); }
+    int getPlacedGraphicCount() { return graphics.size(); }
     bool operator==(const Layer &rhs) const;
 
   private:
@@ -60,6 +61,7 @@ class Scene {
     const int &getWidth() const;
     void setHeight(const int &newHeight);
     const int &getHeight() const;
+    const LayerCollection &getLayerCollection() const { return layers; }
     LayerIterator begin() { return layers.begin(); }
     LayerIterator end() { return layers.end(); }
     int getLayerCount() { return static_cast<int>(std::distance(begin(), end())); }
@@ -125,14 +127,8 @@ framework::Scene readScene(const framework::Element &sceneElmnt);
 // write
 framework::Element writePoint(const geom::Point &point);
 framework::Element writeVectorGraphic(const HVectorGraphic &vectorGraphic);
-/*
 framework::Element writePlacedGraphic(const framework::PlacedGraphic &placedGraphic);
 framework::Element writeLayer(const framework::Layer &layer);
 framework::Element writeScene(const framework::Scene &scene);
-*/
-
-/*
-HVectorGraphic readVectorGraphic (const tinyxml2::XMLElement &vectorGraphicElmnt);
-*/
 } //namespace framework::io
 
