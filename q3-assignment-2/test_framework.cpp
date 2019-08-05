@@ -9,32 +9,7 @@
 #include <iostream>
 #include <sstream>
 #include <string>
-
-/*
-class Attribute {
-    public:
-        Attribute(const std::string &attr_name, const std::string &attr_value) : name{attr_name}, value{attr_value} {}
-        const std::string &getName() const { return name; }
-        const std::string &getStrValue() const { return value; }
-        const int getIntValue() const;
-    private:
-        std::string name;
-        std::string value;
-};
-
-class Element {
-    public:
-        Element(const std::string &elmnt_name) : name{elmnt_name} {}
-        const std::string &getName() const { return name; }
-        const std::vector<Attribute> &getAllAttributes() const { return attributes; }
-        void addAttribute(const Attribute &attr) { attributes.push_back(attr); }
-        const std::vector<Element> &getChildren() const { return children; }
-        void addChild(const Element &elmnt) { children.push_back(elmnt); }
-    private:
-        std::string name;
-        std::vector<Attribute> attributes;
-        std::vector<Element> children;
-};*/
+#include <algorithm>
 
 TEST(framework_Attribute, getStr_getInt) {
     framework::Attribute attr_x("x", "0");
@@ -463,9 +438,29 @@ TEST(framework_io, elementToXML_good) {
     auto framework_elmnt = framework::io::elementFromXML(doc.RootElement());
     doc.Clear();
     auto xml_elmnt = framework::io::elementToXML(framework_elmnt, doc);
+    // translate and check
     tinyxml2::XMLPrinter printer;
     xml_elmnt->Accept( &printer );
     std::string xml_str(printer.CStr());
     trim(xml_str, "\n\t\r");
     CHECK_EQUAL(xml_case::point_good, xml_str);
+}
+TEST(framework_io, elementToXML) {
+    tinyxml2::XMLDocument doc;
+    doc.Parse(xml_case::complete_w_comment.c_str()); 
+    auto elmnt = framework::io::elementFromXML(doc.ToDocument());
+    doc.Clear();
+    static_cast<void>(framework::io::elementToXML(elmnt, doc));  // cast to void since doc is referenced and updated 
+    auto comment_elmnt = doc.NewComment("My crufty comment!");
+    doc.InsertFirstChild(comment_elmnt);
+    // translate and check
+    tinyxml2::XMLPrinter printer;
+    doc.Accept( &printer );
+    std::string xml_str(printer.CStr());
+    auto newline = std::string("\n");
+    xml_str.erase(std::remove_if(xml_str.begin(),
+                                 xml_str.end(),
+                                 [newline](unsigned char c){ return newline.find_first_of(c) != std::string::npos; }),
+                  xml_str.end());
+    CHECK_EQUAL(xml_case::expected_w_comment, xml_str);
 }
