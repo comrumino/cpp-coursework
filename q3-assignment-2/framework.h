@@ -16,7 +16,7 @@ class PlacedGraphic {
     void setPlacementPoint(geom::Point const &placement);
     geom::Point const &getPlacementPoint() const;
     void setGraphic(const HVectorGraphic &graphic);
-    HVectorGraphic const &getGraphic() const;
+    HVectorGraphic const getGraphic() const;  // copy shared_ptr by value
 
   private:
     geom::Point placementPoint;
@@ -58,10 +58,10 @@ class Scene {
     typedef LayerCollection::iterator LayerIterator;
 
     void addLayer(Layer &layer);
-    void setWidth(const int &newWidth);
-    const int &getWidth() const;
-    void setHeight(const int &newHeight);
-    const int &getHeight() const;
+    void setWidth(const int newWidth);
+    const int getWidth() const;
+    void setHeight(const int newHeight);
+    const int getHeight() const;
     const LayerCollection &getLayerCollection() const { return layers; }
     LayerIterator begin() { return layers.begin(); }
     LayerIterator end() { return layers.end(); }

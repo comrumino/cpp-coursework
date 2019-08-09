@@ -30,10 +30,10 @@ bool operator!=(const Layer &lhs, const Layer &rhs) { return !(lhs == rhs); }
 
 // class Scene
 void Scene::addLayer(Layer &layer) { layers.push_back(std::move(layer)); }
-void Scene::setWidth(const int &newWidth) { width = newWidth; }
-const int &Scene::getWidth() const { return width; }
-void Scene::setHeight(const int &newHeight) { height = newHeight; }
-const int &Scene::getHeight() const { return height; }
+void Scene::setWidth(const int newWidth) { width = newWidth; }
+const int Scene::getWidth() const { return width; }
+void Scene::setHeight(const int newHeight) { height = newHeight; }
+const int Scene::getHeight() const { return height; }
 bool Scene::operator==(const Scene &rhs) const { // scope to class and used stdlib equality check
     return rhs.getWidth() == getWidth() && rhs.layers == layers;
 }
