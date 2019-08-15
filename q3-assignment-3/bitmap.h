@@ -73,8 +73,9 @@ std::ostream &operator<<(std::ostream &os, const Bitmap &rhs);
 
 template <typename T>
 Color::Color(const T &red, const T &green, const T &blue)
-    : red{static_cast<binary::Byte>(red)}, green{static_cast<binary::Byte>(green)}, blue{static_cast<binary::Byte>(
-                                                                                        blue)} {}
+    : red{static_cast<binary::Byte>(red)},
+      green{static_cast<binary::Byte>(green)},
+      blue{static_cast<binary::Byte>(blue)} {}
 
 std::ostream &operator<<(std::ostream &os, const Color &rhs) noexcept;
 
