@@ -17,7 +17,6 @@ class Color {
     Color(Color &&src) noexcept = default;
 
     Color &operator=(const Color &rhs) = default;
-    Color &operator=(Color &&rhs) noexcept = default;
     bool operator==(const Color &rhs) const noexcept {
         return getRed() == rhs.getRed() && getGreen() == rhs.getGreen() && getBlue() == rhs.getBlue();
     }
@@ -44,10 +43,8 @@ class Bitmap {
     ~Bitmap() = default;
     Bitmap(int width, int height, std::istream &is);
     Bitmap(const Bitmap &src) = default;
-    Bitmap(Bitmap &&src) noexcept = default;
 
     Bitmap &operator=(const Bitmap &rhs) = default;
-    Bitmap &operator=(Bitmap &&rhs) noexcept = default;
 
     int getWidth() const noexcept { return width; }
     int getHeight() const noexcept { return height; }
@@ -85,10 +82,10 @@ class WindowsBitmapHeader {
     ~WindowsBitmapHeader() = default;
     WindowsBitmapHeader(std::istream &is) { read(is); }
     WindowsBitmapHeader(const WindowsBitmapHeader &src) = default;
-    WindowsBitmapHeader(WindowsBitmapHeader &&src) = default;
+    WindowsBitmapHeader(WindowsBitmapHeader &&src) noexcept = default;
 
     WindowsBitmapHeader &operator=(const WindowsBitmapHeader &rhs) = default;
-    WindowsBitmapHeader &operator=(WindowsBitmapHeader &&rhs) = default;
+    WindowsBitmapHeader &operator=(WindowsBitmapHeader &&rhs) noexcept = default;
 
     void read(std::istream &is);
     void readFileHeader(std::istream &is);
