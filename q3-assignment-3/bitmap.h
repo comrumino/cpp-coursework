@@ -14,10 +14,10 @@ class Color {
     ~Color() = default;
     template <typename T> Color(const T &red, const T &green, const T &blue);
     Color(const Color &src) = default;
-    Color(Color &&src) = default;
+    Color(Color &&src) noexcept = default;
 
     Color &operator=(const Color &rhs) = default;
-    Color &operator=(Color &&rhs) = default;
+    Color &operator=(Color &&rhs) noexcept = default;
     bool operator==(const Color &rhs) const noexcept {
         return getRed() == rhs.getRed() && getGreen() == rhs.getGreen() && getBlue() == rhs.getBlue();
     }
@@ -44,10 +44,10 @@ class Bitmap {
     ~Bitmap() = default;
     Bitmap(int width, int height, std::istream &is);
     Bitmap(const Bitmap &src) = default;
-    Bitmap(Bitmap &&src) = default;
+    Bitmap(Bitmap &&src) noexcept = default;
 
     Bitmap &operator=(const Bitmap &rhs) = default;
-    Bitmap &operator=(Bitmap &&rhs) = default;
+    Bitmap &operator=(Bitmap &&rhs) noexcept = default;
 
     int getWidth() const noexcept { return width; }
     int getHeight() const noexcept { return height; }

@@ -14,20 +14,20 @@ template <typename T> class Binary_t {
 
     Binary_t() = default;
     ~Binary_t() = default;
-    constexpr Binary_t(T value) : bvalue{value} {};
+    constexpr Binary_t(T value) : bvalue{value} {}; // non-explicit
     Binary_t(const Binary_t &src) = default;
-    Binary_t(Binary_t &&src) = default;
+    Binary_t(Binary_t &&src) noexcept = default;
     Binary_t &operator=(const Binary_t &rhs) = default;
-    Binary_t &operator=(Binary_t &&rhs) = default;
+    Binary_t &operator=(Binary_t &&rhs) noexcept = default;
     Binary_t &operator=(const T &value);
-    Binary_t &operator=(T &&value);
 
     operator T() const noexcept { return bvalue; }
     bool operator==(const Binary_t &rhs) const noexcept { return bvalue == rhs.bvalue; }
+    bool operator!=(const Binary_t &rhs) const noexcept { return !(bvalue == rhs.bvalue); }
     bool operator==(const T &rhs) const noexcept { return bvalue == rhs; }
     template <typename T2> bool operator!=(const T2 &rhs) const noexcept { return !(bvalue == rhs); }
 
-    const T &getValue() const noexcept { return bvalue; };
+    const T getValue() const noexcept { return bvalue; };
     void write(std::ostream &os, const endian &&endianess = endian::little) const;
     void writeLittleEndian(std::ostream &os) const { write(os, endian::little); }
     void writeBigEndian(std::ostream &os) const { write(os, endian::big); }
@@ -46,10 +46,6 @@ static constexpr int OCTET = 8; // 8 bits in an octet
 static constexpr Byte_t BIT_MASK = static_cast<Byte_t>((1 << (OCTET + 1)) - 1);
 
 template <typename T> Binary_t<T> &Binary_t<T>::operator=(const T &value) {
-    bvalue = static_cast<T>(value);
-    return *this;
-}
-template <typename T> Binary_t<T> &Binary_t<T>::operator=(T &&value) {
     bvalue = static_cast<T>(value);
     return *this;
 }

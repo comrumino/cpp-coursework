@@ -107,6 +107,7 @@
 * tightly/loosely coupled systems, rather vauge term to describe the MIMD group. Shared-memory ~ tightly and distributed/wan/lan ~ loosely
 * concurrent assignment, `x, y = y, x`
 * [stack unwinding](http://www.stroustrup.com/except89.pdf), when an exception is thrown find a handling in the call chain.
+* CODEC, comes from "code/decode" (similar to MODEM which comes from "Modulator/Demodulator")
 
 ## Condensed quarter one
 * `for (auto element = values.begin(); element != values.end(); ++element) ` st auto `vector::iterator` or `const_iterator`
@@ -183,8 +184,8 @@
 * template specialization, all parameters of template function are specified. class template and member templates allow partial specialization via partial evalation of the base template
 * template type parameter, named used to abstract a type (that is the parameters to the template dipshit)
 * trailing return types, `auto fcn(It beg, It end) -> typename remove_reference<decltype(*beg)>::type` if the function template return type is a related type of a template type parameter, instantiation of all possibilities is burdensome
-* type transformation template, metaprogramming, tranform a given template type parameter to a related type
-* variadic template, varying number of template arguments---use template parmeter pack
+* type transformation template, metaprogramming, transform a given template type parameter to a related type
+* variadic template, varying number of template arguments---use template parameter pack
 
 ## Condensed concurrency
 * task switch, doing a bit of one task followed by doing a bit of another task
@@ -193,7 +194,7 @@
     * determine the next task
     * reload CPU state
     * sometimes the instructions load from memory into cache and prevent CPU from executing instructions meanwhile
-* concurrency, a system performing multiple activites in parallel
+* concurrency, a system performing multiple activities in parallel
 * concurrency illusion, single-core interleaves tasks and multiple activities are quick enough to feel like parallelism
 * hardware concurrency, multi-core or multi-processor systems can complete multiple activities in parallel
 * hardware threads, the number of independent tasks a processor can genuinely run concurrently
@@ -204,7 +205,7 @@
 * client/server application, thread for each connection will at some point reduce overall performance due to task switching
 * abstraction penalty, the cost of using high-level facilities in terms of performance (but increased coherence and decreased errors)
 * data race, concurrent modification of the same object resulting in undefined behavior
-* lock-free programming, (difficult to get right) desing the data structure and its invariants so that modifcations are done as a series of indivisible changes which preserves the invariants
+* lock-free programming, (difficult to get right) design the data structure and its invariants so that modifications are done as a series of indivisible changes which preserves the invariants
 * transaction, series of reads and writes followed by a commit all done in a single step. if can't proceed, then restarted
 * uniform initialization syntax, one use is to avoid "C++'s most vexing parse" (like accidental prototype of thread)
 * mutex, (mutual exclusion) synchronization primitive used to lock the associated data while being accessed and unlocked when done
@@ -221,7 +222,7 @@
 * work stealing, a design which allows a thread with no work to steal work from a thread with a full queue
 * thread-safe, no data loss or corruption, all invariants are upheld, and no race conditions
 * serialization, preventing genuine concurrent access and requires threads to access it serially
-* atomic action, indivisble sequence of primitive operations that must be complete without interruption
+* atomic action, indivisible sequence of primitive operations that must be complete without interruption
 
 ## Condensed Q3
 * bitmap, are unstructured (a list of colored dots such as BMP, JPG, GIF, and TIFF)
@@ -246,28 +247,36 @@
 * `std::move`, a cast to an rvalue, doesn't actually move anything, the object can become empty in the previous context
 * `std::forward`, produces an rvalue from an universal-reference/rvalue only (Myeres' rule #25)
 * persistence, data continues to exists after a process exits
-* transparent persistence, complexitys of periodic saving are hiddent from object use
+* transparent persistence, complexities of periodic saving are hidden from object use
 * serialization, the process of transforming an object into sequentially stored/transferred bits
 * file format, a defined convention for encoding a file
 * POD, plain old data, contiguous sequence of bytes in memory
 * scene, collection of objects and their orientation to each other
-* layer, colection of graphics, no width and height
+* layer, collection of graphics, no width and height
 * locking, disable modification
 * z-layer, dictates the order in which graphics are drawn
 * synergy, worth more in its whole than the parts
-* LSP, liskov substituion principle, if S is subtype of T then S may replace T
+* LSP, liskov substitution principle, if S is subtype of T then S may replace T
 * smart_pointers, reference count to same object
 * unique_ptr, retains exclusive ownership
 * weak_ptr, does not affect shared_ptr count
-* fundamental collections, generic collections that are the foundation to collections desgined for a precise use, (i.e. list, deque, vector)
-* weakest link, the part of a design which should be optimized in an ad hoc manner when its worth it
+* fundamental collections, generic collections that are the foundation to collections designed for a precise use, (i.e. list, deque, vector)
+* weakest link, the part of a design which should be optimized when worth it and necessary
 * list, element access is linear
 * deque, efficient start/end insertion/removal, random access, start/end operations don't invalidate iterators otherwise iterators are invalidated
 * Horizontal alignment, placement relative to the archetypal rectangle
 * assignment of self is no operator `if (this != &rhs) { value = rhs.value; } return *this`
 * be aware of which operators invalidate the iterator
 * first-class concept, an idea the is represented in a system in a well-defined manner (e.g. as a class)
-* second-class concept, an idea that pervades the system but is not consistenly used or defined.
+* second-class concept, an idea that pervades the system but is not consistently used or defined.
+* extend functionality two options: decorators or subclasses (decorators for dynamic, transparent, and when subclassing is impractical)
+* iterator/cursor, sequential access for an aggregate object
+* prototype, dynamic loading that avoids a class hierachy of factories when there a finite number of state combinations
+* end iterators, a result of a pointer based mental model and overly biased to primitive type behavior
+* unsigned int, rarely necessary to save one more bit for storage and trying to ensure something is positive futile due to implicit rule conversions
+* Performing a copy inside of a function declared with move sematics will cause your coworkers to change careers
+* noexcept: use on move construct, move assign, and swap.
+* std::iterator. it does not define a virtual destructor
 
 ## Shared pointers
 * shared pointer, syntax `std::shared_ptr<int[]> sharedValues = std::make_shared<int[]>(20);` allows multiple clients to share access to that dynamically allocated heap memory by using reference counting use unique pointer unless you really need sharing
@@ -301,6 +310,7 @@
 * [C++ best example](https://gist.github.com/irbull/08339ddcd5686f509e9826964b17bb59)
 * http://www.stroustrup.com/Programming/PPP-style-rev3.pdf
 * [Amortized Analysis, CMU Algo](https://www.cs.cmu.edu/afs/cs/academic/class/15451-s07/www/)
+* [Skip Lists: A Probabilistic Alternative to Balanced Trees](https://cglab.ca/~morin/teaching/5408/refs/p90a.pdf)
 
 # UML: Identity, behavior, state (IBS)
 * unified modeling language
