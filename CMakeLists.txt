@@ -3,6 +3,8 @@ project(CPROGRM)
 # CXX Preferences
 SET(CMAKE_CXX_COMPILER             "/usr/bin/clang++")
 # SET(CMAKE_CXX_FLAGS                "-Wall -Wextra -Weverything -pedantic -Wno-sign-conversion")
+set (CMAKE_CXX_STANDARD 20)
+
 SET(CMAKE_CXX_FLAGS_DEBUG          "-g")
 SET(CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
 SET(CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
