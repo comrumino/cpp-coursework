@@ -2,8 +2,8 @@
 #include "bitmap.h"
 #include <iostream>
 #include <memory>
-#include <sstream>
 #include <set>
+#include <sstream>
 #include <string>
 #include <string_view>
 

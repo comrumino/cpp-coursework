@@ -189,9 +189,7 @@ BitmapIterator::BitmapIterator(const Bitmap &bitmap)
     }
 }
 
-Color BitmapIterator::getColor() const noexcept {
-    return *currPixel;
-}
+Color BitmapIterator::getColor() const noexcept { return *currPixel; }
 
 int BitmapIterator::getBitmapWidth() const noexcept { return width; }
 
@@ -201,13 +199,9 @@ int BitmapIterator::getBitmapNumberOfPadBytes() const noexcept { return numberOf
 
 bool BitmapIterator::isEndOfImage() const noexcept { return currScanLine == endOfScanLines; }
 
-bool BitmapIterator::isEndOfScanLine() const noexcept {
-    return currPixel == currScanLine->end();
-}
+bool BitmapIterator::isEndOfScanLine() const noexcept { return currPixel == currScanLine->end(); }
 
-bool BitmapIterator::isStartOfScanLine() const noexcept {
-    return currPixel == currScanLine->begin();
-}
+bool BitmapIterator::isStartOfScanLine() const noexcept { return currPixel == currScanLine->begin(); }
 
 void BitmapIterator::nextScanLine() {
     if (isEndOfImage()) {

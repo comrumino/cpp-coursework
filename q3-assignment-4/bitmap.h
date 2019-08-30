@@ -331,15 +331,6 @@ class DownLeftDecorator : public BitmapIteratorDecorator {
         BitmapIteratorDecorator::nextScanLine();
         BitmapIteratorDecorator::nextPixel();
     }
-    virtual Color getColor() const noexcept override {
-        auto color = BitmapIteratorDecorator::getColor();
-
-        auto red = color.getRed() * 0.67;
-        auto green = color.getGreen() * 0.67;
-        auto blue = static_cast<double>(std::min(static_cast<int>(color.getBlue() * 1.33), Color::SUP));
-
-        return Color{red, green, blue};
-    }
 };
 
 } // namespace bitmap
