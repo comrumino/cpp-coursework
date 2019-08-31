@@ -5,7 +5,7 @@ using namespace std;
 
 namespace bitmap {
 
-Color Color::read(istream &is) noexcept {
+Color Color::read(istream &is) {
     auto blue = Byte::read(is);
     auto green = Byte::read(is);
     auto red = Byte::read(is);
@@ -18,7 +18,7 @@ void Color::write(ostream &os) const {
     red.write(os);
 }
 
-ostream &operator<<(ostream &os, const Color &rhs) noexcept {
+ostream &operator<<(ostream &os, const Color &rhs) {
     rhs.write(os);
     return os;
 }
@@ -40,7 +40,7 @@ void Bitmap::write(ostream &os) const {
     }
 }
 
-void Bitmap::readScanLine(istream &is) noexcept {
+void Bitmap::readScanLine(istream &is) {
     ScanLine scanLine;
     for (auto w = 0; w < getWidth(); w++) {
         scanLine.emplace_back(Color::read(is));
@@ -55,20 +55,20 @@ void Bitmap::writeScanLine(ostream &os, const ScanLine &scanLine) const {
     writePadding(os);
 }
 
-void Bitmap::readPadding(istream &is) const noexcept {
+void Bitmap::readPadding(istream &is) const {
     for (auto p = 0; p < getPaddingSize(); p++) {
         is.ignore();
     }
 }
 
-void Bitmap::writePadding(ostream &os) const noexcept {
+void Bitmap::writePadding(ostream &os) const {
     binary::Byte pad;
     for (auto p = 0; p < getPaddingSize(); p++) {
         pad.write(os);
     }
 }
 
-HBitmapIterator Bitmap::createIterator() const noexcept { return std::make_shared<BitmapIterator>(*this); }
+HBitmapIterator Bitmap::createIterator() const { return std::make_shared<BitmapIterator>(*this); }
 ostream &operator<<(ostream &os, const Bitmap &rhs) {
     rhs.write(os);
     return os;
@@ -183,25 +183,40 @@ void WindowsBitmapHeader::write(ostream &os) const {
 
 BitmapIterator::BitmapIterator(const Bitmap &bitmap)
     : width{bitmap.getWidth()}, height{bitmap.getHeight()}, numberOfPadBytes{bitmap.getPaddingSize()},
-      currScanLine{bitmap.begin()}, endOfScanLines{bitmap.end()} {
+      startOfScanLines{bitmap.begin()}, currScanLine{bitmap.begin()}, endOfScanLines{bitmap.end()} {
     if (!BitmapIterator::isEndOfImage()) {
         currPixel = currScanLine->begin();
     }
 }
 
-Color BitmapIterator::getColor() const noexcept { return *currPixel; }
+BitmapIterator::~BitmapIterator() = default;
+BitmapIterator::BitmapIterator(HBitmapIterator &bitmapIter) {
+    this->width = bitmapIter->getBitmapWidth();
+    this->height = bitmapIter->getBitmapHeight();
+    this->numberOfPadBytes = bitmapIter->getBitmapNumberOfPadBytes();
+    this->startOfScanLines = bitmapIter->getStartOfImage();
+    this->endOfScanLines = bitmapIter->getEndOfImage();
+    this->currScanLine = bitmapIter->getCurrentScanLine();
+    this->currPixel = bitmapIter->getCurrentPixel();
+}
+Color BitmapIterator::getColor() const { return *currPixel; }
 
-int BitmapIterator::getBitmapWidth() const noexcept { return width; }
+int BitmapIterator::getBitmapWidth() const { return width; }
 
-int BitmapIterator::getBitmapHeight() const noexcept { return height; }
+int BitmapIterator::getBitmapHeight() const { return height; }
 
-int BitmapIterator::getBitmapNumberOfPadBytes() const noexcept { return numberOfPadBytes; }
+int BitmapIterator::getBitmapNumberOfPadBytes() const { return numberOfPadBytes; }
 
-bool BitmapIterator::isEndOfImage() const noexcept { return currScanLine == endOfScanLines; }
+bool BitmapIterator::isEndOfImage() const { return currScanLine == endOfScanLines; }
 
-bool BitmapIterator::isEndOfScanLine() const noexcept { return currPixel == currScanLine->end(); }
+bool BitmapIterator::isEndOfScanLine() const { return currPixel == currScanLine->end(); }
 
-bool BitmapIterator::isStartOfScanLine() const noexcept { return currPixel == currScanLine->begin(); }
+bool BitmapIterator::isStartOfScanLine() const { return currPixel == currScanLine->begin(); }
+ScanLineIterator BitmapIterator::getCurrentScanLine() const { return currScanLine; }
+ScanLineIterator BitmapIterator::getStartOfImage() const { return startOfScanLines; }
+ScanLineIterator BitmapIterator::getEndOfImage() const { return endOfScanLines; }
+PixelIterator BitmapIterator::getCurrentPixel() const { return currPixel; }
+
 
 void BitmapIterator::nextScanLine() {
     if (isEndOfImage()) {

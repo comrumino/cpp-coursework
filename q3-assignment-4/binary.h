@@ -21,13 +21,13 @@ template <typename T> class Binary_t {
     Binary_t &operator=(Binary_t &&rhs) noexcept = default;
     Binary_t &operator=(const T &value);
 
-    operator T() const noexcept { return bvalue; }
-    bool operator==(const Binary_t &rhs) const noexcept { return bvalue == rhs.bvalue; }
-    bool operator!=(const Binary_t &rhs) const noexcept { return !(bvalue == rhs.bvalue); }
-    bool operator==(const T &rhs) const noexcept { return bvalue == rhs; }
-    template <typename T2> bool operator!=(const T2 &rhs) const noexcept { return !(bvalue == rhs); }
+    operator T() const { return bvalue; }
+    bool operator==(const Binary_t &rhs) const { return bvalue == rhs.bvalue; }
+    bool operator!=(const Binary_t &rhs) const { return !(bvalue == rhs.bvalue); }
+    bool operator==(const T &rhs) const { return bvalue == rhs; }
+    template <typename T2> bool operator!=(const T2 &rhs) const { return !(bvalue == rhs); }
 
-    const T getValue() const noexcept { return bvalue; };
+    const T getValue() const { return bvalue; };
     void write(std::ostream &os, const endian &&endianess = endian::native) const;
     void writeLittleEndian(std::ostream &os) const;
     void writeBigEndian(std::ostream &os) const;

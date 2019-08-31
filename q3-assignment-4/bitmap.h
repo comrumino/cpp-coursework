@@ -16,7 +16,7 @@ namespace bitmap {
 class Color {
   public:
     static constexpr int SIZEOF = 3; // one byte per color: red, green, blue
-    static Color read(std::istream &is) noexcept;
+    static Color read(std::istream &is);
     static constexpr int INF{0};
     static constexpr int SUP{256};
 
@@ -27,14 +27,14 @@ class Color {
     Color(Color &&src) noexcept = default;
 
     Color &operator=(const Color &rhs) = default;
-    bool operator==(const Color &rhs) const noexcept {
+    bool operator==(const Color &rhs) const {
         return getRed() == rhs.getRed() && getGreen() == rhs.getGreen() && getBlue() == rhs.getBlue();
     }
-    bool operator!=(const Color &rhs) const noexcept { return !(*this == rhs); }
+    bool operator!=(const Color &rhs) const { return !(*this == rhs); }
 
-    const binary::Byte getRed() const noexcept { return red.getValue(); }
-    const binary::Byte getGreen() const noexcept { return green.getValue(); }
-    const binary::Byte getBlue() const noexcept { return blue.getValue(); }
+    const binary::Byte getRed() const { return red.getValue(); }
+    const binary::Byte getGreen() const { return green.getValue(); }
+    const binary::Byte getBlue() const { return blue.getValue(); }
     void write(std::ostream &os) const;
 
   private:
@@ -44,28 +44,37 @@ class Color {
 };
 template <typename T>
 Color::Color(const T &red, const T &green, const T &blue)
-    : red{static_cast<binary::Byte>(red)}, green{static_cast<binary::Byte>(green)}, blue{static_cast<binary::Byte>(
-                                                                                        blue)} {}
+    : red{binary::Byte(red)}, green{binary::Byte(green)}, blue{binary::Byte(blue)} {}
 
-std::ostream &operator<<(std::ostream &os, const Color &rhs) noexcept;
+std::ostream &operator<<(std::ostream &os, const Color &rhs);
+
+using ScanLine = std::vector<Color>;
+using ScanLineCollection = std::vector<ScanLine>;
+using ScanLineIterator = ScanLineCollection::const_iterator;
+using Pixel = Color;
+using PixelIterator = ScanLine::const_iterator;
 
 class IBitmapIterator {
   public:
     virtual ~IBitmapIterator(){};
 
-    virtual Color getColor() const noexcept = 0;
+    virtual Color getColor() const = 0;
+    virtual ScanLineIterator getCurrentScanLine() const = 0;
+    virtual ScanLineIterator getStartOfImage() const = 0;
+    virtual ScanLineIterator getEndOfImage() const = 0;
+    virtual PixelIterator getCurrentPixel() const = 0;
 
-    virtual int getBitmapWidth() const noexcept = 0;
+    virtual int getBitmapWidth() const = 0;
 
-    virtual int getBitmapHeight() const noexcept = 0;
+    virtual int getBitmapHeight() const = 0;
 
-    virtual int getBitmapNumberOfPadBytes() const noexcept = 0;
+    virtual int getBitmapNumberOfPadBytes() const = 0;
 
-    virtual bool isEndOfImage() const noexcept = 0;
+    virtual bool isEndOfImage() const = 0;
 
-    virtual bool isEndOfScanLine() const noexcept = 0;
+    virtual bool isEndOfScanLine() const = 0;
 
-    virtual bool isStartOfScanLine() const noexcept = 0;
+    virtual bool isStartOfScanLine() const = 0;
 
     virtual void nextScanLine() = 0;
 
@@ -76,12 +85,6 @@ using HBitmapIterator = std::shared_ptr<IBitmapIterator>;
 
 class Bitmap {
   public:
-    using ScanLine = std::vector<Color>;
-    using ScanLineCollection = std::vector<ScanLine>;
-    using ScanLineIterator = ScanLineCollection::const_iterator;
-    using Pixel = Color;
-    using PixelIterator = ScanLine::const_iterator;
-    using ReversePixelIterator = ScanLine::const_reverse_iterator;
 
     Bitmap() = default;
     ~Bitmap() = default;
@@ -90,13 +93,13 @@ class Bitmap {
 
     Bitmap &operator=(const Bitmap &rhs) = default;
 
-    int getWidth() const noexcept { return width; }
-    int getHeight() const noexcept { return height; }
-    int getPaddingSize() const noexcept { return paddingSize; }
+    int getWidth() const { return width; }
+    int getHeight() const { return height; }
+    int getPaddingSize() const { return paddingSize; }
 
-    ScanLineIterator begin() const noexcept { return scanLines.begin(); }
-    ScanLineIterator end() const noexcept { return scanLines.end(); }
-    HBitmapIterator createIterator() const noexcept;
+    ScanLineIterator begin() const { return scanLines.begin(); }
+    ScanLineIterator end() const { return scanLines.end(); }
+    HBitmapIterator createIterator() const;
 
     void write(std::ostream &os) const;
 
@@ -106,11 +109,11 @@ class Bitmap {
     ScanLineCollection scanLines;
     int paddingSize{0};
 
-    void readScanLine(std::istream &is) noexcept;
+    void readScanLine(std::istream &is);
     void writeScanLine(std::ostream &os, const ScanLine &scanLine) const;
 
-    void readPadding(std::istream &is) const noexcept;
-    void writePadding(std::ostream &os) const noexcept;
+    void readPadding(std::istream &is) const;
+    void writePadding(std::ostream &os) const;
 };
 
 std::ostream &operator<<(std::ostream &os, const Bitmap &rhs);
@@ -132,9 +135,9 @@ class WindowsBitmapHeader {
     void readFileHeader(std::istream &is);
     void readInfoHeader(std::istream &is);
 
-    int getBitmapWidth() const noexcept { return width.getValue(); }
-    int getBitmapHeight() const noexcept { return height.getValue(); }
-    int getFileSize() const noexcept { return fileSize.getValue(); }
+    int getBitmapWidth() const { return width.getValue(); }
+    int getBitmapHeight() const { return height.getValue(); }
+    int getFileSize() const { return fileSize.getValue(); }
 
     void writeFileHeader(std::ostream &os) const;
     void writeInfoHeader(std::ostream &os) const;
@@ -167,83 +170,52 @@ class WindowsBitmapHeader {
 class BitmapIterator : public IBitmapIterator {
   public:
     BitmapIterator(const Bitmap &bitmap);
+    BitmapIterator(HBitmapIterator &bitmapIter);
+    virtual ~BitmapIterator() override;
 
-    virtual ~BitmapIterator() = default;
+    int getBitmapWidth() const override;
+    int getBitmapHeight() const override;
+    int getBitmapNumberOfPadBytes() const override;
+    bool isEndOfImage() const override;
+    bool isEndOfScanLine() const override;
+    bool isStartOfScanLine() const override;
+    ScanLineIterator getCurrentScanLine() const override;
+    ScanLineIterator getStartOfImage() const override;
+    ScanLineIterator getEndOfImage() const override;
+    PixelIterator getCurrentPixel() const override;
 
-    virtual Color getColor() const noexcept override;
-
-    virtual int getBitmapWidth() const noexcept override;
-    virtual int getBitmapHeight() const noexcept override;
-    virtual int getBitmapNumberOfPadBytes() const noexcept override;
-
-    virtual bool isEndOfImage() const noexcept override;
-    virtual bool isEndOfScanLine() const noexcept override;
-    virtual bool isStartOfScanLine() const noexcept override;
-
+    virtual Color getColor() const override;
     virtual void nextScanLine() override;
     virtual void nextPixel() override;
 
   private:
-    const int width, height, numberOfPadBytes;
-    Bitmap::ScanLineIterator currScanLine;
-    Bitmap::ScanLineIterator endOfScanLines;
-    Bitmap::PixelIterator currPixel;
-    Bitmap::ReversePixelIterator currReversePixel;
+    int width, height, numberOfPadBytes;
+    ScanLineIterator currScanLine;
+    ScanLineIterator startOfScanLines;
+    ScanLineIterator endOfScanLines;
+    PixelIterator currPixel;
 };
 
-class BitmapIteratorDecorator : public IBitmapIterator {
-  public:
-    BitmapIteratorDecorator(HBitmapIterator iterator) : iterator{iterator} {}
-
-    ~BitmapIteratorDecorator() = default;
-
-    BitmapIteratorDecorator(const BitmapIteratorDecorator &src) = default;
-    BitmapIteratorDecorator(BitmapIteratorDecorator &&src) = default;
-
-    BitmapIteratorDecorator &operator=(const BitmapIteratorDecorator &rhs) = default;
-    BitmapIteratorDecorator &operator=(BitmapIteratorDecorator &&rhs) = default;
-
-    virtual Color getColor() const noexcept override { return iterator->getColor(); }
-
-    virtual int getBitmapWidth() const noexcept override { return iterator->getBitmapWidth(); }
-
-    virtual int getBitmapHeight() const noexcept override { return iterator->getBitmapHeight(); }
-
-    virtual int getBitmapNumberOfPadBytes() const noexcept override { return iterator->getBitmapNumberOfPadBytes(); }
-
-    virtual bool isEndOfImage() const noexcept override { return iterator->isEndOfImage(); }
-
-    virtual bool isEndOfScanLine() const noexcept override { return iterator->isEndOfScanLine(); }
-
-    virtual bool isStartOfScanLine() const noexcept override { return iterator->isEndOfScanLine(); }
-
-    virtual void nextScanLine() override { iterator->nextScanLine(); }
-
-    virtual void nextPixel() override { iterator->nextPixel(); }
-
-  private:
-    HBitmapIterator iterator;
-};
+using BitmapIteratorDecorator = BitmapIterator;
 
 class BrightnessDecorator : public BitmapIteratorDecorator {
   public:
-    BrightnessDecorator(HBitmapIterator innerDecorator, const int adjustment)
+    BrightnessDecorator(BitmapIterator innerDecorator, const int adjustment)
         : BitmapIteratorDecorator{innerDecorator}, adjustment{adjustment} {}
 
     ~BrightnessDecorator() = default;
-
-    BrightnessDecorator(const BrightnessDecorator &src) = default;
-
+    BrightnessDecorator(const BrightnessDecorator &bitmapIter) = default;
+    BrightnessDecorator(BrightnessDecorator &&src) noexcept = default;
     BrightnessDecorator &operator=(const BrightnessDecorator &rhs) = default;
+    BrightnessDecorator &operator=(BrightnessDecorator &&rhs) noexcept = default;
 
-    virtual Color getColor() const noexcept override {
+    Color getColor() const final {
         auto color = BitmapIteratorDecorator::getColor();
 
         ranged_number<int, Color::INF, Color::SUP> red{color.getRed() + adjustment};
         ranged_number<int, Color::INF, Color::SUP> green{color.getGreen() + adjustment};
         ranged_number<int, Color::INF, Color::SUP> blue{color.getBlue() + adjustment};
-        return Color{static_cast<binary::Byte_t>(red), static_cast<binary::Byte_t>(green),
-                     static_cast<binary::Byte_t>(blue)};
+        return Color{binary::Byte_t(red), binary::Byte_t(green), binary::Byte_t(blue)};
     }
 
   private:
@@ -252,15 +224,15 @@ class BrightnessDecorator : public BitmapIteratorDecorator {
 
 class ColorInversionDecorator : public BitmapIteratorDecorator {
   public:
-    ColorInversionDecorator(HBitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {}
+    ColorInversionDecorator(BitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {}
     ~ColorInversionDecorator() = default;
 
     ColorInversionDecorator(const ColorInversionDecorator &src) = default;
-    ColorInversionDecorator(ColorInversionDecorator &&src) = default;
+    ColorInversionDecorator(ColorInversionDecorator &&src) noexcept = default;
     ColorInversionDecorator &operator=(const ColorInversionDecorator &rhs) = default;
-    ColorInversionDecorator &operator=(ColorInversionDecorator &&rhs) = default;
+    ColorInversionDecorator &operator=(ColorInversionDecorator &&rhs) noexcept = default;
 
-    virtual Color getColor() const noexcept override {
+    Color getColor() const noexcept final {
         auto color = BitmapIteratorDecorator::getColor();
         auto red = Color::SUP - color.getRed();
         auto green = Color::SUP - color.getGreen();
@@ -272,19 +244,19 @@ class ColorInversionDecorator : public BitmapIteratorDecorator {
 
 class RedShiftDecorator : public BitmapIteratorDecorator {
   public:
-    RedShiftDecorator(HBitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {}
+    RedShiftDecorator(BitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {}
     ~RedShiftDecorator() = default;
 
     RedShiftDecorator(const RedShiftDecorator &src) = default;
-    RedShiftDecorator(RedShiftDecorator &&src) = default;
+    RedShiftDecorator(RedShiftDecorator &&src) noexcept : BitmapIteratorDecorator{std::move(src)} {}
 
     RedShiftDecorator &operator=(const RedShiftDecorator &rhs) = default;
-    RedShiftDecorator &operator=(RedShiftDecorator &&rhs) = default;
+    RedShiftDecorator &operator=(RedShiftDecorator &&rhs) noexcept = default;
 
-    virtual Color getColor() const noexcept override {
+    Color getColor() const final {
         auto color = BitmapIteratorDecorator::getColor();
 
-        auto red = static_cast<double>(std::min(static_cast<int>(color.getRed() * 1.33), Color::SUP));
+        auto red = double(std::min(int(color.getRed() * 1.33), Color::SUP));
         auto green = color.getGreen() * 0.67;
         auto blue = color.getBlue() * 0.67;
 
@@ -294,7 +266,7 @@ class RedShiftDecorator : public BitmapIteratorDecorator {
 
 class BlueShiftDecorator : public BitmapIteratorDecorator {
   public:
-    BlueShiftDecorator(HBitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {}
+    BlueShiftDecorator(BitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {}
     ~BlueShiftDecorator() = default;
 
     BlueShiftDecorator(const BlueShiftDecorator &src) = default;
@@ -303,12 +275,12 @@ class BlueShiftDecorator : public BitmapIteratorDecorator {
     BlueShiftDecorator &operator=(const BlueShiftDecorator &rhs) = default;
     BlueShiftDecorator &operator=(BlueShiftDecorator &&rhs) = default;
 
-    virtual Color getColor() const noexcept override {
+    virtual Color getColor() const override {
         auto color = BitmapIteratorDecorator::getColor();
 
         auto red = color.getRed() * 0.67;
         auto green = color.getGreen() * 0.67;
-        auto blue = static_cast<double>(std::min(static_cast<int>(color.getBlue() * 1.33), Color::SUP));
+        auto blue = double(std::min(int(color.getBlue() * 1.33), Color::SUP));
 
         return Color{red, green, blue};
     }
@@ -316,7 +288,7 @@ class BlueShiftDecorator : public BitmapIteratorDecorator {
 
 class DownLeftDecorator : public BitmapIteratorDecorator {
   public:
-    DownLeftDecorator(HBitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {
+    DownLeftDecorator(BitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {
         BitmapIteratorDecorator::nextScanLine();
     }
     ~DownLeftDecorator() = default;

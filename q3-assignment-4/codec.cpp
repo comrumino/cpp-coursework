@@ -8,13 +8,11 @@
 
 namespace codec {
 
-static const std::set<std::string_view> SUPPORTED{MimeType::WINDOWS_BITMAP};
+CodecLibrary::CodecLibrary(const mime_map &supportedMimeTypes) : supportedMimeTypes{supportedMimeTypes} {}
 
-CodecLibrary::CodecLibrary() : supportedMimeTypes{MimeType::WINDOWS_BITMAP} {}
+void CodecLibrary::registerEncoder(const HBitmapEncoder &encoder_) { encoder = encoder_; }
 
-void CodecLibrary::registerEncoder(const HBitmapEncoder &encoder_) noexcept { encoder = encoder_; }
-
-void CodecLibrary::registerDecoder(const HBitmapDecoder &decoder_) noexcept { decoder = decoder_; }
+void CodecLibrary::registerDecoder(const HBitmapDecoder &decoder_) { decoder = decoder_; }
 
 HBitmapEncoder CodecLibrary::createEncoder(const std::string &mimeType, const bitmap::HBitmapIterator &iter) {
     if (supportedMimeTypes.find(mimeType) == supportedMimeTypes.end()) {
@@ -24,7 +22,30 @@ HBitmapEncoder CodecLibrary::createEncoder(const std::string &mimeType, const bi
     }
 }
 
-HBitmapDecoder CodecLibrary::createDecoder(std::istream &inStream) { return decoder->clone(inStream); }
+bool CodecLibrary::isSupported(std::istream &inStream) const {
+    //inStream.exceptions(std::ios::failbit | std::ios::badbit);
+    std::string s;
+    char c;
+    for (int i=0; i < HEADER_CHUNK_SIZE; i++) {
+        inStream.seekg(i);
+        c = inStream.peek();
+        if (c == EOF) {
+            break;
+        } else {
+            s += c;
+        }
+    }
+    inStream.seekg(0);
+    return decoder->isSupported(s);
+}
+
+HBitmapDecoder CodecLibrary::createDecoder(std::istream &inStream) {
+    if (!isSupported(inStream)) {
+        throw std::runtime_error{"Malformed or unsupported istream"};
+    } else {
+        return decoder->clone(inStream);
+    }
+}
 
 HBitmapDecoder CodecLibrary::createDecoder(const std::string &mimeType, std::istream &inStream) {
     if (supportedMimeTypes.find(mimeType) == supportedMimeTypes.end()) {
@@ -62,13 +83,13 @@ bitmap::HBitmapIterator WindowsBitmapDecoder::createIterator() const {
     return std::make_shared<bitmap::BitmapIterator>(it);
 }
 
-const std::string &WindowsBitmapDecoder::getMimeType() const noexcept { return mimeType; }
+const std::string &WindowsBitmapDecoder::getMimeType() const { return mimeType; }
 
-bool WindowsBitmapDecoder::isSupported(const std::string &firstChunkOfBitmap) const noexcept {
+bool WindowsBitmapDecoder::isSupported(const std::string &firstChunkOfBitmap) const {
     return firstChunkOfBitmap[0] == 'B' && firstChunkOfBitmap[1] == 'M';
 }
 
-HBitmapEncoder WindowsBitmapEncoder::clone(bitmap::HBitmapIterator it) noexcept {
+HBitmapEncoder WindowsBitmapEncoder::clone(bitmap::HBitmapIterator it) {
     auto result = std::make_shared<WindowsBitmapEncoder>();
     result->it = it;
     return result;
