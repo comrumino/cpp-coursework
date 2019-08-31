@@ -217,7 +217,6 @@ ScanLineIterator BitmapIterator::getStartOfImage() const { return startOfScanLin
 ScanLineIterator BitmapIterator::getEndOfImage() const { return endOfScanLines; }
 PixelIterator BitmapIterator::getCurrentPixel() const { return currPixel; }
 
-
 void BitmapIterator::nextScanLine() {
     if (isEndOfImage()) {
         throw std::runtime_error{"cannot retrieve next scan line, currently at end of image"};

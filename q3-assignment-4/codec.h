@@ -2,10 +2,10 @@
 #include "bitmap.h"
 #include <iostream>
 #include <memory>
-#include <unordered_map>
 #include <sstream>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 
 namespace codec {
 
@@ -20,7 +20,9 @@ struct MimeType {
     static constexpr std::string_view WINDOWS_BITMAP = "image/x-ms-bmp";
 };
 
-static const mime_map SUPPORTED = {{MimeType::WINDOWS_BITMAP, MimeType::WINDOWS_BITMAP}, };
+static const mime_map SUPPORTED = {
+    {MimeType::WINDOWS_BITMAP, MimeType::WINDOWS_BITMAP},
+};
 
 class CodecLibrary {
   public:
@@ -31,7 +33,7 @@ class CodecLibrary {
 
     CodecLibrary &operator=(const CodecLibrary &rhs) = default;
     CodecLibrary &operator=(CodecLibrary &&rhs) = default;
-    bool isSupported( std::istream &inStream) const;
+    bool isSupported(std::istream &inStream) const;
 
     void registerEncoder(const HBitmapEncoder &encoder);
     void registerDecoder(const HBitmapDecoder &decoder);

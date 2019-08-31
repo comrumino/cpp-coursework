@@ -18,7 +18,7 @@ class Color {
     static constexpr int SIZEOF = 3; // one byte per color: red, green, blue
     static Color read(std::istream &is);
     static constexpr int INF{0};
-    static constexpr int SUP{256};
+    static constexpr int SUP{255};
 
     Color() = default;
     ~Color() = default;
@@ -85,7 +85,6 @@ using HBitmapIterator = std::shared_ptr<IBitmapIterator>;
 
 class Bitmap {
   public:
-
     Bitmap() = default;
     ~Bitmap() = default;
     Bitmap(int width, int height, std::istream &is = inullstream);
@@ -248,7 +247,7 @@ class RedShiftDecorator : public BitmapIteratorDecorator {
     ~RedShiftDecorator() = default;
 
     RedShiftDecorator(const RedShiftDecorator &src) = default;
-    RedShiftDecorator(RedShiftDecorator &&src) noexcept : BitmapIteratorDecorator{std::move(src)} {}
+    RedShiftDecorator(RedShiftDecorator &&src) noexcept = default;
 
     RedShiftDecorator &operator=(const RedShiftDecorator &rhs) = default;
     RedShiftDecorator &operator=(RedShiftDecorator &&rhs) noexcept = default;
@@ -257,6 +256,7 @@ class RedShiftDecorator : public BitmapIteratorDecorator {
         auto color = BitmapIteratorDecorator::getColor();
 
         auto red = double(std::min(int(color.getRed() * 1.33), Color::SUP));
+        std::cout << "red " << red << std::endl;
         auto green = color.getGreen() * 0.67;
         auto blue = color.getBlue() * 0.67;
 
@@ -275,7 +275,7 @@ class BlueShiftDecorator : public BitmapIteratorDecorator {
     BlueShiftDecorator &operator=(const BlueShiftDecorator &rhs) = default;
     BlueShiftDecorator &operator=(BlueShiftDecorator &&rhs) = default;
 
-    virtual Color getColor() const override {
+    Color getColor() const final {
         auto color = BitmapIteratorDecorator::getColor();
 
         auto red = color.getRed() * 0.67;
@@ -290,6 +290,7 @@ class DownLeftDecorator : public BitmapIteratorDecorator {
   public:
     DownLeftDecorator(BitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {
         BitmapIteratorDecorator::nextScanLine();
+        BitmapIteratorDecorator::nextPixel();
     }
     ~DownLeftDecorator() = default;
 
@@ -299,10 +300,21 @@ class DownLeftDecorator : public BitmapIteratorDecorator {
     DownLeftDecorator &operator=(const DownLeftDecorator &rhs) = default;
     DownLeftDecorator &operator=(DownLeftDecorator &&rhs) = default;
 
-    virtual void nextScanLine() override {
+    void nextScanLine() final {
         BitmapIteratorDecorator::nextScanLine();
         BitmapIteratorDecorator::nextPixel();
     }
 };
 
+class NopDecorator : public BitmapIteratorDecorator {
+  public:
+    NopDecorator(BitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {}
+    ~NopDecorator() = default;
+
+    NopDecorator(const NopDecorator &src) = default;
+    NopDecorator(NopDecorator &&src) = default;
+
+    NopDecorator &operator=(const NopDecorator &rhs) = default;
+    NopDecorator &operator=(NopDecorator &&rhs) = default;
+};
 } // namespace bitmap

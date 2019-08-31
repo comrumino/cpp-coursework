@@ -23,10 +23,10 @@ HBitmapEncoder CodecLibrary::createEncoder(const std::string &mimeType, const bi
 }
 
 bool CodecLibrary::isSupported(std::istream &inStream) const {
-    //inStream.exceptions(std::ios::failbit | std::ios::badbit);
+    // inStream.exceptions(std::ios::failbit | std::ios::badbit);
     std::string s;
     char c;
-    for (int i=0; i < HEADER_CHUNK_SIZE; i++) {
+    for (int i = 0; i < HEADER_CHUNK_SIZE; i++) {
         inStream.seekg(i);
         c = inStream.peek();
         if (c == EOF) {
