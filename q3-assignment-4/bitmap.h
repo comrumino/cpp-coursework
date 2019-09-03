@@ -301,7 +301,7 @@ class FlipDecorator : public BitmapIteratorDecorator {
     FlipDecorator &operator=(FlipDecorator &&rhs) = default;
 
     Color getColor() const { return *rCurrPixel; }
-    void nextPixel() { 
+    void nextPixel() {
         BitmapIteratorDecorator::nextPixel();
         ++rCurrPixel;
     }
