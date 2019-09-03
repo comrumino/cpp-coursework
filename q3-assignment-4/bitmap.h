@@ -11,6 +11,7 @@ namespace {
 std::istringstream inullsstream("");
 std::istream inullstream(inullsstream.rdbuf());
 } // namespace
+
 namespace bitmap {
 
 class Color {
@@ -53,6 +54,7 @@ using ScanLineCollection = std::vector<ScanLine>;
 using ScanLineIterator = ScanLineCollection::const_iterator;
 using Pixel = Color;
 using PixelIterator = ScanLine::const_iterator;
+using RPixelIterator = ScanLine::const_reverse_iterator;
 
 class IBitmapIterator {
   public:
@@ -256,7 +258,6 @@ class RedShiftDecorator : public BitmapIteratorDecorator {
         auto color = BitmapIteratorDecorator::getColor();
 
         auto red = double(std::min(int(color.getRed() * 1.33), Color::SUP));
-        std::cout << "red " << red << std::endl;
         auto green = color.getGreen() * 0.67;
         auto blue = color.getBlue() * 0.67;
 
@@ -286,24 +287,32 @@ class BlueShiftDecorator : public BitmapIteratorDecorator {
     }
 };
 
-class DownLeftDecorator : public BitmapIteratorDecorator {
+class FlipDecorator : public BitmapIteratorDecorator {
   public:
-    DownLeftDecorator(BitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {
-        BitmapIteratorDecorator::nextScanLine();
-        BitmapIteratorDecorator::nextPixel();
+    FlipDecorator(BitmapIterator innerDecorator) : BitmapIteratorDecorator{innerDecorator} {
+        rCurrPixel = getCurrentScanLine()->rbegin();
     }
-    ~DownLeftDecorator() = default;
+    ~FlipDecorator() = default;
 
-    DownLeftDecorator(const DownLeftDecorator &src) = default;
-    DownLeftDecorator(DownLeftDecorator &&src) = default;
+    FlipDecorator(const FlipDecorator &src) = default;
+    FlipDecorator(FlipDecorator &&src) = default;
 
-    DownLeftDecorator &operator=(const DownLeftDecorator &rhs) = default;
-    DownLeftDecorator &operator=(DownLeftDecorator &&rhs) = default;
+    FlipDecorator &operator=(const FlipDecorator &rhs) = default;
+    FlipDecorator &operator=(FlipDecorator &&rhs) = default;
 
-    void nextScanLine() final {
-        BitmapIteratorDecorator::nextScanLine();
+    Color getColor() const { return *rCurrPixel; }
+    void nextPixel() { 
         BitmapIteratorDecorator::nextPixel();
+        ++rCurrPixel;
     }
+    void nextScanLine() {
+        BitmapIteratorDecorator::nextScanLine();
+        rCurrPixel = getCurrentScanLine()->rbegin();
+    }
+    PixelIterator getCurrentPixel() const { return rCurrPixel.base(); }
+
+  private:
+    RPixelIterator rCurrPixel;
 };
 
 class NopDecorator : public BitmapIteratorDecorator {

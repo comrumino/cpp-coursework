@@ -135,8 +135,24 @@ TEST(windowsBitmapDecodeEncode, CodecLibrary) {
 
     std::ofstream outFile{"q3-assignment-4/output_basicCopy.bmp", std::ios::binary};
     encoder->encodeToStream(outFile);
-    // TODO: file compare input/output
-
+    outFile.close();
+    // file compare input/output
+    std::ifstream inFile2{"q3-assignment-4/basic.bmp", std::ios::binary};
+    std::ifstream inFile3{"q3-assignment-4/output_basicCopy.bmp", std::ios::binary};
+    HBitmapDecoder decoder2{theCodecLibrary->createDecoder(inFile2)};
+    HBitmapIterator iterator2{decoder2->createIterator()};
+    HBitmapDecoder decoder3{theCodecLibrary->createDecoder(inFile3)};
+    HBitmapIterator iterator3{decoder3->createIterator()};
+    while (!iterator2->isEndOfImage()) {
+        CHECK(!iterator3->isEndOfImage());
+        for (int i = 0; i < iterator2->getBitmapWidth(); i++) {
+            CHECK_EQUAL(iterator2->getColor(), iterator3->getColor());
+            iterator2->nextPixel();
+            iterator3->nextPixel();
+        }
+        iterator2->nextScanLine();
+        iterator3->nextScanLine();
+    }
     tearDown();
 }
 
@@ -158,8 +174,24 @@ TEST(brightnessDecoratorIterator, CodecLibrary) {
 
     std::ofstream outFile{"q3-assignment-4/output_basicBrightnessAdjusted.bmp", std::ios::binary};
     encoder->encodeToStream(outFile);
-    // TODO: file compare input/output
-
+    // file compare input/output
+    outFile.close();
+    std::ifstream inFile2{"q3-assignment-4/output_basicBrightnessAdjusted.bmp", std::ios::binary};
+    std::ifstream inFile3{"q3-assignment-4/expected_basicBrightnessAdjusted.bmp", std::ios::binary};
+    HBitmapDecoder decoder2{theCodecLibrary->createDecoder(inFile2)};
+    HBitmapIterator iterator2{decoder2->createIterator()};
+    HBitmapDecoder decoder3{theCodecLibrary->createDecoder(inFile3)};
+    HBitmapIterator iterator3{decoder3->createIterator()};
+    while (!iterator2->isEndOfImage()) {
+        CHECK(!iterator3->isEndOfImage());
+        for (int i = 0; i < iterator2->getBitmapWidth(); i++) {
+            CHECK_EQUAL(iterator2->getColor(), iterator3->getColor());
+            iterator2->nextPixel();
+            iterator3->nextPixel();
+        }
+        iterator2->nextScanLine();
+        iterator3->nextScanLine();
+    }
     tearDown();
 }
 
@@ -270,28 +302,26 @@ TEST(Nop, CodecLibrary) {
     encoder->encodeToStream(outFile);
     inFile.close();
     outFile.close();
-    //
+    // Compare file output
     std::ifstream inFile2{"q3-assignment-4/basic_color.bmp", std::ios::binary};
     std::ifstream inFile3{"q3-assignment-4/output_nopBasic.bmp", std::ios::binary};
     HBitmapDecoder decoder2{theCodecLibrary->createDecoder(inFile2)};
     HBitmapIterator iterator2{decoder2->createIterator()};
     HBitmapDecoder decoder3{theCodecLibrary->createDecoder(inFile3)};
     HBitmapIterator iterator3{decoder3->createIterator()};
-    for (int i = 0; i < iterator2->getBitmapWidth(); i++) {
-        CHECK_EQUAL(iterator2->getColor(), iterator3->getColor());
-        iterator2->nextPixel();
-        iterator3->nextPixel();
-    }
-    iterator2->nextScanLine();
-    iterator3->nextScanLine();
-    for (int i = 0; i < iterator2->getBitmapWidth(); i++) {
-        CHECK_EQUAL(iterator2->getColor(), iterator3->getColor());
-        iterator2->nextPixel();
-        iterator3->nextPixel();
+    while (!iterator2->isEndOfImage()) {
+        CHECK(!iterator3->isEndOfImage());
+        for (int i = 0; i < iterator2->getBitmapWidth(); i++) {
+            CHECK_EQUAL(iterator2->getColor(), iterator3->getColor());
+            iterator2->nextPixel();
+            iterator3->nextPixel();
+        }
+        iterator2->nextScanLine();
+        iterator3->nextScanLine();
     }
     tearDown();
 }
-TEST(downLeftShift, CodecLibrary) {
+TEST(Flip, CodecLibrary) {
     setUp();
 
     std::ifstream inFile{"q3-assignment-4/basic_color.bmp", std::ios::binary};
@@ -303,12 +333,30 @@ TEST(downLeftShift, CodecLibrary) {
     CHECK(iterator.get());
     CHECK_EQUAL(2, iterator->getBitmapHeight());
     CHECK_EQUAL(3, iterator->getBitmapWidth());
+    HBitmapIterator flipIterator{new FlipDecorator{iterator}};
 
-    HBitmapIterator downLeftIterator{new DownLeftDecorator{iterator}};
+    HBitmapEncoder encoder{theCodecLibrary->createEncoder(msBmp, flipIterator)};
 
-    HBitmapEncoder encoder{theCodecLibrary->createEncoder(msBmp, downLeftIterator)};
-
-    std::ofstream outFile{"q3-assignment-4/output_downLeft.bmp", std::ios::binary};
+    std::ofstream outFile{"q3-assignment-4/output_flipBasic.bmp", std::ios::binary};
     encoder->encodeToStream(outFile);
+    inFile.close();
+    outFile.close();
+    // Compare file output
+    std::ifstream inFile2{"q3-assignment-4/expected_flipBasic.bmp", std::ios::binary};
+    std::ifstream inFile3{"q3-assignment-4/output_flipBasic.bmp", std::ios::binary};
+    HBitmapDecoder decoder2{theCodecLibrary->createDecoder(inFile2)};
+    HBitmapIterator iterator2{decoder2->createIterator()};
+    HBitmapDecoder decoder3{theCodecLibrary->createDecoder(inFile3)};
+    HBitmapIterator iterator3{decoder3->createIterator()};
+    while (!iterator2->isEndOfImage()) {
+        CHECK(!iterator3->isEndOfImage());
+        for (int i = 0; i < iterator2->getBitmapWidth(); i++) {
+            CHECK_EQUAL(iterator2->getColor(), iterator3->getColor());
+            iterator2->nextPixel();
+            iterator3->nextPixel();
+        }
+        iterator2->nextScanLine();
+        iterator3->nextScanLine();
+    }
     tearDown();
 }

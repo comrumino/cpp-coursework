@@ -27,7 +27,6 @@ Bitmap::Bitmap(int w, int h, istream &is) : width{w}, height{h}, paddingSize{0} 
         auto align = DoubleWord::SIZEOF;
         auto scanLineSize = Color::SIZEOF * width;
         paddingSize = (align - (scanLineSize % align)) % align;
-
         for (auto h = 0; h < getHeight(); h++) {
             readScanLine(is);
         }
