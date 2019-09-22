@@ -89,12 +89,11 @@ void WindowsBitmapHeader::read(istream &is) {
 
     auto rawImagePos = static_cast<streampos>(rawImageOffset);
 
-    if (rawImagePos != is.tellg()) // skip past "other" headers
-    {
+    if (rawImagePos != is.tellg()) { // skip the reset
         is.seekg(rawImagePos);
     }
 
-    verifyEquality(rawImagePos, is.tellg(), "actual raw image position referred to via rawImageOffset");
+    verifyEquality(rawImagePos, is.tellg(), "raw image position referred to rawImageOffset");
 }
 
 void WindowsBitmapHeader::readFileHeader(istream &is) {
@@ -133,10 +132,7 @@ void WindowsBitmapHeader::readInfoHeader(istream &is) {
     static_cast<void>(Word::read(is));
 
     verifyEquality(static_cast<streampos>(30), is.tellg(), "compressionMethod position");
-    compressionType = DoubleWord::read(is);
-
-    verifyEquality(static_cast<streampos>(34), is.tellg(), "compressedImageSize position");
-    compressedImageSize = DoubleWord::read(is);
+    compressionType = DoubleWord::read(is); verifyEquality(static_cast<streampos>(34), is.tellg(), "compressedImageSize position"); compressedImageSize = DoubleWord::read(is);
 
     verifyEquality(static_cast<streampos>(38), is.tellg(), "horizontalPixelsPerMeter position");
     horizontalPixelsPerMeter = DoubleWord::read(is);

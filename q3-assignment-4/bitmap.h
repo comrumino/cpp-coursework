@@ -1,6 +1,7 @@
 #pragma once
 #include "binary.h"
 #include "ranged_number.h"
+#include <functional>
 #include <iostream>
 #include <memory>
 #include <sstream>
@@ -55,13 +56,14 @@ using ScanLineIterator = ScanLineCollection::const_iterator;
 using Pixel = Color;
 using PixelIterator = ScanLine::const_iterator;
 using RPixelIterator = ScanLine::const_reverse_iterator;
+using ColorFunc = std::function<Color(Color)>;
+using ColorFuncs = std::vector<ColorFunc>;
 
 class IBitmapIterator {
   public:
     virtual ~IBitmapIterator(){};
 
     virtual Color getColor() const = 0;
-    virtual ScanLineIterator getCurrentScanLine() const = 0;
     virtual ScanLineIterator getStartOfImage() const = 0;
     virtual ScanLineIterator getEndOfImage() const = 0;
     virtual PixelIterator getCurrentPixel() const = 0;
@@ -184,6 +186,8 @@ class BitmapIterator : public IBitmapIterator {
     ScanLineIterator getStartOfImage() const override;
     ScanLineIterator getEndOfImage() const override;
     PixelIterator getCurrentPixel() const override;
+    // void addColorFunc(ColorFunc func) { colorFuncs.push_back(func); }
+    // ColorFuncs getColorFuncs() { return colorFuncs; }
 
     virtual Color getColor() const override;
     virtual void nextScanLine() override;
@@ -191,6 +195,7 @@ class BitmapIterator : public IBitmapIterator {
 
   private:
     int width, height, numberOfPadBytes;
+    // ColorFuncs colorFuncs;
     ScanLineIterator currScanLine;
     ScanLineIterator startOfScanLines;
     ScanLineIterator endOfScanLines;
@@ -212,11 +217,11 @@ class BrightnessDecorator : public BitmapIteratorDecorator {
 
     Color getColor() const final {
         auto color = BitmapIteratorDecorator::getColor();
-
         ranged_number<int, Color::INF, Color::SUP> red{color.getRed() + adjustment};
         ranged_number<int, Color::INF, Color::SUP> green{color.getGreen() + adjustment};
         ranged_number<int, Color::INF, Color::SUP> blue{color.getBlue() + adjustment};
         return Color{binary::Byte_t(red), binary::Byte_t(green), binary::Byte_t(blue)};
+        return color;
     }
 
   private:

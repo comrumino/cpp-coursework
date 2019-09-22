@@ -4,12 +4,13 @@
 template <typename T, T greatestLowerBound, T leastUpperBound> class ranged_number {
   public:
     ranged_number() = default;
-    ranged_number(const T &value);
+    explicit ranged_number(const T &value);
     ~ranged_number() = default;
     ranged_number(const ranged_number &src) = default;
     ranged_number(ranged_number &&src) = default;
     ranged_number &operator=(const ranged_number &rhs) = default;
     ranged_number &operator=(ranged_number &&rhs) = default;
+    ranged_number &operator=(const int rhs);
     const T &getValue() const noexcept;
     operator T();
 
@@ -19,6 +20,7 @@ template <typename T, T greatestLowerBound, T leastUpperBound> class ranged_numb
     const ranged_number operator--(int) noexcept;
     const ranged_number &operator+=(const ranged_number &rhs) noexcept;
     const ranged_number &operator+=(ranged_number &&rhs) noexcept;
+    const ranged_number &operator+=(const int rhs) noexcept;
     const ranged_number &operator-=(const ranged_number &rhs) noexcept;
     const ranged_number &operator-=(ranged_number &&rhs) noexcept;
 
@@ -56,6 +58,13 @@ operator++(int) noexcept {
 }
 
 template <typename T, T leastLowerBound, T leastUpperBound>
+ranged_number<T, leastLowerBound, leastUpperBound> &ranged_number<T, leastLowerBound, leastUpperBound>::
+operator=(const int rhs) {
+    value = std::clamp<T>(T(rhs), leastLowerBound, leastUpperBound);
+    return *this;
+}
+
+template <typename T, T leastLowerBound, T leastUpperBound>
 const ranged_number<T, leastLowerBound, leastUpperBound> &ranged_number<T, leastLowerBound, leastUpperBound>::
 operator--() noexcept {
     value = std::clamp<T>(value - 1, leastLowerBound, leastUpperBound);
@@ -74,6 +83,13 @@ template <typename T, T leastLowerBound, T leastUpperBound>
 const ranged_number<T, leastLowerBound, leastUpperBound> &ranged_number<T, leastLowerBound, leastUpperBound>::
 operator+=(const ranged_number &rhs) noexcept {
     value = std::clamp<T>(value + rhs.getValue(), leastLowerBound, leastUpperBound);
+    return *this;
+}
+
+template <typename T, T leastLowerBound, T leastUpperBound>
+const ranged_number<T, leastLowerBound, leastUpperBound> &ranged_number<T, leastLowerBound, leastUpperBound>::
+operator+=(const int rhs) noexcept {
+    value = std::clamp<T>(value + T(rhs), leastLowerBound, leastUpperBound);
     return *this;
 }
 

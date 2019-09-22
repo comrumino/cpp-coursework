@@ -214,8 +214,28 @@ TEST(colorInvertDecoratorIterator, CodecLibrary) {
     std::ofstream outFile{"q3-assignment-4/output_basicColorInvert.bmp", std::ios::binary};
     encoder->encodeToStream(outFile);
 
+    inFile.close();
+    outFile.close();
+    // Compare file output
+    std::ifstream inFile2{"q3-assignment-4/expected_basicColorInvert.bmp", std::ios::binary};
+    std::ifstream inFile3{"q3-assignment-4/output_basicColorInvert.bmp", std::ios::binary};
+    HBitmapDecoder decoder2{theCodecLibrary->createDecoder(inFile2)};
+    HBitmapIterator iterator2{decoder2->createIterator()};
+    HBitmapDecoder decoder3{theCodecLibrary->createDecoder(inFile3)};
+    HBitmapIterator iterator3{decoder3->createIterator()};
+    while (!iterator2->isEndOfImage()) {
+        CHECK(!iterator3->isEndOfImage());
+        for (int i = 0; i < iterator2->getBitmapWidth(); i++) {
+            CHECK_EQUAL(iterator2->getColor(), iterator3->getColor());
+            iterator2->nextPixel();
+            iterator3->nextPixel();
+        }
+        iterator2->nextScanLine();
+        iterator3->nextScanLine();
+    }
     tearDown();
 }
+/*
 TEST(chainedDecorator, CodecLibrary) {
     setUp();
 
@@ -236,9 +256,27 @@ TEST(chainedDecorator, CodecLibrary) {
 
     std::ofstream outFile{"q3-assignment-4/output_darkInverted.bmp", std::ios::binary};
     encoder->encodeToStream(outFile);
-
+    inFile.close();
+    outFile.close();
+    // Compare file output
+    std::ifstream inFile2{"q3-assignment-4/expected_darkInverted.bmp", std::ios::binary};
+    std::ifstream inFile3{"q3-assignment-4/output_darkInverted.bmp", std::ios::binary};
+    HBitmapDecoder decoder2{theCodecLibrary->createDecoder(inFile2)};
+    HBitmapIterator iterator2{decoder2->createIterator()};
+    HBitmapDecoder decoder3{theCodecLibrary->createDecoder(inFile3)};
+    HBitmapIterator iterator3{decoder3->createIterator()};
+    while (!iterator2->isEndOfImage()) {
+        CHECK(!iterator3->isEndOfImage());
+        for (int i = 0; i < iterator2->getBitmapWidth(); i++) {
+            CHECK_EQUAL(iterator2->getColor(), iterator3->getColor());
+            iterator2->nextPixel();
+            iterator3->nextPixel();
+        }
+        iterator2->nextScanLine();
+        iterator3->nextScanLine();
+    }
     tearDown();
-}
+}*/
 TEST(redShift, CodecLibrary) {
     setUp();
 
