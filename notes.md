@@ -2,7 +2,7 @@
 * F. Brooks in No Silver Bullet, states four steps to grow. The third step is episodes of advanced formal education with top designers
 * learning to solve problems using the C++ language and the object paradigm
 
-# Implementation Considerations
+# Implementation
 * simplicity (minimize the accidental complexity, the complexity brought in when solving the problem)
     * built-ins, class member functions, standard library, 3rd party library, and roll your own
     * compile-time verification eliminates the need for run-time check... this isn't Python
@@ -18,9 +18,9 @@
 * adherence to standards (UML/C++)
 * test driven development
 
-## Implementation Considerations: Specific principles and concepts
+## Implementation: Specific principles and concepts
 * Duck typing, a type system which relies on the duck test: suitability for a purpose is determined by methods and properties
-* LSP, liskov substitution principle, if S is subtype of T then S may replace T
+* LSP, Liskov Substitution Principle, if S is subtype of T then S may replace T
 * first-class concept, an idea the is represented in a system in a well-defined manner (e.g. as a class)
 * second-class concept, an idea that pervades the system but is not consistently used or defined.
 * Class-responsibility-collaboration cards (CRC cards),
@@ -29,10 +29,10 @@
     3. responsibilities class
     4. names of other classes that it will interact with
     5. author name
-* SOLID: Single responsibility, open/closed principle, LSP, Interface segragation, dependency inversion
+* SOLID: Single responsibility, open/closed principle, LSP, Interface segregation, dependency inversion
     * open/close principle: easy to add a new concrete component 
 
-## Implementation Considerations: Misc
+## Implementation: Miscellaneous
 * move assignment operator should use default implementation for class assignments. See [considerations](http://scottmeyers.blogspot.com/2014/06/the-drawbacks-of-implementing-move.html) of using std::swap in move assignment operator 
 * performing a copy inside of a function declared with move sematics will cause your coworkers to change careers (e.g. `operator=(T&&)`)
 * `noexcept`, use on move construct, move assign, and swap
@@ -47,7 +47,7 @@
 * deprecated features ought be avoided
 * interfaces should have their own `.h` file
 
-## How to test
+## Testing
 * Write tests first, otherwise implemented solution might not allow for automated testing    
 * Mainline data, usage scenarios, boundary conditions, and stress conditions
 * if a function takes a pointer test for nullptr, NULL, or 0 is passed
@@ -58,8 +58,8 @@
 
 ## Commenting    
 * a null/pass statement should be commented `;`
-* Stating intent (i.e. identify the purpose of a variable)
-* Strategy or general design (i.e. summarize an algorithm)
+* Stating intent (i.e. variable purpose)
+* Strategy or general design (i.e. algorithm outline)
 * Stating invariants, pre- and post-conditions
 * if the comment and code disagree, both are most likely wrong
 
@@ -85,12 +85,12 @@
 
 # UML: Identity, behavior, state (IBS)
 * unified modeling language
-* object idenity, how the object is distinguished from all other objects
+* object identify, how the object is distinguished from all other objects
 * object behavior, responses to events or messages from other objects (C++ even is a function call)
 * object state, the current value of all attributes
 * OO programming, organization is based on interactions of objects so that ultimately a solution can be found
 * OO requirements, method of analysis that captures the behavioral expectations of a system
-* OO design, a way to decompose a system or physiscal process into logical models and physical models
+* OO design, a way to decompose a system or physical process into logical models and physical models
 * OO analysis, to take a problem domain and identify entities/objects and classes. Nouns, verbs, adjectives -> identity/object, behavior/action, state/properties.
 * Class-responsibility-collaboration cards (CRC cards),
     1. class name
@@ -169,7 +169,7 @@
 * hardware threads, the number of independent tasks a processor can genuinely run concurrently
 * task parallelism, takes the parts of a task and does them concurrently (a task is divided in terms of processing)
 * data parallelism, takes the parts of data and process them concurrently (a task is divided in terms of data)
-* conveinently concurrent, a task which is easily made parallel in terms of processing or data
+* conveniently concurrent, a task which is easily made parallel in terms of processing or data
 * cost benefit, added complexity (likeli-hood of bugs), performance gain, overhead of thread spawning, and separation of concerns
 * client/server application, thread for each connection will at some point reduce overall performance due to task switching
 * abstraction penalty, the cost of using high-level facilities in terms of performance (but increased coherence and decreased errors)
@@ -179,7 +179,7 @@
 * uniform initialization syntax, one use is to avoid "C++'s most vexing parse" (like accidental prototype of thread)
 * mutex, (mutual exclusion) synchronization primitive used to lock the associated data while being accessed and unlocked when done
     * protect the right data---deadlocks, too much, or too little
-* oversubscription, when the number of threads running decreases performance due to task switching overhead
+* over-subscription, when the number of threads running decreases performance due to task switching overhead
 * cache ping-pong, passing data back and forth between caches many times
 * mutex cache ping-pong, allows the system to schedule another ready-to-run thread while waiting for the mutex
 * atomic operation cache ping-pong, at the processor level causes a stall which does not allow anything else to run
@@ -198,7 +198,7 @@
 * [abstract class](https://en.cppreference.com/w/cpp/language/abstract_class)
     * overly restrictive description: all trivial classes are concrete, but not all concrete classes are trivial
 * concrete, something that is not abstract
-* RAII, exception safety for stack resources and locality of aquistion/release logic
+* RAII, exception safety for stack resources and locality of acquisition/release logic
 * object, a region of memory which contains data and has a type
 * declaration, makes a name known to program (variable declaration specifies name & type)
 * identifiers, e.g. name
@@ -294,12 +294,12 @@
 * upcast, convert into base class type
 * downcast, by dynamic_cast mostly for debugging
 * base class, should almost always have a virtual destructor (why?)
-* Derived object has a subobject for itself and each base class which allows a reference/pointer to be bound to the base
+* Derived object has a sub-object for itself and each base class which allows a reference/pointer to be bound to the base
 * overloaded operator, redefine the built-in operation---member of class or operand of type class
 * conversion operator, performs class-type/user-defined conversions (judicious, clear, avoid mutual conversions, multiple arith type convs)
 * explicit conversion, implicit conversion restricted to expressions used as a condition
 * function-objects, callable objects (class w/ operator def)---lambdas are function objects
-* function-table, datastructure allowing search of function-objects with the same call signature---function templates
+* function-table, data structure allowing search of function-objects with the same call signature---function templates
 * function-template, library template representing any callable type
 * vectors, contiguous storage can result in reallocation operations and reserve can help reduce the amoritized cost
 * containers, template types that hold a collection of objects such that all objects are the same type
@@ -326,13 +326,13 @@
 * Exceptions can only be one at a type so use primitive types in your exception classes
 * default template arguments, default a type for a template
 * function templates, can deduce template parameter types
-* explicit instantiation, `extern` declares the arguments for all parameters and nonextern instationation---extern is promise of instantiation elsewhere to avoid overheard
+* explicit instantiation, `extern` declares the arguments for all parameters and nonextern instantiation---extern is promise of instantiation elsewhere to avoid overheard
 * function parameter pack, one or more arguments
 * instantiate, the replacement of template arguments with corresponding args based on a call.
-* member template, member function that is a template (applies ordinary non template classes aswell)
-* template nontype parameters, intergral parameters are consts, refs/ptrs have lifetimes
-* template specialization, all parameters of template function are specified. class template and member templates allow partial specialization via partial evalation of the base template
-* template type parameter, named used to abstract a type (that is the parameters to the template dipshit)
+* member template, member function that is a template (applies ordinary non template classes as well)
+* template nontype parameters, integral parameters are consts, refs/ptrs have lifetimes
+* template specialization, all parameters of template function are specified. class template and member templates allow partial specialization via partial evaluation of the base template
+* template type parameter, named used to abstract a type (that is the parameters to the template)
 * trailing return types, `auto fcn(It beg, It end) -> typename remove_reference<decltype(*beg)>::type` if the function template return type is a related type of a template type parameter, instantiation of all possibilities is burdensome
 * type transformation template, metaprogramming, transform a given template type parameter to a related type
 * variadic template, varying number of template arguments---use template parameter pack
@@ -367,7 +367,6 @@
 * locking, disable modification
 * z-layer, dictates the order in which graphics are drawn
 * synergy, worth more in its whole than the parts
-* LSP, liskov substitution principle, if S is subtype of T then S may replace T
 * smart_pointers, reference count to same object
 * unique_ptr, retains exclusive ownership
 * weak_ptr, does not affect shared_ptr count
@@ -380,13 +379,11 @@
 * be aware of which operators invalidate the iterator
 * first-class concept, an idea the is represented in a system in a well-defined manner (e.g. as a class)
 * second-class concept, an idea that pervades the system but is not consistently used or defined.
-* extend functionality two options: decorators or subclasses (decorators for dynamic, transparent, and when subclassing is impractical)
+* extend functionality two options: decorators or subclasses (decorators for dynamic, transparent, and when subclasses are impractical)
 * iterator/cursor, sequential access for an aggregate object
-* prototype, dynamic loading that avoids a class hierachy of factories when there a finite number of state combinations
+* prototype, dynamic loading that avoids a class hierarchy of factories when there a finite number of state combinations
 * end iterators, a result of a pointer based mental model and overly biased to primitive type behavior
 * unsigned int, rarely necessary to save one more bit for storage and trying to ensure something is positive futile due to implicit rule conversions
-* Performing a copy inside of a function declared with move sematics will cause your coworkers to change careers
-* noexcept: use on move construct, move assign, and swap.
 * std::iterator. it does not define a virtual destructor
 * nonbool -> if value == 0 then false, so nonzero is true
 * undefined operation such as assign an out-of-range value to an object of signed type the result is undefined
