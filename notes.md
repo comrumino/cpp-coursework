@@ -99,7 +99,7 @@
     4. names of other classes that it will interact with
     5. author name
 
-## Object model framework
+## Object Model Framework
 **Major elements**    
 * abstraction, identify characteristics which distinguish it for conceptual boundaries (entity abstractions & action abstraction)
 * encapsulation, should be a consequence of abstraction
@@ -156,7 +156,7 @@
         b. composition, one or more parts strong ownership so parts canot exist outside        
 * Dependency, one class requires the behavior of another object    
 
-## Condensed concurrency
+## Concurrency Basics
 * task switch, doing a bit of one task followed by doing a bit of another task
 * context switch, the system operations that are performed to switch from one task to another
     * save CPU state and instruction pointer
