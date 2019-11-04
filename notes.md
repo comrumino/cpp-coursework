@@ -4,6 +4,7 @@
 
 # Implementation
 * simplicity (minimize the accidental complexity, the complexity brought in when solving the problem)
+    * each responsibility/concern requires a specific amount of information
     * built-ins, class member functions, standard library, 3rd party library, and roll your own
     * compile-time verification eliminates the need for run-time check... this isn't Python
 * cohesion and coherence
@@ -17,6 +18,10 @@
     * "uses" criteria, A is simpler because it uses B and B is not substantially more complex because it is not allowed to use A
 * adherence to standards (UML/C++)
 * test driven development
+* three functions of a module (Agile Software Development: Principles, Patterns, and Practices. _R. Martin_)
+    1. the module performs it's existential purpose
+    2. the module affords change over it's lifetime
+    3. the module communicates to unfamiliar developers without mental gymnastics
 
 ## Implementation: Specific principles and concepts
 * Duck typing, a type system which relies on the duck test: suitability for a purpose is determined by methods and properties
