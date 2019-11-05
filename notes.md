@@ -36,6 +36,7 @@
     5. author name
 * SOLID: Single responsibility, open/closed principle, LSP, Interface segregation, dependency inversion
     * open/close principle: easy to add a new concrete component 
+* DRY: don't repeat yourself
 
 ## Implementation: Miscellaneous
 * move assignment operator should use default implementation for class assignments. See [considerations](http://scottmeyers.blogspot.com/2014/06/the-drawbacks-of-implementing-move.html) of using std::swap in move assignment operator 
