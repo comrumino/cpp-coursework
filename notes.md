@@ -18,6 +18,7 @@
     * "uses" criteria, A is simpler because it uses B and B is not substantially more complex because it is not allowed to use A
 * adherence to standards (UML/C++)
 * test driven development
+* tests should provide incremental feedback/results-serialization for flexibility
 * three functions of a module (Agile Software Development: Principles, Patterns, and Practices. _R. Martin_)
     1. the module performs it's existential purpose
     2. the module affords change over it's lifetime
