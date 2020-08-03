@@ -10,6 +10,7 @@
 * cohesion and coherence
     * separation of concerns, (separate context specific logic from common member functions)
     * self-documenting and predictable behavior
+    * cross-cutting concern, features such as logging and persistance cannot be cleanly decomposed and result in code duplication or dependencies between systems 
 * ease of extension/contraction
     * greater flexibility is smaller increments of capability; flexibility is ease of change 
     * generality is availability of smaller subsets, generality is usability without change
